@@ -1,0 +1,251 @@
+body {
+  color: #000 !important;
+  background: #eeedf2 !important;
+}
+
+.rightsidebg img {
+  width: 100%;
+  height: auto;
+}
+
+.rightsidebg {
+  background: #00bdd5;
+  padding: 5% 0;
+  height: 100vh;
+  left: 15px;
+}
+@media only screen and (min-width: 768px) {
+  .navbar-nav {
+    float: left;
+    margin: 0;
+    position: relative;
+    top: 3px;
+  }
+
+  .nav > li > a {
+    padding: 13px 30px 12px !important;
+  }
+  .navbar .navbar-right > li > a {
+    padding: 13px 0px 12px !important;
+  }
+  .formbodymain {
+    position: relative;
+    min-height: auto;
+    /* margin: 4% auto 0; */
+    padding: 0;
+    max-width: 100;
+    width: 100%;
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    z-index: 99; /* 
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%; */
+    background: #fff;
+    min-height: auto;
+  }
+  .ttl_main {
+    text-align: left;
+  }
+}
+
+.ttl_hd {
+  padding: 15% 0 3% 0;
+  text-align: center;
+  font-size: 30px;
+  color: #000;
+}
+
+@media only screen and (max-width: 767px) {
+  .formbodymain {
+    background: #fff;
+  }
+  body {
+    background: #fff !important;
+  }
+}
+
+.btn-success {
+  background: #00bdd5 !important;
+  border: 1px solid #169f85;
+  width: 100%;
+}
+.aset .btn-success {
+  background: #00bdd5 !important;
+  border: 1px solid #169f85;
+  width: fit-content;
+}
+.navbar-header {
+  background: transparent !important;
+  color: #00bdd5 !important;
+}
+
+.navbar-header .navbar-brand,
+.navbar-nav > li > a,
+.site_title {
+  color: #00bdd5 !important;
+  margin-left: 0 !important;
+}
+
+.ttl_main h2 {
+  text-align: left;
+  padding-top: 5%;
+}
+.ttl_maindt h2 {
+  text-align: center;
+}
+.txtrgt {
+  text-align: right;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > .active > a:hover {
+  color: #555;
+  background-color: transparent !important;
+  border-bottom: 2px solid #00bdd5;
+}
+
+@media (min-width: 992px) {
+  .col-md-3 {
+    width: 24.3% !important;
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.label-default {
+  background-color: #fff !important;
+  padding: 10px 15px !important;
+  border: 1px solid #ccc;
+  color: #000 !important;
+}
+.dmag {
+  margin: 2px 0 0 0;
+  display: block;
+  width: fit-content;
+}
+.dmag2 {
+  margin: 2px 0 0 0;
+  display: inline;
+  width: fit-content;
+}
+.pdtop30 {
+  padding-top: 5%;
+}
+.txtclr {
+  color: #00bdd5 !important;
+}
+.mgtop20 {
+  margin-top: 20px;
+}
+.backlgbg {
+  background: #f3f4f6;
+  border: 1px solid #ccc;
+}
+
+.form-control2 {
+  display: block;
+  width: 100%;
+  height: 24px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #f3f4f6;
+  background-repeat: no-repeat;
+  background-position: right;
+  border: none;
+  outline: none;
+}
+label.cp {
+  padding-left: 10px;
+}
+
+table thead {
+  background: #fafafb;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #fff !important;
+}
+
+.table-striped > tbody > tr {
+  background-color: #fff !important;
+  border: 1px solid #ccc;
+}
+
+table tbody {
+  border-top: 1px solid #ccc;
+}
+
+.table-striped > tbody > tr:first-child {
+  border-top: 1px solid #ccc;
+}
+.ruleGroup-header {
+  display: flex;
+  justify-content: space-between; /* Space between elements */
+  align-items: center; /* Vertically align items in the center */
+  gap: 10px; /* Space between the inner elements, use this instead of margin/padding for better control */
+  padding: 10px; /* Optional, add padding around the header */
+}

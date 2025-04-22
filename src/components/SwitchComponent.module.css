@@ -1,0 +1,102 @@
+.deviceTable {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.deviceTable td div {
+  font-size: 13px;
+}
+.deviceTable th {
+  font-size: 13px;
+  font-weight: bold;
+}
+.timPicker li {
+  font-size: 12px;
+}
+.timPicker input {
+  font-size: 1.2rem;
+}
+
+.table {
+  width: 100%;
+}
+.table th,
+.table td,
+.table tr {
+  vertical-align: middle !important;
+  padding: 5px !important;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.table td span {
+  line-height: 100% !important;
+}
+.table td {
+  border: 1px solid #ddd;
+}
+.table td input {
+  /* font-size: 1.4em !important; */
+  width: 100px;
+}
+.settings_input input {
+  padding: 2px 0 0 15px !important;
+}
+.settings_input fieldset {
+  top: -13px;
+}
+.save_btn {
+  font-size: 1em !important;
+  width: 100px;
+}
+.btnDiv {
+  padding-top: 15px;
+}
+.table th.stickyColumn1,
+.table td.stickyColumn1 {
+  /* position: sticky;
+  left: 0; */
+  z-index: 2;
+  background-color: white;
+  min-width: 100px;
+  max-width: 200px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+/* @media (max-width: 768px) {
+  .table th.stickyColumn1,
+  .table td.stickyColumn1 {
+    min-width: 100px;
+  }
+} */
+
+.table th.stickyColumn2,
+.table td.stickyColumn2 {
+  position: sticky;
+  left: 60px;
+  z-index: 2;
+  background-color: white;
+  min-width: 80px;
+}
+
+.table td.stickyColumn1 {
+  z-index: 1;
+}
+
+.table td.stickyColumn2 {
+  z-index: 1;
+}
+
+.switchAutoChk input {
+  width: 30px !important;
+}
+.switchAutoChkLabel {
+  margin-left: 20px !important;
+  margin-right: 0px !important;
+  padding: 0px !important;
+}
+.switchAutoChkLabel span {
+  font-size: 13px;
+}
+

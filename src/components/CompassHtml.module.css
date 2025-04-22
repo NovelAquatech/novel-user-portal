@@ -1,0 +1,439 @@
+.compass {
+  width: 100%;
+  max-width: 360px;
+  height: 100%;
+  max-height: 360px;
+  background-color: #f3f3f3;
+  border-radius: 100%;
+  background-image: -webkit-linear-gradient(top, #f7f7f7, #ececec);
+  position: absolute;
+  margin: 0;
+}
+
+.compassInner {
+  width: 100%;
+  max-width: 320px;
+  max-height: 320px;
+  height: 100%;
+  background-color: #3d3d3d;
+  border-radius: 100%;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  border: 3px solid #c5c5c5;
+  transform: translate(-50%, -50%);
+}
+.mainArrow {
+  height: 100%;
+  width: 30px;
+  left: 50%;
+  top: 50%;
+  position: relative;
+  padding-top: 5px;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%) rotate(45deg);
+  animation: spin 2s alternate 2;
+  -ms-transform: translate(-50%, -50%) rotate(45deg);
+  -o-transform: translate(-50%, -50%) rotate(45deg);
+  -o-animation: spin 2s alternate 2;
+  -moz-transform: translate(-50%, -50%) rotate(45deg);
+  -moz-animation: spin 2s alternate 2;
+  -webkit-transform: translate(-50%, -50%) rotate(45deg);
+  -webkit-animation: spin 2s alternate 2;
+}
+
+.arrowUp {
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 150px solid #ef5052;
+  position: relative;
+}
+
+.arrowDown {
+  -webkit-transform: rotate(180deg); /* Safari and Chrome */
+  width: 0;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 150px solid #f3f3f3;
+  position: relative;
+}
+
+.north {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 140px;
+  top: 0px;
+}
+
+.northone {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 220px;
+  top: 53px;
+}
+
+.east {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 280px;
+  top: 140px;
+}
+
+.eastone {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 45px;
+  top: 225px;
+}
+.easttwo {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 210px;
+  top: 222px;
+}
+
+.west {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 10px;
+  top: 140px;
+}
+.westtwo {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 37px;
+  top: 53px;
+}
+
+.south {
+  font-size: 36px;
+  font-family: "Roboto", sans-serif;
+  color: #fff;
+  position: absolute;
+  left: 140px;
+  top: 270px;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1) rotate(80deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(-180deg);
+  }
+}
+
+@-o-keyframes spin {
+  0% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  50% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(80deg);
+  }
+  100% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(-180deg);
+  }
+}
+
+@-moz-keyframes spin {
+  0% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  50% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(80deg);
+  }
+  100% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(-180deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+  50% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(80deg);
+  }
+  100% {
+    -webkit-transform: translate(-50%, -50%) scale(1) rotate(-180deg);
+  }
+}
+/* 
+@media (max-width: 600px) {
+  .compass {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+  }
+
+  .compassInner {
+    width: 170px;
+    height: 170px;
+    left: 13px;
+    top: 13px;
+  }
+
+  .mainArrow {
+    width: 30px;
+    left: 78px;
+    width: 15px;
+    padding-top: 3px;
+  }
+
+  .arrowUp {
+    border-bottom: 82.5px solid #ef5052;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .arrowDown {
+    border-bottom: 82.5px solid #f3f3f3;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .north {
+    left: 78px;
+    top: 10px;
+    font-size: 16px;
+  }
+
+  .south {
+    font-size: 16px;
+    left: 78px;
+    top: 140px;
+  }
+
+  .east {
+    font-size: 16px;
+    top: 72.5px;
+    left: 145px;
+  }
+
+  .west {
+    font-size: 16px;
+    left: 10px;
+    top: 72.5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .compass {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+  }
+
+  .compassInner {
+    width: 170px;
+    height: 170px;
+    left: 13px;
+    top: 13px;
+  }
+
+  .mainArrow {
+    width: 30px;
+    left: 78px;
+    width: 15px;
+    padding-top: 3px;
+  }
+
+  .arrowUp {
+    border-bottom: 82.5px solid #ef5052;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .arrowDown {
+    border-bottom: 82.5px solid #f3f3f3;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .north {
+    left: 78px;
+    top: 10px;
+    font-size: 16px;
+  }
+
+  .south {
+    font-size: 16px;
+    left: 78px;
+    top: 140px;
+  }
+
+  .east {
+    font-size: 16px;
+    top: 72.5px;
+    left: 145px;
+  }
+
+  .west {
+    font-size: 16px;
+    left: 10px;
+    top: 72.5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .compass {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+  }
+
+  .compassInner {
+    width: 170px;
+    height: 170px;
+    left: 13px;
+    top: 13px;
+  }
+
+  .mainArrow {
+    width: 30px;
+    left: 78px;
+    width: 15px;
+    padding-top: 3px;
+  }
+
+  .arrowUp {
+    border-bottom: 82.5px solid #ef5052;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .arrowDown {
+    border-bottom: 82.5px solid #f3f3f3;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .north {
+    left: 78px;
+    top: 10px;
+    font-size: 16px;
+  }
+
+  .south {
+    font-size: 16px;
+    left: 78px;
+    top: 140px;
+  }
+
+  .east {
+    font-size: 16px;
+    top: 72.5px;
+    left: 145px;
+  }
+
+  .west {
+    font-size: 16px;
+    left: 10px;
+    top: 72.5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .compass {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+  }
+
+  .compassInner {
+    width: 170px;
+    height: 170px;
+    left: 100px;
+    top: 100px;
+  }
+
+  .mainArrow {
+    width: 30px;
+    left: 78px;
+    width: 15px;
+    padding-top: 3px;
+  }
+
+  .arrowUp {
+    border-bottom: 82.5px solid #ef5052;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .arrowDown {
+    border-bottom: 82.5px solid #f3f3f3;
+    border-left: 7.5px solid transparent;
+    border-right: 7.5px solid transparent;
+  }
+
+  .north {
+    left: 78px;
+    top: 2px;
+    font-size: 16px;
+  }
+
+  .south {
+    font-size: 16px;
+    left: 78px;
+    top: 140px;
+  }
+
+  .east {
+    font-size: 16px;
+    top: 72.5px;
+    left: 145px;
+  }
+
+  .west {
+    font-size: 16px;
+    left: 5px;
+    top: 72.5px;
+  }
+  .westtwo {
+    font-size: 16px;
+    position: absolute;
+    left: 25px;
+    top: 32px;
+  }
+  .northone {
+    font-size: 16px;
+    left: 124px;
+    top: 30px;
+  }
+  .easttwo {
+    font-size: 16px;
+    left: 119px;
+    top: 114px;
+  }
+  .eastone {
+    position: absolute;
+    font-size: 16px;
+    left: 28px;
+    top: 114px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+} */

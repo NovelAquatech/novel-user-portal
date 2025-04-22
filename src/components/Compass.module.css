@@ -1,0 +1,120 @@
+/* Compass.module.css */
+
+/* Default style for needle */
+.needle,
+.needleBase {
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 10%;
+  border-left: 0.6em solid transparent;
+  border-right: 0.6em solid transparent;
+  transform-origin: bottom center;
+  transition: transform 0.8s ease-in-out;
+}
+
+.needle {
+  border-bottom-color: red !important;
+}
+
+.needleBase {
+  border-bottom-color: white !important;
+}
+
+@media (min-width: 993px) {
+  .needle,
+  .needleBase {
+    border-bottom: 4.4em solid;
+  }
+}
+@media (max-width: 992px) {
+  .needle,
+  .needleBase {
+    border-bottom: 3.4em solid;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .needle,
+  .needleBase {
+    border-bottom: 4em solid;
+  }
+}
+
+@media (max-width: 480px) {
+  .needle,
+  .needleBase {
+    border-bottom: 4.4em solid;
+  }
+}
+
+.directions {
+  position: absolute;
+  color: white;
+  font-weight: bold;
+}
+
+.label {
+  margin-top: 10px;
+  font-size: 14px;
+  color: "#555";
+}
+
+.north,
+.northEast,
+.east,
+.southEast,
+.south,
+.southWest,
+.west,
+.northWest {
+  position: absolute;
+  font-size: 14px;
+  font-weight: normal;
+  color: black;
+}
+
+.north {
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.northEast {
+  top: 15%;
+  right: 15%;
+}
+
+.east {
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+}
+
+.southEast {
+  bottom: 15%;
+  right: 15%;
+}
+
+.south {
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.southWest {
+  bottom: 15%;
+  left: 15%;
+}
+
+.west {
+  top: 50%;
+  left: 5%;
+  transform: translateY(-50%);
+}
+
+.northWest {
+  top: 15%;
+  left: 15%;
+}

@@ -1,0 +1,150 @@
+$accent-color: #be4d45;
+$dark-color: #2a3539;
+
+.compass-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.compass {
+  width: 140px;
+  position: relative;
+  aspect-ratio: 1;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.compass__windrose {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: $dark-color;
+  position: relative;
+  box-shadow: inset 0 0 5px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+  border: 4px solid rgb(108, 106, 106);
+}
+
+.compass__mark--direction-h,
+.compass__mark--direction-v,
+.compass__mark--direction-d1,
+.compass__mark--direction-d2 {
+  width: 4px;
+  height: 100%;
+  left: calc(50% - 2px);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:before,
+  &:after {
+    content: "";
+    position: absolute;
+    font-size: 1.1rem;
+    color: #fff;
+    font-family: "Roboto Slab", serif;
+  }
+
+  &:before {
+    top: 5.5%;
+  }
+
+  &:after {
+    bottom: 5.5%;
+    transform: rotate(180deg);
+  }
+}
+
+.compass__mark--direction-h {
+  &:before {
+    content: "N";
+  }
+
+  &:after {
+    content: "S";
+  }
+}
+
+.compass__mark--direction-d1 {
+  transform: rotate(45deg);
+  &:before {
+    content: "NE";
+  }
+
+  &:after {
+    content: "SW";
+  }
+}
+
+.compass__mark--direction-d2 {
+  transform: rotate(-45deg);
+  &:before {
+    content: "NW";
+  }
+
+  &:after {
+    content: "SE";
+  }
+}
+
+.compass__mark--direction-v {
+  transform: rotate(90deg);
+
+  &:before {
+    content: "E";
+  }
+
+  &:after {
+    content: "W";
+  }
+}
+
+.compass__arrow-container {
+  width: 68%;
+  height: 80%;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.compass__arrow {
+  position: relative;
+  width: 71%;
+  height: 71%;
+
+  /* Top triangle (pointing north) */
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    clip-path: polygon(50% 0%, 10% 100%, 90% 100%);
+    background-color: $accent-color;
+    width: 25%;
+    height: 50%;
+  }
+
+  /* Bottom triangle (pointing south) */
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    clip-path: polygon(50% 0%, 10% 100%, 90% 100%);
+    background-color: #fff;
+    width: 25%;
+    height: 50%;
+  }
+}

@@ -1,0 +1,91 @@
+.x_content {
+  max-height: 400px;
+  overflow-y: scroll;
+}
+
+.table th,
+.table td,
+.table tr {
+  vertical-align: middle !important;
+  padding: 5px !important;
+}
+
+.table td span {
+  line-height: 100% !important;
+}
+.table td input {
+  font-size: 1.4em !important;
+  width: 100px;
+}
+.save_btn {
+  font-size: 1em !important;
+  width: 100px;
+}
+.succ_msg {
+  color: green;
+  padding-left: 10px;
+  font-size: 0.8em;
+}
+.err_msg {
+  color: red;
+  padding-left: 10px;
+  font-size: 0.8em;
+}
+.settings_input input {
+  padding: 2px 0 0 0 !important;
+}
+.settings_input fieldset {
+  top: -13px;
+}
+.switch_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.switch_container span {
+  padding: 0 10px;
+}
+.tableContainer {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.table {
+  /* table-layout: fixed; */
+  width: 100%;
+}
+
+.table th,
+.table td {
+  text-align: center;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+.table th.stickyColumn1,
+.table td.stickyColumn1 {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background-color: white;
+  min-width: 60px;
+}
+
+.table th.stickyColumn2,
+.table td.stickyColumn2 {
+  position: sticky;
+  left: 60px;
+  z-index: 2;
+  background-color: white;
+  min-width: 80px;
+}
+
+.table td.stickyColumn1 {
+  z-index: 1;
+}
+
+.table td.stickyColumn2 {
+  z-index: 1;
+}
