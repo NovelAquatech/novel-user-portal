@@ -31,12 +31,7 @@ export const SettingPage = () => {
   const [errors, setErrors] = useState({});
   const [devices, setDevices] = useState([]);
   const [autoLogin, setAutoLogin] = useState(false);
-  const {
-    isDevicesFetched,
-    setIsDevicesFetched,
-    fetchedDevices,
-    setFetchedDevices,
-  } = useCacheStatus();
+  const { isDevicesFetched, setIsDevicesFetched, fetchedDevices, setFetchedDevices } = useCacheStatus();
   // Fetch data inside the component
   const fetchAlertData = async () => {
     const apiPromises = [
@@ -60,7 +55,7 @@ export const SettingPage = () => {
   // Update state when data is fetched
   useEffect(() => {
     setAutoLogin(user.autoLogin);
-  }, []);
+  }, [])
   useEffect(() => {
     if (data) {
       // Getting device list
@@ -91,21 +86,17 @@ export const SettingPage = () => {
           orgName: dt.orgName,
           paramDisplayName: dt.paramDisplayName,
           repeatedAlert: dt.repeatedAlert,
-          timestamp: dt.Timestamp,
         });
-      }); 
+      });
+
       // Getting settings the data
       const settingsData = Object.entries(organizedData).map(
         ([devEUI, parameters]) => {
           let devName = deviceList[devEUI];
-          const sortedParameters = parameters.sort((a, b) => {
-            return new Date(b.timestamp) - new Date(a.timestamp);
-          });
           return {
             devName,
             devEUI,
-            parameters:sortedParameters,
-            timestamp: sortedParameters[0]?.timestamp || null,
+            parameters,
           };
         }
       );
@@ -151,12 +142,12 @@ export const SettingPage = () => {
           errorMsg = `Minimum value should be less than or equal ${selectedSetting.currentMinAlert}`;
         }
         break;
-      case "max_value":
-        if (value == selectedSetting?.max_value) isValid = false;
-        else if (selectedSetting?.currentMaxAlert > value) {
-          isValid = false;
-          errorMsg = `Maximum value should be more than or equal to ${selectedSetting.currentMaxAlert}`;
-        }
+        case "max_value":
+          if (value == selectedSetting?.max_value) isValid = false;
+          else if (selectedSetting?.currentMaxAlert > value) {
+            isValid = false;
+            errorMsg = `Maximum value should be more than or equal to ${selectedSetting.currentMaxAlert}`;
+          }
         break;
       default:
         isValid = true;
@@ -246,7 +237,7 @@ export const SettingPage = () => {
       }
     }, 5000);
   }, [showSuccMsg, showErrMsg]);
- 
+
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
@@ -265,34 +256,17 @@ export const SettingPage = () => {
           <div className="col-md-12 col-sm-12 col-xs-12" id="style-3">
             <div className="x_panel">
               <div className="col-md-12 col-sm-12 col-xs-12">
-                <div
-                  className={
-                    user.orgName == "UNSW" || user.orgName == "UNSW2"
-                      ? "ttl_main sm-padding"
-                      : "ttl_main"
-                  }
-                >
-                  <h2 style={{ textAlign: "center" }}>
-                    <strong
-                      className={
-                        user.orgName == "SeelyEnergyMonitor"
-                          ? "show-elm"
-                          : "hide-elm"
-                      }
-                    >
-                      Seeley Energy Monitor
-                    </strong>
+
+                <div className={user.orgName == 'UNSW' || user.orgName == 'UNSW2' ? 'ttl_main sm-padding' : 'ttl_main'}>
+
+                  <h2 style={{ "textAlign": "center" }}>
+                    <strong className={user.orgName == 'SeelyEnergyMonitor' ? 'show-elm' : 'hide-elm'}>Seeley Energy Monitor</strong>
                   </h2>
                 </div>
-
+                
                 <SwitchComponent devices={devices} autoLogin={autoLogin} />
-                <div
-                  className={
-                    user.orgName == "UNSW" || user.orgName == "UNSW2"
-                      ? "ttl_main sm-padding"
-                      : "ttl_main"
-                  }
-                >
+                <div className={user.orgName == 'UNSW' || user.orgName == 'UNSW2' ? 'ttl_main sm-padding' : 'ttl_main'}>
+
                   <h2>
                     <strong>Advisory Setting</strong>
                   </h2>
@@ -493,7 +467,7 @@ export const SettingPage = () => {
                                   disabled={!param.alertActive || autoLogin}
                                   error={
                                     errors[
-                                      `${param.parameter}_currentMinAlert`
+                                    `${param.parameter}_currentMinAlert`
                                     ] || false
                                   }
                                   style={{
@@ -534,7 +508,7 @@ export const SettingPage = () => {
                                   disabled={!param.alertActive || autoLogin}
                                   error={
                                     errors[
-                                      `${param.parameter}_currentMaxAlert`
+                                    `${param.parameter}_currentMaxAlert`
                                     ] || false
                                   }
                                   style={{

@@ -111,30 +111,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     );
   };
 
-   const handleSave = async (row) => {
-    const now = dayjs();
-
-    if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
-      toast.error("Turn-on time must be now or in the future!");
-      return;
-    }
-
-    if (row.turnOffTime && dayjs(row.turnOffTime).isBefore(now)) {
-      toast.error("The turn-off time must be later than the turn-on time!");
-      return;
-    }
-
-    if (
-      row.turnOnTime &&
-      row.turnOffTime &&
-      dayjs(row.turnOffTime).isBefore(dayjs(row.turnOnTime))
-    ) {
-      toast.error("Turn-off time cannot be earlier than Turn-on time!");
-      return;
-    }
-
+  const handleSave = async (row) => {
     setLoadingRows((prev) => ({ ...prev, [row.RowKey]: true }));
-
     try {
       await mutation.mutateAsync({
         active: row.active,
@@ -194,6 +172,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                           if (row.once) autoValue = "once";
                           else if (row.repeat) autoValue = "repeat";
                           else if (row.manual) autoValue = "manual";
+
                           return (
                             <TableRow key={row.RowKey}>
                               <TableCell
@@ -287,10 +266,9 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                 </RadioGroup>
                               </TableCell>
                               <TableCell className={styles.settings_input}>
-                              
                                 {autoValue === "repeat" ? (
                                   <DesktopTimePicker
-                                  disabled={autoLogin || (autoValue == "manual")}
+                                    disabled={autoLogin}
                                     value={
                                       row.turnOnTime
                                         ? dayjs()
@@ -324,10 +302,12 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     minutesStep={1}
                                     className={styles.timPicker}
                                   />
-                                )  : (
+                                ) : (
                                   <DateTimePicker
                                     key={row.RowKey}
-                                    disabled={autoLogin || (autoValue == "manual")}
+                                    disabled={
+                                      autoLogin || autoValue === "manual"
+                                    }
                                     value={
                                       row.turnOnTime
                                         ? dayjs(row.turnOnTime)
@@ -361,7 +341,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                               <TableCell className={styles.settings_input}>
                                 {autoValue === "repeat" ? (
                                   <DesktopTimePicker
-                                  disabled={autoLogin || (autoValue == "manual")}
+                                    disabled={autoLogin}
                                     value={
                                       row.turnOffTime
                                         ? dayjs()
@@ -396,12 +376,10 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   />
                                 ) : (
                                   <DateTimePicker
-                                  disabled={autoLogin || (autoValue == "manual")}
+                                    disabled={autoLogin}
                                     value={
                                       row.turnOffTime
                                         ? dayjs(row.turnOffTime)
-                                            .second(0)
-                                            .millisecond(0)
                                         : null
                                     }
                                     onChange={(newTime) => {
@@ -413,26 +391,20 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         toast.error(
                                           "Turn-off time cannot be earlier than Turn-on time!"
                                         );
-                                        return;
                                       }
                                       handleTimeChange(
                                         row.RowKey,
                                         "turnOffTime",
                                         newTime
-                                          ? newTime.format(
-                                              "YYYY-MM-DDTHH:mm:ss"
-                                            )
+                                          ? newTime.format("YYYY-MM-DDTHH:mm")
                                           : ""
                                       );
                                     }}
                                     showToolbar
                                     minDateTime={
                                       row.turnOnTime
-                                        ? dayjs(row.turnOnTime)
-                                            .add(5, "minute")
-                                            .second(0)
-                                            .millisecond(0)
-                                        : dayjs().second(0).millisecond(0)
+                                        ? dayjs(row.turnOnTime).add(5, "minute")
+                                        : dayjs()
                                     }
                                     className={styles.timPicker}
                                     format="YYYY-MM-DD HH:mm"

@@ -10,9 +10,7 @@ export const AlertAdvisories = ({
   const responsive = APP_CONST.alert_advisories_responsive_parameter;
   let totalAlert = [];
   const advisoriesData = getAlerts(alerts);
-  totalAlert = [...advisoriesData].reverse();
-  // totalAlert = advisoriesData;
-
+  totalAlert = advisoriesData;
   totalAlert = totalAlert.map(alert => {
     if (alert.threshold.includes("<b>Combinator:</b>")) {
       const combinator = alert.threshold.match(/<b>Combinator:<\/b>\s*(\w+)/)[1];
