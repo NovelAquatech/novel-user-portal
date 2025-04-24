@@ -15,25 +15,26 @@ export const SurveyPage = () => {
   }, []);
   const { user } = useAuth();
   const orgName = user.orgName;
-  let googleDocLink =
-    orgName === "Kolkata"
-      ? APP_CONST.googleDocLinkKolSensors1
-      : orgName === "UNSW"
-      ? APP_CONST.googleDocLinkUNSW
-      : orgName === "UNSW2"
-      ? APP_CONST.googleDocLinkUNSW2
-      : APP_CONST.googleDocLinkSeely;
 
-  let googleFormURL =
-    orgName === "Kolkata"
-      ? APP_CONST.googleFormLinkKolSensors1
-      : orgName === "UNSW"
-      ? APP_CONST.googleFormLinkUNSW
-      : orgName === "UNSW2"
-      ? APP_CONST.googleFormLinkUNSW2
-      : orgName === "Seely"
-      ? APP_CONST.googleFormLinkSeely
-      : "";
+  let googleDocLink = user.orgDetails.occupantSurvey.googleDocLink
+    // orgName === "Kolkata"
+    //   ? APP_CONST.googleDocLinkKolSensors1
+    //   : orgName === "UNSW"
+    //   ? APP_CONST.googleDocLinkUNSW
+    //   : orgName === "UNSW2"
+    //   ? APP_CONST.googleDocLinkUNSW2
+    //   : APP_CONST.googleDocLinkSeely;
+
+  let googleFormURL =user.orgDetails.occupantSurvey.googleFormLink
+    // orgName === "Kolkata"
+    //   ? APP_CONST.googleFormLinkKolSensors1
+    //   : orgName === "UNSW"
+    //   ? APP_CONST.googleFormLinkUNSW
+    //   : orgName === "UNSW2"
+    //   ? APP_CONST.googleFormLinkUNSW2
+    //   : orgName === "Seely"
+    //   ? APP_CONST.googleFormLinkSeely
+    //   : "";
   return (
     <>
       <CirclesWithBar
