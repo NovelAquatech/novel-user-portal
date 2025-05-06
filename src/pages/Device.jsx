@@ -207,27 +207,35 @@ export const DevicePage = () => {
                       {deviceTypes.map((type, i) => {
                         return (
                           <option value={type} key={i}>
-                            {type}
+                          {type}
                           </option>
                         );
-                      })}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="x_content">
-                <table id="datatable" className="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Device Name</th>
-                      <th>Last Update</th>
-                      <th>Device Type</th>
-                      <th>Email</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {devices.map((device, i) => {
+                        })}
+                      </select>
+                      <button
+                        type="button"
+                        className="btn btn-info btn-m"
+                        style={{ marginLeft: "10px" }}
+                        onClick={() => window.location.href = "/devices/new"}
+                      >
+                        Add Device
+                      </button>
+                      </div>
+                    </div>
+                    </div>
+                    <div className="x_content">
+                    <table id="datatable" className="table table-striped">
+                      <thead>
+                      <tr>
+                        <th>Device Name</th>
+                        <th>Last Update</th>
+                        <th>Device Type</th>
+                        <th>Email</th>
+                        <th></th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {devices.map((device, i) => {
                       let delta = differenceDate(
                         new Date(device.lastUpdate),
                         new Date()

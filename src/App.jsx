@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { LoginPage } from "./pages/Login";
 import { DevicePage } from "./pages/Device";
+import { AddDevicePage } from "./pages/AddDevice";
 import { ReportPage } from "./pages/Report";
 import { SettingPage } from "./pages/Setting";
 import { SurveyPage } from "./pages/SurveyPage";
@@ -41,6 +42,14 @@ function App() {
           element={
             <ProtectedRoute>
               <DevicePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/devices/new"
+          element={
+            <ProtectedRoute>
+              <AddDevicePage />
             </ProtectedRoute>
           }
         />
