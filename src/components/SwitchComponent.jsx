@@ -121,7 +121,11 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
    const handleSave = async (row) => {
     const now = dayjs();
-
+    
+ if (!row.turnOffTime) {
+    toast.error("Turn-off time is required!");
+    return;
+  }
     if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
       toast.error("Turn-on time must be now or in the future!");
       return;
