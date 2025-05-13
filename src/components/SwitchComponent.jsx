@@ -28,7 +28,9 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [loadingRows, setLoadingRows] = useState({});
   const [rows, setRows] = useState([]);
-  const [dateTime, setDateTime] = useState(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+  const [dateTime, setDateTime] = useState(
+    dayjs().format("YYYY-MM-DD HH:mm:ss")
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,7 +39,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
     return () => clearInterval(interval);
   }, []);
-
 
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -123,6 +124,28 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   const handleSave = async (row) => {
+    if (!row.turnOffTime) {
+      toast.error("Turn-off time is required!");
+      return;
+    }
+    if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
+      toast.error("Turn-on time must be now or in the future!");
+      return;
+    }
+
+    if (row.turnOffTime && dayjs(row.turnOffTime).isBefore(now)) {
+      toast.error("The turn-off time must be later than the turn-on time!");
+      return;
+    }
+
+    if (
+      row.turnOnTime &&
+      row.turnOffTime &&
+      dayjs(row.turnOffTime).isBefore(dayjs(row.turnOnTime))
+    ) {
+      toast.error("Turn-off time cannot be earlier than Turn-on time!");
+      return;
+    }
     setLoadingRows((prev) => ({ ...prev, [row.RowKey]: true }));
     try {
       await mutation.mutateAsync({
@@ -151,12 +174,20 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     <>
       {rows && rows.length > 0 ? (
         <div>
-          <div style={{display: "flex", justifyContent:"space-between",alignItems: "center"}}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             {" "}
             <h2 style={{ paddingTop: "2px" }}>
               <strong>Device Settings</strong>
             </h2>
-            <p><b>Current time:</b> {dateTime}</p>
+            <p>
+              <b>Current time:</b> {dateTime}
+            </p>
           </div>
 
           <div className="formbodymain">
@@ -324,11 +355,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     disabled={
                                       autoLogin || autoValue === "manual"
                                     }
-                                    // value={
-                                    //   row.turnOnTime
-                                    //     ? dayjs(row.turnOnTime)
-                                    //     : dayjs()
-                                    // }
                                     value={
                                       row.turnOnTime
                                         ? dayjs(row.turnOnTime)
