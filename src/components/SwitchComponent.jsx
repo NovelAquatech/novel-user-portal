@@ -28,6 +28,14 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [loadingRows, setLoadingRows] = useState({});
   const [rows, setRows] = useState([]);
+  const [dateTime, setDateTime] = useState(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+    useEffect(() => {
+    const interval = setInterval(() => {
+      setDateTime(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -162,9 +170,13 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     <>
       {rows && rows.length > 0 ? (
         <div>
-          <h2 style={{ paddingTop: "2px" }}>
-            <strong>Device Settings</strong>
-          </h2>
+          <div style={{display: "flex", justifyContent:"space-between",alignItems: "center"}}>
+            {" "}
+            <h2 style={{ paddingTop: "2px" }}>
+              <strong>Device Settings</strong>
+            </h2>
+            <p><b>Current time:</b> {dateTime}</p>
+          </div>
           <div className="formbodymain">
             <div className="row">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -331,7 +343,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     value={
                                       row.turnOnTime
                                         ? dayjs(row.turnOnTime)
-                                        : dayjs()
+                                        : null
                                     }
                                     onChange={(newTime) => {
                                       if (
