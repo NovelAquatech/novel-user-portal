@@ -124,10 +124,12 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   const handleSave = async (row) => {
-    if (!row.turnOffTime) {
-      toast.error("Turn-off time is required!");
-      return;
-    }
+    const now = dayjs();
+
+if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
+  toast.error("Both Turn-on and Turn-off time are required!");
+  return;
+}
     if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
       toast.error("Turn-on time must be now or in the future!");
       return;
@@ -312,7 +314,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   />
                                 </RadioGroup>
                               </TableCell>
-                              <TableCell className={styles.settings_input}>
+                              {/* <TableCell className={styles.settings_input}>
                                 {autoValue === "repeat" ? (
                                   <DesktopTimePicker
                                     disabled={autoLogin}
@@ -452,6 +454,166 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       row.turnOnTime
                                         ? dayjs(row.turnOnTime).add(5, "minute")
                                         : dayjs()
+                                    }
+                                    className={styles.timPicker}
+                                    format="YYYY-MM-DD HH:mm"
+                                  />
+                                )}
+                              </TableCell> */}
+                               <TableCell className={styles.settings_input}>
+                                {autoValue === "repeat" ? (
+                                  <DesktopTimePicker
+                                    disabled={
+                                      autoLogin || autoValue == "manual"
+                                    }
+                                    value={
+                                      row.turnOnTime
+                                        ? dayjs()
+                                            .set(
+                                              "hour",
+                                              Number(
+                                                row.turnOnTime.split(":")[0]
+                                              )
+                                            )
+                                            .set(
+                                              "minute",
+                                              Number(
+                                                row.turnOnTime.split(":")[1]
+                                              )
+                                            )
+                                            .set(
+                                              "second",
+                                              Number(
+                                                row.turnOnTime.split(":")[2]
+                                              )
+                                            )
+                                        : null
+                                    }
+                                    onChange={(newTime) =>
+                                      handleTimeChangeRepeat(
+                                        row.RowKey,
+                                        "turnOnTime",
+                                        newTime ? newTime.toString() : ""
+                                      )
+                                    }
+                                    minutesStep={1}
+                                    className={styles.timPicker}
+                                  />
+                                ) : (
+                                  <DateTimePicker
+                                    key={row.RowKey}
+                                    disabled={
+                                      autoLogin || autoValue == "manual"
+                                    }
+                                    value={
+                                      row.turnOnTime
+                                        ? dayjs(row.turnOnTime)
+                                        : null
+                                    }
+                                    onChange={(newTime) => {
+                                      if (
+                                        newTime &&
+                                        newTime.isBefore(dayjs())
+                                      ) {
+                                        toast.error(
+                                          "You have selected a past date/time!"
+                                        );
+                                      }
+                                      handleTimeChange(
+                                        row.RowKey,
+                                        "turnOnTime",
+                                        newTime
+                                          ? newTime.format(
+                                              "YYYY-MM-DDTHH:mm:ss"
+                                            )
+                                          : ""
+                                      );
+                                    }}
+                                    minDateTime={null}
+                                    format="YYYY-MM-DD HH:mm"
+                                    className={styles.timPicker}
+                                  />
+                                )}
+                              </TableCell>
+                              <TableCell className={styles.settings_input}>
+                                {autoValue === "repeat" ? (
+                                  <DesktopTimePicker
+                                    disabled={
+                                      autoLogin || autoValue == "manual"
+                                    }
+                                    value={
+                                      row.turnOffTime
+                                        ? dayjs()
+                                            .set(
+                                              "hour",
+                                              Number(
+                                                row.turnOffTime.split(":")[0]
+                                              )
+                                            )
+                                            .set(
+                                              "minute",
+                                              Number(
+                                                row.turnOffTime.split(":")[1]
+                                              )
+                                            )
+                                            .set(
+                                              "second",
+                                              Number(
+                                                row.turnOffTime.split(":")[2]
+                                              )
+                                            )
+                                        : null
+                                    }
+                                    onChange={(newTime) =>
+                                      handleTimeChangeRepeat(
+                                        row.RowKey,
+                                        "turnOffTime",
+                                        newTime ? newTime.toString() : ""
+                                      )
+                                    }
+                                    className={styles.timPicker}
+                                  />
+                                ) : (
+                                  <DateTimePicker
+                                    disabled={
+                                      autoLogin || autoValue == "manual"
+                                    }
+                                    value={
+                                      row.turnOffTime
+                                        ? dayjs(row.turnOffTime)
+                                            .second(0)
+                                            .millisecond(0)
+                                        : null
+                                    }
+                                    onChange={(newTime) => {
+                                      if (
+                                        newTime &&
+                                        row.turnOnTime &&
+                                        newTime.isBefore(dayjs(row.turnOnTime))
+                                      ) {
+                                        toast.error(
+                                          "Turn-off time cannot be earlier than Turn-on time!"
+                                        );
+                                        return;
+                                      }
+                                      handleTimeChange(
+                                        row.RowKey,
+                                        "turnOffTime",
+                                        newTime
+                                          ? newTime.format(
+                                              "YYYY-MM-DDTHH:mm:ss"
+                                            )
+                                          : ""
+                                      );
+                                    }}
+                                    showToolbar
+                                    minDateTime={
+                                      row.turnOnTime
+                                        ? dayjs(row.turnOnTime)
+                                            .add(5, "minute")
+                                            .second(0)
+                                            .millisecond(0)
+                                        : dayjs().second(0).millisecond(0)
                                     }
                                     className={styles.timPicker}
                                     format="YYYY-MM-DD HH:mm"
