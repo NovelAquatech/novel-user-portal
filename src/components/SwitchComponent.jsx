@@ -36,8 +36,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
   dayjs.extend(utc);
   dayjs.extend(timezone);
-  dayjs.extend(advancedFormat);
-  dayjs.extend(localeData);
   dayjs.locale("en");
   const [dateTime, setDateTime] = useState(
     dayjs().tz("Australia/Sydney").format("D MMMM YYYY HH:mm:ss z")
@@ -142,30 +140,31 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       toast.error("Both Turn-on and Turn-off time are required!");
       return;
     }
-    // if (
-    //   row.turnOnTime &&
-    //   dayjs(row.turnOnTime).tz("Australia/Sydney").isBefore(now)
-    // ) {
-    //   toast.error("Turn-on time must be now or in the future!");
-    //   return;
-    // }
     if (
-  row.turnOnTime &&
-  dayjs(row.turnOnTime).tz("Australia/Sydney").isBefore(now)
-) {
-  // If turnOnTime is in the past, allow it **only** if turnOffTime is in the future
-  if (
-    !row.turnOffTime ||
-    dayjs(row.turnOffTime).tz("Australia/Sydney").isBefore(now)
-  ) {
-    toast.error("Turn-on time must be now or in the future unless the turn-off time is still in the future!");
-    return;
-  }
-}
+      row.turnOnTime &&
+      dayjs(row.turnOnTime).isBefore(now)
+    ) {
+      toast.error("Turn-on time must be now or in the future!");
+      return;
+    }
+    if (
+      row.turnOnTime &&
+      dayjs(row.turnOnTime).isBefore(now)
+    ) {
+      if (
+        !row.turnOffTime ||
+        dayjs(row.turnOffTime).isBefore(now)
+      ) {
+        toast.error(
+          "Turn-on time must be now or in the future & the turn-off time should be atleast 5mins past than turn-on time!"
+        );
+        return;
+      }
+    }
 
     if (
       row.turnOffTime &&
-      dayjs(row.turnOffTime).tz("Australia/Sydney").isBefore(now)
+      dayjs(row.turnOffTime).isBefore(now)
     ) {
       toast.error("The turn-off time must be later than the turn-on time!");
       return;
@@ -174,9 +173,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     if (
       row.turnOnTime &&
       row.turnOffTime &&
-      dayjs(row.turnOffTime)
-        .tz("Australia/Sydney")
-        .isBefore(dayjs(row.turnOnTime).tz("Australia/Sydney"))
+      dayjs(row.turnOffTime)       
+        .isBefore(dayjs(row.turnOnTime))
     ) {
       toast.error("Turn-off time cannot be earlier than Turn-on time!");
       return;
@@ -193,8 +191,14 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         once: row.once,
         repeat: row.repeat,
         manual: row.manual,
-        turnOffTime: row.turnOffTime,
         turnOnTime: row.turnOnTime,
+        turnOffTime:row.turnOffTime,
+        // turnOnTime: row.repeat
+        //   ? row.turnOnTime
+        //   : dayjs(row.turnOnTime).format("YYYY-MM-DDTHH:mm:ss"),
+        // turnOffTime: row.repeat
+        //   ? row.turnOffTime
+        //   : dayjs(row.turnOffTime).format("YYYY-MM-DDTHH:mm:ss"),
       });
       toast.success("Settings saved successfully!");
     } catch (error) {
@@ -356,7 +360,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     value={
                                       row.turnOnTime
                                         ? dayjs()
-                                            .tz("Australia/Sydney")
                                             .set(
                                               "hour",
                                               Number(
@@ -385,7 +388,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       )
                                     }
                                     minutesStep={1}
-                                    error={false}
+                                    
                                     ampm={false}
                                     className={styles.timPicker}
                                   />
@@ -397,31 +400,31 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     }
                                     value={
                                       row.turnOnTime
-                                        ? dayjs.utc(row.turnOnTime).tz("Australia/Sydney")
+                                        ? dayjs(row.turnOnTime)
                                         : null
-                                    }                          
+                                    }
                                     onChange={(newTime) => {
                                       if (
                                         newTime &&
-                                        newTime.isBefore(
-                                          dayjs().tz("Australia/Sydney")
-                                        )
+                                        newTime.isBefore(dayjs())
                                       ) {
                                         toast.error(
                                           "You have selected a past date/time!"
                                         );
                                       }
-                                      const sydneyTime = newTime.tz("Australia/Sydney", true);
+
                                       handleTimeChange(
                                         row.RowKey,
                                         "turnOnTime",
                                         newTime
-                                          ? sydneyTime.utc().format("YYYY-MM-DDTHH:mm:ss[Z]")
+                                          ? newTime.format(
+                                              "YYYY-MM-DDTHH:mm:ss"
+                                            )
                                           : ""
                                       );
                                     }}
-                                    minDateTime={dayjs().tz("Australia/Sydney")}
-                                    // error={false}
+                                    minDateTime={null}
+                                    
                                     ampm={false}
                                     format="YYYY-MM-DD HH:mm"
                                     className={styles.timPicker}
@@ -437,7 +440,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     value={
                                       row.turnOffTime
                                         ? dayjs()
-                                            .tz("Australia/Sydney")
                                             .set(
                                               "hour",
                                               Number(
@@ -466,44 +468,39 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         newTime ? newTime.toString() : ""
                                       )
                                     }
-                                    error={false}
+                                    
                                     ampm={false}
                                     className={styles.timPicker}
                                   />
                                 ) : (
                                   <DateTimePicker
                                     disabled={
-                                      autoLogin || autoValue == "manual"
+                                      autoLogin || autoValue === "manual"
                                     }
                                     value={
                                       row.turnOffTime
-                                        ? dayjs.utc(row.turnOffTime)
-                                            .tz("Australia/Sydney")
-                                            .second(0)
-                                            .millisecond(0)
+                                        ? dayjs(row.turnOffTime)
                                         : null
                                     }
                                     onChange={(newTime) => {
                                       if (
                                         newTime &&
                                         row.turnOnTime &&
-                                        newTime.isBefore(
-                                          dayjs(row.turnOnTime).tz(
-                                            "Australia/Sydney"
-                                          )
-                                        )
+                                        newTime.isBefore(dayjs(row.turnOnTime))
                                       ) {
                                         toast.error(
                                           "Turn-off time cannot be earlier than Turn-on time!"
                                         );
                                         return;
                                       }
-                                       const sydneyTime = newTime.tz("Australia/Sydney", true);
+
                                       handleTimeChange(
                                         row.RowKey,
                                         "turnOffTime",
                                         newTime
-                                          ? sydneyTime.utc().format("YYYY-MM-DDTHH:mm:ss[Z]")
+                                          ? newTime.format(
+                                              "YYYY-MM-DDTHH:mm:ss"
+                                            )
                                           : ""
                                       );
                                     }}
@@ -511,15 +508,14 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     minDateTime={
                                       row.turnOnTime
                                         ? dayjs(row.turnOnTime)
-                                            .tz("Australia/Sydney")
                                             .add(5, "minute")
                                             .second(0)
                                             .millisecond(0)
                                         : dayjs().second(0).millisecond(0)
                                     }
+                                    
                                     className={styles.timPicker}
                                     ampm={false}
-                                    // error={false}
                                     format="YYYY-MM-DD HH:mm"
                                   />
                                 )}
