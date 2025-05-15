@@ -140,21 +140,12 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       toast.error("Both Turn-on and Turn-off time are required!");
       return;
     }
-    if (
-      row.turnOnTime &&
-      dayjs(row.turnOnTime).isBefore(now)
-    ) {
+    if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
       toast.error("Turn-on time must be now or in the future!");
       return;
     }
-    if (
-      row.turnOnTime &&
-      dayjs(row.turnOnTime).isBefore(now)
-    ) {
-      if (
-        !row.turnOffTime ||
-        dayjs(row.turnOffTime).isBefore(now)
-      ) {
+    if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
+      if (!row.turnOffTime || dayjs(row.turnOffTime).isBefore(now)) {
         toast.error(
           "Turn-on time must be now or in the future & the turn-off time should be atleast 5mins past than turn-on time!"
         );
@@ -162,10 +153,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       }
     }
 
-    if (
-      row.turnOffTime &&
-      dayjs(row.turnOffTime).isBefore(now)
-    ) {
+    if (row.turnOffTime && dayjs(row.turnOffTime).isBefore(now)) {
       toast.error("The turn-off time must be later than the turn-on time!");
       return;
     }
@@ -173,8 +161,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     if (
       row.turnOnTime &&
       row.turnOffTime &&
-      dayjs(row.turnOffTime)       
-        .isBefore(dayjs(row.turnOnTime))
+      dayjs(row.turnOffTime).isBefore(dayjs(row.turnOnTime))
     ) {
       toast.error("Turn-off time cannot be earlier than Turn-on time!");
       return;
@@ -192,7 +179,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         repeat: row.repeat,
         manual: row.manual,
         turnOnTime: row.turnOnTime,
-        turnOffTime:row.turnOffTime,
+        turnOffTime: row.turnOffTime,
         // turnOnTime: row.repeat
         //   ? row.turnOnTime
         //   : dayjs(row.turnOnTime).format("YYYY-MM-DDTHH:mm:ss"),
@@ -388,9 +375,16 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       )
                                     }
                                     minutesStep={1}
-                                    
+                                    error={false}
                                     ampm={false}
                                     className={styles.timPicker}
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 ) : (
                                   <DateTimePicker
@@ -424,10 +418,16 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       );
                                     }}
                                     minDateTime={null}
-                                    
                                     ampm={false}
                                     format="YYYY-MM-DD HH:mm"
                                     className={styles.timPicker}
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 )}
                               </TableCell>
@@ -468,9 +468,15 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         newTime ? newTime.toString() : ""
                                       )
                                     }
-                                    
                                     ampm={false}
                                     className={styles.timPicker}
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 ) : (
                                   <DateTimePicker
@@ -513,10 +519,16 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                             .millisecond(0)
                                         : dayjs().second(0).millisecond(0)
                                     }
-                                    
                                     className={styles.timPicker}
                                     ampm={false}
                                     format="YYYY-MM-DD HH:mm"
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 )}
                               </TableCell>
