@@ -166,7 +166,10 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       toast.error("Turn-off time cannot be earlier than Turn-on time!");
       return;
     }
-
+    if (row.repeat && (!row.turnOnTime || !row.turnOffTime)) {
+      toast.error("Both Turn-on and Turn-off time are required!");
+      return;
+    }
     setLoadingRows((prev) => ({ ...prev, [row.RowKey]: true }));
 
     try {
