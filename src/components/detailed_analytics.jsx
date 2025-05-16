@@ -31,7 +31,13 @@ export const DetailedAnalytics = React.forwardRef(
   ) => {
     let displayParameters = [];
     Object.keys(parameters).map((parameter, i) => {
-      displayParameters.push(parameter);
+      const paramData = parameters[parameter];
+      if (
+        paramData.currentMinAlert != null &&
+        paramData.currentMaxAlert != null
+      ) {
+        displayParameters.push(parameter);
+      }
     });
     displayParameters.sort();
 

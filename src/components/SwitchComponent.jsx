@@ -1,4 +1,9 @@
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import advancedFormat from "dayjs/plugin/advancedFormat";
+import localeData from "dayjs/plugin/localeData";
+import "dayjs/locale/en";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopTimePicker } from "@mui/x-date-pickers/DesktopTimePicker";
 import styles from "./SwitchComponent.module.css";
@@ -28,12 +33,19 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [loadingRows, setLoadingRows] = useState({});
   const [rows, setRows] = useState([]);
+
+  dayjs.extend(utc);
+  dayjs.extend(timezone);
+  dayjs.locale("en");
   const [dateTime, setDateTime] = useState(
-    dayjs().format("YYYY-MM-DD HH:mm:ss")
+    dayjs().tz("Australia/Sydney").format("D MMMM YYYY HH:mm:ss z")
   );
+
   useEffect(() => {
     const interval = setInterval(() => {
-      setDateTime(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+      setDateTime(
+        dayjs().tz("Australia/Sydney").format("D MMMM YYYY HH:mm:ss z")
+      );
     }, 1000);
 
     return () => clearInterval(interval);
@@ -122,15 +134,23 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   const handleSave = async (row) => {
-    const now = dayjs();
+    const now = dayjs().tz("Australia/Sydney");
 
-if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
-  toast.error("Both Turn-on and Turn-off time are required!");
-  return;
-}
+    if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
+      toast.error("Both Turn-on and Turn-off time are required!");
+      return;
+    }
     if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
       toast.error("Turn-on time must be now or in the future!");
       return;
+    }
+    if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
+      if (!row.turnOffTime || dayjs(row.turnOffTime).isBefore(now)) {
+        toast.error(
+          "Turn-on time must be now or in the future & the turn-off time should be atleast 5mins past than turn-on time!"
+        );
+        return;
+      }
     }
 
     if (row.turnOffTime && dayjs(row.turnOffTime).isBefore(now)) {
@@ -146,7 +166,10 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
       toast.error("Turn-off time cannot be earlier than Turn-on time!");
       return;
     }
-
+    if (row.repeat && (!row.turnOnTime || !row.turnOffTime)) {
+      toast.error("Both Turn-on and Turn-off time are required!");
+      return;
+    }
     setLoadingRows((prev) => ({ ...prev, [row.RowKey]: true }));
 
     try {
@@ -158,8 +181,14 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
         once: row.once,
         repeat: row.repeat,
         manual: row.manual,
-        turnOffTime: row.turnOffTime,
         turnOnTime: row.turnOnTime,
+        turnOffTime: row.turnOffTime,
+        // turnOnTime: row.repeat
+        //   ? row.turnOnTime
+        //   : dayjs(row.turnOnTime).format("YYYY-MM-DDTHH:mm:ss"),
+        // turnOffTime: row.repeat
+        //   ? row.turnOffTime
+        //   : dayjs(row.turnOffTime).format("YYYY-MM-DDTHH:mm:ss"),
       });
       toast.success("Settings saved successfully!");
     } catch (error) {
@@ -349,7 +378,16 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                       )
                                     }
                                     minutesStep={1}
+                                    error={false}
+                                    ampm={false}
                                     className={styles.timPicker}
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 ) : (
                                   <DateTimePicker
@@ -371,6 +409,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                           "You have selected a past date/time!"
                                         );
                                       }
+
                                       handleTimeChange(
                                         row.RowKey,
                                         "turnOnTime",
@@ -382,8 +421,16 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                       );
                                     }}
                                     minDateTime={null}
+                                    ampm={false}
                                     format="YYYY-MM-DD HH:mm"
                                     className={styles.timPicker}
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 )}
                               </TableCell>
@@ -420,21 +467,28 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                       handleTimeChangeRepeat(
                                         row.RowKey,
                                         "turnOffTime",
+
                                         newTime ? newTime.toString() : ""
                                       )
                                     }
+                                    ampm={false}
                                     className={styles.timPicker}
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 ) : (
                                   <DateTimePicker
                                     disabled={
-                                      autoLogin || autoValue == "manual"
+                                      autoLogin || autoValue === "manual"
                                     }
                                     value={
                                       row.turnOffTime
                                         ? dayjs(row.turnOffTime)
-                                            .second(0)
-                                            .millisecond(0)
                                         : null
                                     }
                                     onChange={(newTime) => {
@@ -448,6 +502,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                         );
                                         return;
                                       }
+
                                       handleTimeChange(
                                         row.RowKey,
                                         "turnOffTime",
@@ -468,7 +523,15 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                         : dayjs().second(0).millisecond(0)
                                     }
                                     className={styles.timPicker}
+                                    ampm={false}
                                     format="YYYY-MM-DD HH:mm"
+                                    sx={{
+                                      "& .MuiOutlinedInput-root": {
+                                        "&.Mui-error fieldset": {
+                                          borderColor: "inherit",
+                                        },
+                                      },
+                                    }}
                                   />
                                 )}
                               </TableCell>
