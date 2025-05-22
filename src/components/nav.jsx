@@ -38,12 +38,13 @@ export const Navbar = () => {
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
           </button>
-          <a className="navbar-brand" href="/report">
+          <a className="navbar-brand" href="/devices">
             <img src={orgIcon} className={orgName == 'UNSW' ? "orglog" : "orglog orglog2"} />
           </a>
         </div>
         {/* Collect the nav links, forms, and other content for toggling */}
         <div className={user.orgName == 'UNSW' || orgName == 'UNSW2' ? 'collapse navbar-collapse sm-padding-nav': 'collapse navbar-collapse'} id="bs-example-navbar-collapse-1">
+          
           <ul className="nav navbar-nav">
             <li>
               <NavLink to="/report">Reports</NavLink>

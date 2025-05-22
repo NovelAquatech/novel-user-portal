@@ -29,17 +29,25 @@ export const DetailedAnalytics = React.forwardRef(
     },
     ref
   ) => {
+    const { user } = useAuth();
+    const farmer_companies = APP_CONST.farmer_companies;
+    const orgName = user.orgName;
     let displayParameters = [];
     Object.keys(parameters).map((parameter, i) => {
-      const paramData = parameters[parameter];
-      if (
-        paramData.currentMinAlert != null &&
-        paramData.currentMaxAlert != null
-      ) {
-        displayParameters.push(parameter);
-      }
+      displayParameters.push(parameter);
+      // Filter out 'valve_1' and 'valve_2' for JoeFarm
+      // if (orgName === "JoeFarm" && (parameter === "valve_1" || parameter === "valve_2")) {
+      //   return;
+      // }
     });
+   
+    // if (orgName === "JoeFarm") {
+    //   displayParameters = displayParameters.filter(
+    //   (param) => param.toLowerCase() !== "valve_1" && param.toLowerCase() !== "valve_2"
+    //   );
+    // }
     displayParameters.sort();
+  console.log("displayParameters", displayParameters);
 
     let layout = APP_CONST.default_layout;
     const [organizedSerieData, setOrganizedSerieData] = useState([]);
@@ -234,9 +242,6 @@ export const DetailedAnalytics = React.forwardRef(
       setSelectedHourly(event.target.value);
     };
 
-    const { user } = useAuth();
-    const farmer_companies = APP_CONST.farmer_companies;
-    const orgName = user.orgName;
     const orgIcon = farmer_companies.includes(orgName)
       ? "images/logomain.png"
       : `https://api.cors.lol/?url=${user.orgDetails.icon}`;
