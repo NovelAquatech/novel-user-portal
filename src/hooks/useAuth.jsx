@@ -11,9 +11,9 @@ export const AuthProvider = ({ children }) => {
   const setUserData = async (data) => {
     console.log(data)
     setUser(data);
-    // if(data.orgName === 'SeelyEnergyMonitor') navigate("/machines");
-    // else navigate("/devices");
-    navigate("/report");
+    if(data.orgName === 'SeelyEnergyMonitor') navigate("/machines");
+    else navigate("/report");
+  
   };
 
   // call this function to remove user data
