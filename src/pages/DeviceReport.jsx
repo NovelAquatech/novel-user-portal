@@ -17,7 +17,6 @@ import {
   getAdvisorySettings,
   getAlerts,
 } from "../helper/web-service";
-import { Footer } from "../components/footer";
 import { AvgParameters } from "../components/avg_parameters";
 import { DeviceList } from "../components/deviceList";
 import { AlertAdvisories } from "../components/alert_advisories";
@@ -385,7 +384,6 @@ export default function DeviceReportPage(){
             </div>
           </div>
         </div>
-      <Footer />
     </>
   );
-};
+}
