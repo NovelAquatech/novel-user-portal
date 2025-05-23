@@ -35,19 +35,16 @@ export const DetailedAnalytics = React.forwardRef(
     let displayParameters = [];
     Object.keys(parameters).map((parameter, i) => {
       displayParameters.push(parameter);
-      // Filter out 'valve_1' and 'valve_2' for JoeFarm
-      // if (orgName === "JoeFarm" && (parameter === "valve_1" || parameter === "valve_2")) {
-      //   return;
-      // }
     });
-   
-    // if (orgName === "JoeFarm") {
-    //   displayParameters = displayParameters.filter(
-    //   (param) => param.toLowerCase() !== "valve_1" && param.toLowerCase() !== "valve_2"
-    //   );
-    // }
+
+    if (orgName === "JoeFarm") {
+      displayParameters = displayParameters.filter(
+        (param) =>
+          param.toLowerCase() !== "valve_1" && param.toLowerCase() !== "valve_2"
+      );
+    }
     displayParameters.sort();
-  console.log("displayParameters", displayParameters);
+    console.log("displayParameters", displayParameters);
 
     let layout = APP_CONST.default_layout;
     const [organizedSerieData, setOrganizedSerieData] = useState([]);

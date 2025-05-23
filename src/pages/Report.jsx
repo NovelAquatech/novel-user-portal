@@ -67,7 +67,7 @@ export const ReportPage = () => {
           </div>
         </div>
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };
