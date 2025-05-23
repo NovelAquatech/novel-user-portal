@@ -44,7 +44,11 @@ export const Navbar = () => {
         </div>
         {/* Collect the nav links, forms, and other content for toggling */}
         <div className={user.orgName == 'UNSW' || orgName == 'UNSW2' ? 'collapse navbar-collapse sm-padding-nav': 'collapse navbar-collapse'} id="bs-example-navbar-collapse-1">
+          
           <ul className="nav navbar-nav">
+            <li>
+              <NavLink to="/report">Reports</NavLink>
+            </li>
            { user.orgName === 'SeelyEnergyMonitor' && <li>
               <NavLink to="/machines">Machines</NavLink>
             </li>
@@ -52,9 +56,7 @@ export const Navbar = () => {
             <li>
               <NavLink to="/devices">Devices</NavLink>
             </li>
-            <li>
-              <NavLink to="/report">Reports</NavLink>
-            </li>
+            
             <li>
               <NavLink to="/setting">Setting</NavLink>
             </li>

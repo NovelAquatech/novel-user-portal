@@ -9,10 +9,11 @@ export const AuthProvider = ({ children }) => {
 
   // call this function when you want to set user data
   const setUserData = async (data) => {
-    console.log(data)
+    console.log(data);
     setUser(data);
-    if(data.orgName === 'SeelyEnergyMonitor') navigate("/machines");
-    else navigate("/devices");
+    if (data.orgName === "SeelyEnergyMonitor") navigate("/machines");
+    else if (data.orgName === "JoeFarm") navigate("/devices");
+    else navigate("/report");
   };
 
   // call this function to remove user data
