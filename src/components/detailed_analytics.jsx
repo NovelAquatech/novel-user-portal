@@ -29,10 +29,23 @@ export const DetailedAnalytics = React.forwardRef(
     },
     ref
   ) => {
+    const { user } = useAuth();
+    const farmer_companies = APP_CONST.farmer_companies;
+    const orgName = user.orgName;
+    const orgIcon = farmer_companies.includes(orgName)
+      ? "images/logomain.png"
+      : `https://api.cors.lol/?url=${user.orgDetails.icon}`;
     let displayParameters = [];
     Object.keys(parameters).map((parameter, i) => {
       displayParameters.push(parameter);
     });
+
+    if (orgName === "JoeFarm") {
+      displayParameters = displayParameters.filter(
+        (param) =>
+          param.toLowerCase() !== "valve_1" && param.toLowerCase() !== "valve_2"
+      );
+    }
     displayParameters.sort();
 
     let layout = APP_CONST.default_layout;
@@ -227,13 +240,6 @@ export const DetailedAnalytics = React.forwardRef(
     const handleHourlyFilterChange = (event) => {
       setSelectedHourly(event.target.value);
     };
-
-    const { user } = useAuth();
-    const farmer_companies = APP_CONST.farmer_companies;
-    const orgName = user.orgName;
-    const orgIcon = farmer_companies.includes(orgName)
-      ? "images/logomain.png"
-      : `https://api.cors.lol/?url=${user.orgDetails.icon}`;
 
     const convertToBase64 = (imgUrl) => {
       return new Promise((resolve, reject) => {
