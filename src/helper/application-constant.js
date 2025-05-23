@@ -38,15 +38,15 @@ export const APP_CONST = {
     },
     desktop: {
       breakpoint: { max: 3000, min: 1500 },
-      items: 5,
+      items: 8,
     },
     tablet: {
       breakpoint: { max: 1500, min: 750 },
-      items: 3,
+      items: 4,
     },
     mobile: {
       breakpoint: { max: 750, min: 0 },
-      items: 1,
+      items: 2,
     },
   },
   avg_device_data_responsive_parameter: {

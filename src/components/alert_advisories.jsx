@@ -45,14 +45,15 @@ export const AlertAdvisories = ({ alerts }) => {
             style={{ width: '100%' }}
           >
             <div className="dbb ttlcent">
-              <h2>
-                <img src="images/temp.jpg" alt="icon" />
+              <h2 style={{ fontSize: '14px' }}>
+                <img src="images/temp.jpg" height={20} alt="icon" />
                 {data.name} Alert
               </h2>
-              <h3>{data.devName}</h3>
-
+              <h3 style={{ fontSize: '10px' }}>{data.devName}</h3>
+              <h3 style={{ fontSize: '10px' }}>{data.devEUI}</h3>
               <button
                 className="btn btn-link"
+                style={{ fontSize: '10px' }}
                 onClick={() => setSelectedAlert(data)}
               >
                 View Details
@@ -83,6 +84,7 @@ export const AlertAdvisories = ({ alerts }) => {
               {selectedAlert.name} Alert
             </h2>
             <h3>{selectedAlert.devName}</h3>
+            <h3>{selectedAlert.devEUI}</h3>
             <h5>{selectedAlert.timeDiff}</h5>
             <div
               className={`temp ${
@@ -107,9 +109,14 @@ export const AlertAdvisories = ({ alerts }) => {
                 __html: convertOperator(updateMsg(selectedAlert.msg)) || '',
               }}
             />
-            <p
-              dangerouslySetInnerHTML={{ __html: selectedAlert.threshold }}
-            ></p>
+            <p style={{ fontWeight: 'bold' }}>
+              {selectedAlert.typeOfBreach === 'minBreach' && (
+                <>🔻 Below minimum threshold: {selectedAlert.threshold}</>
+              )}
+              {selectedAlert.typeOfBreach === 'maxBreach' && (
+                <>🔺 Above maximum threshold: {selectedAlert.threshold}</>
+              )}
+            </p>
 
             <button
               className="btn btn-secondary"

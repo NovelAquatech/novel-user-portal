@@ -395,12 +395,14 @@ export const getAlerts = (alerts) => {
 
   const createAdvisoryData = (alert, thresholdValue) => ({
     devName: alert.devName,
+    devEUI: alert.devEUI,
     parameter: alert.parameter,
+    typeOfBreach: alert.typeOfBreach,
     name: alert.paramDisplayName,
     unit: alert?.unit ?? "",
     value: alert.currentValue,
     msg: `${alert.devName} Has Breached ${capitalizeFirstLetter(alert.parameter)} Threshold`,
-    threshold: `<b>Threshold:</b> ${thresholdValue} ${alert.unit ?? ""}`,
+    threshold: `${thresholdValue}${alert.unit ?? ""}`,
     timeDiff: timeDifferenceFromNow(alert.Timestamp),
   });
 
