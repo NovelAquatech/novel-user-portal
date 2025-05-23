@@ -31,19 +31,19 @@ export const APP_CONST = {
     alert_advisories_responsive_parameter: {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
-      items: 6,
+      items: 10,
     },
     desktop: {
       breakpoint: { max: 3000, min: 1500 },
-      items: 5,
+      items: 8,
     },
     tablet: {
       breakpoint: { max:1500, min: 750 },
-      items: 3, 
+      items: 4, 
     },
     mobile: {
       breakpoint: { max: 750, min: 0 },
-      items: 1,
+      items: 2,
     },
   },
   avg_device_data_responsive_parameter: {
