@@ -34,15 +34,15 @@ export const APP_CONST = {
   alert_advisories_responsive_parameter: {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
-      items: 6,
+      items: 10,
     },
     desktop: {
-      breakpoint: { max: 3000, min: 1500 },
+      breakpoint: { max: 3000, min: 1450 },
       items: 8,
     },
     tablet: {
-      breakpoint: { max: 1500, min: 750 },
-      items: 4,
+      breakpoint: { max: 1450, min: 750 },
+      items: 6,
     },
     mobile: {
       breakpoint: { max: 750, min: 0 },

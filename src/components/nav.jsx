@@ -38,7 +38,7 @@ export const Navbar = () => {
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
           </button>
-          <a className="navbar-brand" href="/devices">
+          <a className="navbar-brand" href="/novel/report">
             <img src={orgIcon} className={orgName == 'UNSW' ? "orglog" : "orglog orglog2"} />
           </a>
         </div>
