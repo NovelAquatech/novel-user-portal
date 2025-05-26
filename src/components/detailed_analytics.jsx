@@ -44,7 +44,7 @@ export const DetailedAnalytics = React.forwardRef(
       );
     }
     displayParameters.sort();
-    console.log("displayParameters", displayParameters);
+
 
     let layout = APP_CONST.default_layout;
     const [organizedSerieData, setOrganizedSerieData] = useState([]);

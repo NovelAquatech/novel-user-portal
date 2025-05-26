@@ -12,7 +12,7 @@ export const Navbar = () => {
   const { setIsDevicesFetched } = useCacheStatus();
 
   const orgName = user.orgName;
-  const orgIcon = (farmer_companies.includes(orgName)) ? "images/logomain.png" : user.orgDetails.icon;
+  const orgIcon = (farmer_companies.includes(orgName) && orgName !== "JoeFarm") ? "images/logomain.png" : user.orgDetails.icon;
 
   const handleLogout = (event) => {
     console.log("--- Inside handleLogout ---");
@@ -24,25 +24,33 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-default">
       <div className="container-fluid">
-        {/*-- Brand and toggle get grouped for better mobile display */}
-        <div className="navbar-header">
-          <button
-            type="button"
-            className="navbar-toggle collapsed"
-            data-toggle="collapse"
-            data-target="#bs-example-navbar-collapse-1"
-            aria-expanded="false"
-          >
-            <span className="sr-only">Toggle navigation</span>
-            <span className="icon-bar"></span>
-            <span className="icon-bar"></span>
-            <span className="icon-bar"></span>
-          </button>
-          <a className="navbar-brand" href="/novel/report">
-            <img src={orgIcon} className={orgName == 'UNSW' ? "orglog" : "orglog orglog2"} />
-          </a>
-        </div>
-        {/* Collect the nav links, forms, and other content for toggling */}
+        
+          <div className="navbar-header">
+            <button
+              type="button"
+              className="navbar-toggle collapsed"
+              data-toggle="collapse"
+              data-target="#bs-example-navbar-collapse-1"
+              aria-expanded="false"
+            >
+              <span className="sr-only">Toggle navigation</span>
+              <span className="icon-bar"></span>
+              <span className="icon-bar"></span>
+              <span className="icon-bar"></span>
+            </button>
+            <a className="navbar-brand" href="/novel/report">
+              <img
+                src={orgIcon}
+                className={orgName == 'UNSW' ? "orglog" : "orglog orglog2"}
+                style={{
+                  ...(orgName === "JoeFarm" ? { width: "100%" } : {}),
+                  maxWidth: "90%",
+                  height: "auto"
+                }}
+              />
+            </a>
+          </div>
+          {/* Collect the nav links, forms, and other content for toggling */}
         <div className={user.orgName == 'UNSW' || orgName == 'UNSW2' ? 'collapse navbar-collapse sm-padding-nav': 'collapse navbar-collapse'} id="bs-example-navbar-collapse-1">
           
           <ul className="nav navbar-nav">
