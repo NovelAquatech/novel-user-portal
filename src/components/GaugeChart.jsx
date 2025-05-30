@@ -1,9 +1,17 @@
-import React from "react";
-import { GaugeComponent } from "react-gauge-component";
-export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld, formattedAvg }) => {
+import React from 'react';
+import { GaugeComponent } from 'react-gauge-component';
+export const GaugeChart = ({
+  min_value,
+  max_value,
+  low_thohresld,
+  high_thohresld,
+  formattedAvg,
+}) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center'}}>
-    <div className="gauge_chart_container">
+    <div
+      className="compass-container gauge"
+      style={{ display: 'flex', flexDirection: 'column' }}
+    >
       <GaugeComponent
         type="semicircle"
         arc={{
@@ -13,22 +21,22 @@ export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld
           subArcs: [
             {
               limit: low_thohresld,
-              color: "#F5CD19",
+              color: '#F5CD19',
               showTick: false,
             },
             {
               limit: high_thohresld,
-              color: "#75e64d",
+              color: '#75e64d',
               showTick: false,
             },
             {
-              color: "#F5CD19",
+              color: '#F5CD19',
               showTick: false,
             },
           ],
         }}
         pointer={{
-          color: "#345243",
+          color: '#345243',
           length: 0.8,
           width: 10,
         }}
@@ -38,13 +46,13 @@ export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld
             hide: true,
           },
           tickLabels: {
-            type: "outer",
+            type: 'outer',
             defaultTickValueConfig: {
               formatTextValue: (value) => value,
               style: {
-                fontSize: "11px",
-                fill: "#464A4F",
-                width: "100px",
+                fontSize: '11px',
+                fill: '#464A4F',
+                width: '100px',
               },
             },
             defaultTickLineConfig: {
@@ -57,7 +65,6 @@ export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld
         minValue={min_value}
         maxValue={max_value}
       />
-    </div>
     </div>
   );
 };
