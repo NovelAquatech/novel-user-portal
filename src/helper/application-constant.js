@@ -39,7 +39,7 @@ export const APP_CONST = {
     },
     tablet: {
       breakpoint: { max:1450, min: 750 },
-      items: 6, 
+      items: 5, 
     },
     mobile: {
       breakpoint: { max: 750, min: 0 },
@@ -56,11 +56,11 @@ export const APP_CONST = {
       items: 4,
     },
     tablet: {
-      breakpoint: { max: 1250, min: 600 },
+      breakpoint: { max: 1250, min: 750 },
       items: 2,
     },
     mobile: {
-      breakpoint: { max: 600, min: 0 },
+      breakpoint: { max: 750, min: 0 },
       items: 1,
     },
   },
