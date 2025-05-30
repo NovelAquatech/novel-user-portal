@@ -40,7 +40,7 @@ export const Navbar = () => {
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
           </button>
-          <a className="navbar-brand" href="/novel-dev/devices">
+          <a className="navbar-brand" href="/novel-dev/reports">
             <img
               src={orgIcon}
               className={orgName == "UNSW" ? "orglog" : "orglog orglog2"}
