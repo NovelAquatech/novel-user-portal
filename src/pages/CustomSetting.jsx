@@ -175,7 +175,7 @@ export default function CustomSetting() {
                     </div>
                     <div className="col-md-12 col-sm-12 col-xs-12 report">
 
-                        <div className="x_panel">
+                        <div className="">
                             <div className="col-md-12 col-sm-12 col-xs-12">
                                 <div className="ttl_main"><h2><strong>Custom Setting</strong></h2></div>
                             </div>
