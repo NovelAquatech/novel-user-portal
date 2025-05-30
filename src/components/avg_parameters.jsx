@@ -105,7 +105,7 @@ export const AvgParameters = ({
           }
 
           return (
-            <div className="chart_section" style={{border: '1px solid red'}} key={i}>
+            <div className="chart_section" key={i}>
               {chartComponet}
               { paramDisplayName != 'Co2' ? 
               <h5 className="info">{updateParamName(paramDisplayName)}</h5>

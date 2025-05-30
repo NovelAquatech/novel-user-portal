@@ -315,7 +315,7 @@ export default function MachineReportPage() {
                     autoPlaySpeed={1000}
                   >
                     {latestPowerData.map((machine) => (
-                      <div className="chart_section" style={{border: '1px solid green'}} key={machine.devEUI}>
+                      <div className="chart_section" key={machine.devEUI}>
                         <GaugeChart
                           min_value={machine.minValue}
                           max_value={machine.maxValue}

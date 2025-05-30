@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
-import { Navbar } from "../components/nav";
-import { Footer } from "../components/footer";
-import { useAuth } from "../hooks/useAuth";
-import { InputAdornment, OutlinedInput, Checkbox } from "@mui/material";
-import { ErrorOutline } from "@mui/icons-material";
-import { useQuery } from "react-query";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { Navbar } from '../components/nav';
+import { Footer } from '../components/footer';
+import { useAuth } from '../hooks/useAuth';
+import { InputAdornment, OutlinedInput, Checkbox } from '@mui/material';
+import { ErrorOutline } from '@mui/icons-material';
+import { useQuery } from 'react-query';
+import axios from 'axios';
 // import CustomAlerts from "../components/CustomAlerts";
 import {
   setAdvisorySettings,
   getDevices,
   getAdvisorySettings,
-} from "../helper/web-service";
-import styles from "./SettingPage.module.css";
-import { toast, Toaster } from "react-hot-toast";
-import { CirclesWithBar } from "react-loader-spinner";
-import SwitchComponent from "../components/SwitchComponent";
-import { useCacheStatus } from "../hooks/useCacheStatus";
+} from '../helper/web-service';
+import styles from './SettingPage.module.css';
+import { toast, Toaster } from 'react-hot-toast';
+import { CirclesWithBar } from 'react-loader-spinner';
+import SwitchComponent from '../components/SwitchComponent';
+import { useCacheStatus } from '../hooks/useCacheStatus';
 
 export const SettingPage = () => {
   const { user } = useAuth();
@@ -31,7 +31,12 @@ export const SettingPage = () => {
   const [errors, setErrors] = useState({});
   const [devices, setDevices] = useState([]);
   const [autoLogin, setAutoLogin] = useState(false);
-  const { isDevicesFetched, setIsDevicesFetched, fetchedDevices, setFetchedDevices } = useCacheStatus();
+  const {
+    isDevicesFetched,
+    setIsDevicesFetched,
+    fetchedDevices,
+    setFetchedDevices,
+  } = useCacheStatus();
   // Fetch data inside the component
   const fetchAlertData = async () => {
     const apiPromises = [
@@ -39,14 +44,14 @@ export const SettingPage = () => {
       getAdvisorySettings(user),
     ];
     const responses = await Promise.all(apiPromises);
-    const devices = !isDevicesFetched ? responses[0]["value"] : fetchedDevices;
+    const devices = !isDevicesFetched ? responses[0]['value'] : fetchedDevices;
     if (!isDevicesFetched) setFetchedDevices(devices);
     setIsDevicesFetched(true);
-    const advisorySettings = responses[1]["value"];
+    const advisorySettings = responses[1]['value'];
     return { devices, advisorySettings };
   };
 
-  const { data, isLoading, error } = useQuery("alertData", fetchAlertData, {
+  const { data, isLoading, error } = useQuery('alertData', fetchAlertData, {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: 5 * 60 * 1000,
@@ -55,7 +60,7 @@ export const SettingPage = () => {
   // Update state when data is fetched
   useEffect(() => {
     setAutoLogin(user.autoLogin);
-  }, [])
+  }, []);
   useEffect(() => {
     if (data) {
       // Getting device list
@@ -111,9 +116,9 @@ export const SettingPage = () => {
       (s) => s?.parameter === parameterKey
     );
     let isValid = true;
-    let errorMsg = "";
+    let errorMsg = '';
     switch (field) {
-      case "currentMinAlert":
+      case 'currentMinAlert':
         if (value == selectedSetting.currentMinAlert) isValid = false;
         else if (selectedSetting?.min_value > value) {
           isValid = false;
@@ -124,7 +129,7 @@ export const SettingPage = () => {
           errorMsg = `Low Threshold should be less than ${selectedSetting.currentMaxAlert}`;
         }
         break;
-      case "currentMaxAlert":
+      case 'currentMaxAlert':
         if (value == selectedSetting.currentMaxAlert) isValid = false;
         else if (selectedSetting?.max_value < value) {
           isValid = false;
@@ -135,23 +140,23 @@ export const SettingPage = () => {
           errorMsg = `High Threshold should be more than ${selectedSetting.currentMinAlert}`;
         }
         break;
-      case "min_value":
+      case 'min_value':
         if (value == selectedSetting.min_value) isValid = false;
         else if (selectedSetting?.currentMinAlert < value) {
           isValid = false;
           errorMsg = `Minimum value should be less than or equal ${selectedSetting.currentMinAlert}`;
         }
         break;
-        case "max_value":
-          if (value == selectedSetting?.max_value) isValid = false;
-          else if (selectedSetting?.currentMaxAlert > value) {
-            isValid = false;
-            errorMsg = `Maximum value should be more than or equal to ${selectedSetting.currentMaxAlert}`;
-          }
+      case 'max_value':
+        if (value == selectedSetting?.max_value) isValid = false;
+        else if (selectedSetting?.currentMaxAlert > value) {
+          isValid = false;
+          errorMsg = `Maximum value should be more than or equal to ${selectedSetting.currentMaxAlert}`;
+        }
         break;
       default:
         isValid = true;
-        errorMsg = "";
+        errorMsg = '';
     }
     return { isValid, errorMsg };
   };
@@ -165,17 +170,17 @@ export const SettingPage = () => {
         (s) => s?.parameter === parameter
       );
       selectedSetting = { ...selectedSetting, devEUI: devEUI };
-      console.log("selectedSetting :", selectedSetting);
+      console.log('selectedSetting :', selectedSetting);
       if (selectedSetting.length === 0) {
-        toast.warn("No settings to save.");
+        toast.warn('No settings to save.');
         return;
       }
       await axios.post(apiSaveUrl, selectedSetting);
-      toast.success("Settings saved successfully!");
+      toast.success('Settings saved successfully!');
       setShowSuccMsg(true);
       setLoaderVisible(false);
     } catch (err) {
-      toast.error("Error saving settings. Please try again.");
+      toast.error('Error saving settings. Please try again.');
       setShowErrMsg(true);
       setLoaderVisible(false);
     }
@@ -183,7 +188,7 @@ export const SettingPage = () => {
 
   // Auto-save on blur
   const handleBlur = async (devEUI, parameter, field, value) => {
-    console.log("Hello World", { devEUI, parameter, field, value });
+    console.log('Hello World', { devEUI, parameter, field, value });
     const { isValid, errorMsg } = validateValues(
       devEUI,
       parameter,
@@ -256,17 +261,34 @@ export const SettingPage = () => {
           <div className="col-md-12 col-sm-12 col-xs-12" id="style-3">
             <div className="x_panel">
               <div className="col-md-12 col-sm-12 col-xs-12">
-
-                <div className={user.orgName == 'UNSW' || user.orgName == 'UNSW2' ? 'ttl_main sm-padding' : 'ttl_main'}>
-
-                  <h2 style={{ "textAlign": "center" }}>
-                    <strong className={user.orgName == 'SeelyEnergyMonitor' ? 'show-elm' : 'hide-elm'}>Seeley Energy Monitor</strong>
+                <div
+                  className={
+                    user.orgName == 'UNSW' || user.orgName == 'UNSW2'
+                      ? 'ttl_main sm-padding'
+                      : 'ttl_main'
+                  }
+                >
+                  <h2 style={{ textAlign: 'center' }}>
+                    <strong
+                      className={
+                        user.orgName == 'SeelyEnergyMonitor'
+                          ? 'show-elm'
+                          : 'hide-elm'
+                      }
+                    >
+                      Seeley Energy Monitor
+                    </strong>
                   </h2>
                 </div>
-                
-                <SwitchComponent devices={devices} autoLogin={autoLogin} />
-                <div className={user.orgName == 'UNSW' || user.orgName == 'UNSW2' ? 'ttl_main sm-padding' : 'ttl_main'}>
 
+                <SwitchComponent devices={devices} autoLogin={autoLogin} />
+                <div
+                  className={
+                    user.orgName == 'UNSW' || user.orgName == 'UNSW2'
+                      ? 'ttl_main sm-padding'
+                      : 'ttl_main'
+                  }
+                >
                   <h2>
                     <strong>Advisory Setting</strong>
                   </h2>
@@ -287,7 +309,7 @@ export const SettingPage = () => {
                     </h5>
                     <div
                       className={`chartbox dbb ${styles.tableContainer}`}
-                      style={{ marginTop: "10px", marginBottom: "30px" }}
+                      style={{ marginTop: '10px', marginBottom: '30px' }}
                     >
                       <table
                         id="datatable"
@@ -297,25 +319,25 @@ export const SettingPage = () => {
                           <tr>
                             <th
                               className={`${styles.stickyColumn1}`}
-                              style={{ textAlign: "center" }}
+                              style={{ textAlign: 'center' }}
                             >
                               Active
                             </th>
                             <th
                               className={`${styles.stickyColumn2}`}
-                              style={{ textAlign: "center" }}
+                              style={{ textAlign: 'center' }}
                             >
                               Alert
                             </th>
-                            <th style={{ textAlign: "center" }}>Minimum</th>
-                            <th style={{ textAlign: "center" }}>
+                            <th style={{ textAlign: 'center' }}>Minimum</th>
+                            <th style={{ textAlign: 'center' }}>
                               Low Threshold
                             </th>
-                            <th style={{ textAlign: "center" }}>
+                            <th style={{ textAlign: 'center' }}>
                               High Threshold
                             </th>
-                            <th style={{ textAlign: "center" }}>Maximum</th>
-                            <th style={{ textAlign: "center" }}>Notify</th>
+                            <th style={{ textAlign: 'center' }}>Maximum</th>
+                            <th style={{ textAlign: 'center' }}>Notify</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -358,7 +380,15 @@ export const SettingPage = () => {
                                 </label>
                               </td>
                               <td className={`${styles.stickyColumn2}`}>
-                                <span>{param.paramDisplayName}</span>
+                                <span
+                                  style={{
+                                    display: 'inline-block',
+                                    whiteSpace: 'normal',
+                                    wordWrap: 'break-word',
+                                  }}
+                                >
+                                  {param.paramDisplayName}
+                                </span>
                                 <input type="hidden" value={param.parameter} />
                               </td>
                               <td className={styles.settings_input}>
@@ -414,7 +444,7 @@ export const SettingPage = () => {
                                 <OutlinedInput
                                   startAdornment={
                                     <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: "red" }} />
+                                      <ErrorOutline style={{ color: 'red' }} />
                                     </InputAdornment>
                                   }
                                   defaultValue={param.min_value}
@@ -422,7 +452,7 @@ export const SettingPage = () => {
                                     handleBlur(
                                       setting.devEUI,
                                       param.parameter,
-                                      "min_value",
+                                      'min_value',
                                       e.target.value
                                     )
                                   }
@@ -435,13 +465,13 @@ export const SettingPage = () => {
                                     borderColor: errors[
                                       `${param.parameter}_min_value`
                                     ]
-                                      ? "red"
-                                      : "",
+                                      ? 'red'
+                                      : '',
                                     borderWidth: errors[
                                       `${param.parameter}_min_value`
                                     ]
-                                      ? "2px"
-                                      : "",
+                                      ? '2px'
+                                      : '',
                                   }}
                                   aria-describedby="outlined-weight-helper-text"
                                 />
@@ -452,7 +482,7 @@ export const SettingPage = () => {
                                 <OutlinedInput
                                   startAdornment={
                                     <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: "red" }} />
+                                      <ErrorOutline style={{ color: 'red' }} />
                                     </InputAdornment>
                                   }
                                   defaultValue={param.currentMinAlert}
@@ -460,27 +490,27 @@ export const SettingPage = () => {
                                     handleBlur(
                                       setting.devEUI,
                                       param.parameter,
-                                      "currentMinAlert",
+                                      'currentMinAlert',
                                       e.target.value
                                     )
                                   }
                                   disabled={!param.alertActive || autoLogin}
                                   error={
                                     errors[
-                                    `${param.parameter}_currentMinAlert`
+                                      `${param.parameter}_currentMinAlert`
                                     ] || false
                                   }
                                   style={{
                                     borderColor: errors[
                                       `${param.parameter}_currentMinAlert`
                                     ]
-                                      ? "red"
-                                      : "",
+                                      ? 'red'
+                                      : '',
                                     borderWidth: errors[
                                       `${param.parameter}_currentMinAlert`
                                     ]
-                                      ? "2px"
-                                      : "",
+                                      ? '2px'
+                                      : '',
                                   }}
                                   aria-describedby="outlined-weight-helper-text"
                                 />
@@ -493,7 +523,7 @@ export const SettingPage = () => {
                                 <OutlinedInput
                                   startAdornment={
                                     <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: "red" }} />
+                                      <ErrorOutline style={{ color: 'red' }} />
                                     </InputAdornment>
                                   }
                                   defaultValue={param.currentMaxAlert}
@@ -501,27 +531,27 @@ export const SettingPage = () => {
                                     handleBlur(
                                       setting.devEUI,
                                       param.parameter,
-                                      "currentMaxAlert",
+                                      'currentMaxAlert',
                                       e.target.value
                                     )
                                   }
                                   disabled={!param.alertActive || autoLogin}
                                   error={
                                     errors[
-                                    `${param.parameter}_currentMaxAlert`
+                                      `${param.parameter}_currentMaxAlert`
                                     ] || false
                                   }
                                   style={{
                                     borderColor: errors[
                                       `${param.parameter}_currentMaxAlert`
                                     ]
-                                      ? "red"
-                                      : "",
+                                      ? 'red'
+                                      : '',
                                     borderWidth: errors[
                                       `${param.parameter}_currentMaxAlert`
                                     ]
-                                      ? "2px"
-                                      : "",
+                                      ? '2px'
+                                      : '',
                                   }}
                                   aria-describedby="outlined-weight-helper-text"
                                 />
@@ -534,7 +564,7 @@ export const SettingPage = () => {
                                 <OutlinedInput
                                   startAdornment={
                                     <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: "red" }} />
+                                      <ErrorOutline style={{ color: 'red' }} />
                                     </InputAdornment>
                                   }
                                   defaultValue={param.max_value}
@@ -542,7 +572,7 @@ export const SettingPage = () => {
                                     handleBlur(
                                       setting.devEUI,
                                       param.parameter,
-                                      "max_value",
+                                      'max_value',
                                       e.target.value
                                     )
                                   }
@@ -555,13 +585,13 @@ export const SettingPage = () => {
                                     borderColor: errors[
                                       `${param.parameter}_max_value`
                                     ]
-                                      ? "red"
-                                      : "",
+                                      ? 'red'
+                                      : '',
                                     borderWidth: errors[
                                       `${param.parameter}_max_value`
                                     ]
-                                      ? "2px"
-                                      : "",
+                                      ? '2px'
+                                      : '',
                                   }}
                                   aria-describedby="outlined-weight-helper-text"
                                 />
@@ -607,7 +637,7 @@ export const SettingPage = () => {
                                   }}
                                   color="primary"
                                   sx={{
-                                    "& .MuiSvgIcon-root": { fontSize: 20 },
+                                    '& .MuiSvgIcon-root': { fontSize: 20 },
                                   }}
                                 />
                               </td>
