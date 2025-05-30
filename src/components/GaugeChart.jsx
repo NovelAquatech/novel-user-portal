@@ -2,7 +2,8 @@ import React from "react";
 import { GaugeComponent } from "react-gauge-component";
 export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld, formattedAvg }) => {
   return (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'center'}}>
+    <div className="gauge_chart_container">
       <GaugeComponent
         type="semicircle"
         arc={{
@@ -56,6 +57,7 @@ export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld
         minValue={min_value}
         maxValue={max_value}
       />
-    </>
+    </div>
+    </div>
   );
 };
