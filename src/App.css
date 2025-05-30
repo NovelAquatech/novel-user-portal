@@ -350,6 +350,10 @@
     justify-content: flex-start;
     flex-wrap: wrap;
   }
+  .react-multi-carousel-list{
+    display: flex;
+    justify-content: center;
+  }
 }
 
 

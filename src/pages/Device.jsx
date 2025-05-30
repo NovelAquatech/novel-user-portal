@@ -215,7 +215,7 @@ export const DevicePage = () => {
                   </div>
                 </div>
               </div>
-              <div className="x_content">
+              <div className="x_content table-responsive">
                 <table id="datatable" className="table table-striped">
                   <thead>
                     <tr>
