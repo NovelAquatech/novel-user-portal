@@ -80,15 +80,15 @@ export const AlertAdvisories = ({ alerts }) => {
         >
           <div className="dbb ttlcent">
             <h2>
-              <img src="images/temp.jpg" alt="icon" />
-              {selectedAlert.name} Alert
+              <img src="images/temp.jpg" alt="icon" className='alert-icons' />
+            <span className='alert-name'>{selectedAlert.name} Alert</span>
             </h2>
-            <h3>{selectedAlert.devName}</h3>
-            <h3>{selectedAlert.devEUI}</h3>
-            <h5>{selectedAlert.timeDiff}</h5>
+            <h3 className='alert-infos'>{selectedAlert.devName}</h3>
+            <h3 className='alert-infos'>{selectedAlert.devEUI}</h3>
+            <h5 className='alert-time'>{selectedAlert.timeDiff}</h5>
             <div
               className={`temp ${
-                selectedAlert.customAlert ? 'custom-alert-div' : ''
+                selectedAlert.customAlert ? 'custom-alert-div alert-value' : 'alert-value'
               }`}
               dangerouslySetInnerHTML={{
                 __html: `${

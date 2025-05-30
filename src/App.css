@@ -208,11 +208,24 @@
   margin-top: 20px;
 }
 
-@media (max-width: 768px) {
-  .report_page .chtbox .list {
-    height: unset;
-  }
+.tab-toolbar {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
 }
+
+.tab-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tab-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 
 .machine-container {
   padding: 20px;
@@ -295,6 +308,48 @@
   background: none;
   border: none;
   cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .report_page .chtbox .list {
+    height: unset;
+  }
+
+  .alert-name {
+    font-size: 20px;
+  }
+
+  .alert-infos {
+    font-size: 14px !important;
+  }
+
+  .alert-icons {
+    height: 25px;
+  }
+
+  .alert-time {
+    font-size: 12px !important;
+  }
+
+  .alert-value {
+    font-size: 23px !important;
+  }
+
+  .gauge_chart_container {
+    height: 160px;
+    width: 300px;
+  }
+
+  .tab-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tab-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
 }
 
 

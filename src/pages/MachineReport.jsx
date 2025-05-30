@@ -1,31 +1,31 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
-import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
-import TabPanel from "@mui/lab/TabPanel";
-import { CirclesWithBar } from "react-loader-spinner";
-import "react-multi-carousel/lib/styles.css";
-import { useAuth } from "../hooks/useAuth";
-import { useCacheStatus } from "../hooks/useCacheStatus";
-import { APP_CONST } from "../helper/application-constant";
-import { convertMsToKmh } from "../helper/utils";
+import React from 'react';
+import { useState, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import { CirclesWithBar } from 'react-loader-spinner';
+import 'react-multi-carousel/lib/styles.css';
+import { useAuth } from '../hooks/useAuth';
+import { useCacheStatus } from '../hooks/useCacheStatus';
+import { APP_CONST } from '../helper/application-constant';
+import { convertMsToKmh } from '../helper/utils';
 import {
   getSensorData,
   getMachines,
   getAdvisorySettings,
   getDevices,
-} from "../helper/web-service";
-import { DetailedAnalytics } from "../components/detailed_analytics";
-import { FaDownload } from "react-icons/fa";
+} from '../helper/web-service';
+import { DetailedAnalytics } from '../components/detailed_analytics';
+import { FaDownload } from 'react-icons/fa';
 import {
   getOrganizedParameters,
   getOrganizedSensorData,
-} from "../helper/utils";
-import { GaugeChart } from "../components/GaugeChart";
-import Carousel from "react-multi-carousel";
-import moment from "moment";
+} from '../helper/utils';
+import { GaugeChart } from '../components/GaugeChart';
+import Carousel from 'react-multi-carousel';
+import moment from 'moment';
 
 export default function MachineReportPage() {
   const childRef = React.createRef();
@@ -47,13 +47,13 @@ export default function MachineReportPage() {
   const [parameters, setParameters] = useState([]);
   const [series, setSeries] = useState(null);
   const [selectedMachines, setSelectedMachines] = useState([]);
-  const [selectedHourly, setSelectedHourly] = useState("last_hour");
+  const [selectedHourly, setSelectedHourly] = useState('last_hour');
   const [selectedParam, setSelectedParam] = useState(
-    orgName === "SeelyEnergyMonitor"
+    orgName === 'SeelyEnergyMonitor'
       ? [APP_CONST.default_parameter_Seely]
       : [APP_CONST.default_parameter]
   );
-  const [value, setValue] = React.useState("tab_one");
+  const [value, setValue] = React.useState('tab_one');
   const [devices, setDevices] = useState([]);
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [sensorData, setSensorData] = useState([]);
@@ -71,7 +71,7 @@ export default function MachineReportPage() {
     Promise.all(apiPromises).then((responses) => {
       let deviceList = [];
       let repDevices = !isDevicesFetched
-        ? responses[0]["value"]
+        ? responses[0]['value']
         : fetchedDevices;
       if (!isDevicesFetched) setFetchedDevices(repDevices);
       deviceList = repDevices.map((device) => {
@@ -82,24 +82,24 @@ export default function MachineReportPage() {
 
       let machineList = [];
       let repMachines = !isMachinesFetched
-        ? responses[1]["value"]
+        ? responses[1]['value']
         : fetchedMachines;
       if (!isMachinesFetched) setFetchedMachines(repMachines);
       machineList = repMachines;
       setIsMachinesFetched(true);
 
       // Organized parameters
-      let repAdvisorySettings = responses[2]["value"];
+      let repAdvisorySettings = responses[2]['value'];
       // Changing m/s to km/h unit
       repAdvisorySettings.forEach((item) => {
-        if (item.parameter === "wind_speed") {
-          item.unit = "km/h";
+        if (item.parameter === 'wind_speed') {
+          item.unit = 'km/h';
         }
       });
       let parameters = getOrganizedParameters(repAdvisorySettings, true);
 
       // Organized sensor data
-      let repSensorData = responses[3]["value"];
+      let repSensorData = responses[3]['value'];
       repSensorData.forEach((sensorData) => {
         if (sensorData.wind_speed != null) {
           // Check if wind_speed exists and is not null
@@ -127,7 +127,7 @@ export default function MachineReportPage() {
       .filter((item) => selectedMachines.includes(item.RowKey))
       .flatMap((item) => JSON.parse(item.devEUIs));
     setSelectedDevices(devEUIsArray);
-    console.log("selecteddevice", selectedDevices);
+    console.log('selecteddevice', selectedDevices);
   };
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export default function MachineReportPage() {
 
     Promise.all(apiPromises).then((responses) => {
       // Organize sensor data
-      let repSensorData = responses[0]["value"];
+      let repSensorData = responses[0]['value'];
       repSensorData.forEach((sensorData) => {
         if (sensorData.wind_speed != null) {
           sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
@@ -187,7 +187,7 @@ export default function MachineReportPage() {
     try {
       await childRef.current.downloadChartAsPDF();
     } finally {
-      console.log("PDF generation process is done");
+      console.log('PDF generation process is done');
       setLoaderVisible(false);
     }
   };
@@ -198,11 +198,10 @@ export default function MachineReportPage() {
       await childRef.current.downloadChartAsExcel();
       setLoaderVisible(false);
     } finally {
-      console.log("PDF generation process is done");
+      console.log('PDF generation process is done');
       setLoaderVisible(false);
     }
   };
-
 
   const latestPowerData =
     selectedDevices.length > 0
@@ -264,7 +263,7 @@ export default function MachineReportPage() {
                 <div className="reports-button-container">
                   <span
                     className="label label-primary"
-                    style={{ padding: "6px", cursor: "pointer" }}
+                    style={{ padding: '6px', cursor: 'pointer' }}
                     onClick={handleCheckAll}
                   >
                     Check All
@@ -272,15 +271,15 @@ export default function MachineReportPage() {
                   <span
                     className="label label-primary"
                     style={{
-                      padding: "6px",
-                      cursor: "pointer",
+                      padding: '6px',
+                      cursor: 'pointer',
                     }}
                     onClick={handleUncheckAll}
                   >
                     Uncheck All
                   </span>
                 </div>
-                <div className="list" style={{ marginTop: "8px" }}>
+                <div className="list" style={{ marginTop: '8px' }}>
                   {machines.length > 0 ? (
                     machines.map((machine) => (
                       <div key={machine.RowKey} className="checkbox-container">
@@ -290,7 +289,7 @@ export default function MachineReportPage() {
                           checked={selectedMachines.includes(machine.RowKey)}
                           onChange={handleCheckboxChange}
                         />
-                        <label style={{ marginLeft: "5px" }}>
+                        <label style={{ marginLeft: '5px' }}>
                           {machine.PartitionKey}
                         </label>
                       </div>
@@ -316,8 +315,7 @@ export default function MachineReportPage() {
                     autoPlaySpeed={1000}
                   >
                     {latestPowerData.map((machine) => (
-                      <div className="chart_section" key={machine.devEUI}>
-
+                      <div className="chart_section" style={{border: '1px solid green'}} key={machine.devEUI}>
                         <GaugeChart
                           min_value={machine.minValue}
                           max_value={machine.maxValue}
@@ -327,10 +325,10 @@ export default function MachineReportPage() {
                         />
 
                         <h5 className="info">
-                          {machine.partitionKey || "Unknown Machine"}
+                          {machine.partitionKey || 'Unknown Machine'}
                         </h5>
                         <p className="reading_gauge">
-                          {typeof machine.power === "number" &&
+                          {typeof machine.power === 'number' &&
                           !isNaN(machine.power)
                             ? machine.power.toFixed(2)
                             : 0}
@@ -348,63 +346,46 @@ export default function MachineReportPage() {
                 {series ? (
                   <>
                     <TabContext value={value}>
-                      <Box
-                        sx={{
-                          borderBottom: 1,
-                          borderColor: "divider",
-                        }}
-                      >
-                        <TabList
-                          onChange={handleChange}
-                          aria-label="lab API tabs example"
-                        >
-                          <Tab
-                            label="Detailed Analysis"
-                            value="tab_one"
-                            className="tab-btn"
-                          />
-                          <span
-                            className="label label-primary"
-                            style={{
-                              padding: "6px",
-                              cursor: "pointer",
-                              marginTop: "auto",
-                              marginBottom: "12px",
-                              marginLeft: "10px",
-                            }}
-                            onClick={handleRefresh}
+                      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                        <div className="tab-toolbar">
+                          <TabList
+                            onChange={handleChange}
+                            aria-label="lab API tabs example"
+                            className="tab-list"
                           >
-                            Refresh Sensor Data
-                          </span>
-                          <button
-                            className="btn btn-info btn-sm"
-                            style={{
-                              marginTop: "10px",
-                              marginLeft: "auto",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                            onClick={handleChartDownloadAsPdf}
-                          >
-                            <FaDownload style={{ marginRight: "5px" }} />
-                            Download as PDF
-                          </button>
+                            <Tab
+                              label="Detailed Analysis"
+                              value="tab_one"
+                              className="tab-btn"
+                            />
+                          </TabList>
 
-                          <button
-                            className="btn btn-info btn-sm"
-                            style={{
-                              marginTop: "10px",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                            onClick={handleChartDownloadAsExcel}
-                          >
-                            <FaDownload style={{ marginRight: "5px" }} />
-                            Download as Excel
-                          </button>
-                        </TabList>
+                          <div className="tab-actions">
+                            <button
+                              className="btn btn-info btn-sm"
+                              onClick={handleRefresh}
+                            >
+                              Refresh Sensor Data
+                            </button>
+                            <button
+                              className="btn btn-info btn-sm"
+                              onClick={handleChartDownloadAsPdf}
+                            >
+                              <FaDownload style={{ marginRight: '5px' }} />
+                              Download as PDF
+                            </button>
+
+                            <button
+                              className="btn btn-info btn-sm"
+                              onClick={handleChartDownloadAsExcel}
+                            >
+                              <FaDownload style={{ marginRight: '5px' }} />
+                              Download as Excel
+                            </button>
+                          </div>
+                        </div>
                       </Box>
-                      <TabPanel value="tab_one" style={{ padding: "24px 0" }}>
+                      <TabPanel value="tab_one" style={{ padding: '24px 0' }}>
                         <DetailedAnalytics
                           parameters={parameters}
                           devices={devices}
