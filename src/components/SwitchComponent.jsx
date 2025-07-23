@@ -1,10 +1,10 @@
-import dayjs from "dayjs";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DesktopTimePicker } from "@mui/x-date-pickers/DesktopTimePicker";
-import styles from "./SwitchComponent.module.css";
-import { Button } from "@mui/material";
-import { toast, Toaster } from "react-hot-toast";
-import React, { useEffect, useState } from "react";
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
+import styles from './SwitchComponent.module.css';
+import { Button } from '@mui/material';
+import { toast, Toaster } from 'react-hot-toast';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -17,24 +17,28 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-} from "@mui/material";
-import { getValveSettings, setValveSettings } from "../helper/web-service";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useQuery, useMutation, useQueryClient } from "react-query";
-import axios from "axios";
-import { useAuth } from "../hooks/useAuth";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+} from '@mui/material';
+import { getValveSettings, setValveSettings } from '../helper/web-service';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
+import axios from 'axios';
+import { useAuth } from '../hooks/useAuth';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { ValveModel } from './valve_model';
 
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [loadingRows, setLoadingRows] = useState({});
   const [rows, setRows] = useState([]);
   const [dateTime, setDateTime] = useState(
-    dayjs().format("YYYY-MM-DD HH:mm:ss")
+    dayjs().format('YYYY-MM-DD HH:mm:ss')
   );
+
+  const [isModelOpen, setModelOpen] = useState(false);
+  const [modelRow, setModelOpenRow] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setDateTime(dayjs().format("YYYY-MM-DD HH:mm:ss"));
+      setDateTime(dayjs().format('YYYY-MM-DD HH:mm:ss'));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -44,7 +48,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   const { user } = useAuth();
 
   const getDeviceName = (uid) => {
-    return devices[uid] || "";
+    return devices[uid] || '';
   };
 
   const fetchDeviceSettings = async () => {
@@ -60,7 +64,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
   // Fetch device settings data
   const { data, isLoading, error } = useQuery(
-    "valve-settings",
+    'valve-settings',
     fetchDeviceSettings,
     {
       refetchOnWindowFocus: false,
@@ -79,7 +83,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   const mutation = useMutation(saveDeviceSettings, {
     onSuccess: () => {
       // Invalidate and refetch data after mutation
-      queryClient.invalidateQueries("deviceSettings");
+      queryClient.invalidateQueries('deviceSettings');
     },
   });
 
@@ -91,7 +95,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     );
   };
   const handleTimeChangeRepeat = (rowKey, field, newTime) => {
-    const onlyTime = dayjs(newTime).format("HH:mm:ss");
+    const onlyTime = dayjs(newTime).format('HH:mm:ss');
     setRows((prevRows) =>
       prevRows.map((row) =>
         row.RowKey === rowKey ? { ...row, [field]: onlyTime } : row
@@ -114,9 +118,9 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         row.RowKey === rowKey
           ? {
               ...row,
-              once: curOptionValue == "once" ? true : false,
-              repeat: curOptionValue == "repeat" ? true : false,
-              manual: curOptionValue == "manual" ? true : false,
+              once: curOptionValue == 'once' ? true : false,
+              repeat: curOptionValue == 'repeat' ? true : false,
+              manual: curOptionValue == 'manual' ? true : false,
             }
           : row
       )
@@ -126,17 +130,17 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   const handleSave = async (row) => {
     const now = dayjs();
 
-if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
-  toast.error("Both Turn-on and Turn-off time are required!");
-  return;
-}
+    if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
+      toast.error('Both Turn-on and Turn-off time are required!');
+      return;
+    }
     if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
-      toast.error("Turn-on time must be now or in the future!");
+      toast.error('Turn-on time must be now or in the future!');
       return;
     }
 
     if (row.turnOffTime && dayjs(row.turnOffTime).isBefore(now)) {
-      toast.error("The turn-off time must be later than the turn-on time!");
+      toast.error('The turn-off time must be later than the turn-on time!');
       return;
     }
 
@@ -145,7 +149,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
       row.turnOffTime &&
       dayjs(row.turnOffTime).isBefore(dayjs(row.turnOnTime))
     ) {
-      toast.error("Turn-off time cannot be earlier than Turn-on time!");
+      toast.error('Turn-off time cannot be earlier than Turn-on time!');
       return;
     }
     setLoadingRows((prev) => ({ ...prev, [row.RowKey]: true }));
@@ -161,11 +165,32 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
         turnOffTime: row.turnOffTime,
         turnOnTime: row.turnOnTime,
       });
-      toast.success("Settings saved successfully!");
+      toast.success('Settings saved successfully!');
     } catch (error) {
-      console.error("Failed to save settings:", error);
+      console.error('Failed to save settings:', error);
     } finally {
       setLoadingRows((prev) => ({ ...prev, [row.RowKey]: false }));
+    }
+  };
+
+  const openValveModel = (row) => {
+    setModelOpenRow(row);
+    setModelOpen(true);
+  };
+
+  const handleModelClose = async (event) => {
+    const closedByUser = !event;
+
+    setModelOpen(false);
+    setModelOpenRow(null);
+
+    if (closedByUser) {
+      try {
+        const updatedData = await fetchDeviceSettings();
+        setRows(updatedData.value);
+      } catch (err) {
+        console.error('Failed to refresh valve data:', err);
+      }
     }
   };
 
@@ -178,13 +203,13 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
         <div>
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
-            {" "}
-            <h2 style={{ paddingTop: "2px" }}>
+            {' '}
+            <h2 style={{ paddingTop: '2px' }}>
               <strong>Device Settings</strong>
             </h2>
             <p>
@@ -212,15 +237,16 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                         <TableCell>Turn on Time</TableCell>
                         <TableCell>Turn off Time</TableCell>
                         <TableCell>Actions</TableCell>
+                        <TableCell>Valve Status</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {rows &&
                         rows.map((row) => {
                           let autoValue = null;
-                          if (row.once) autoValue = "once";
-                          else if (row.repeat) autoValue = "repeat";
-                          else if (row.manual) autoValue = "manual";
+                          if (row.once) autoValue = 'once';
+                          else if (row.repeat) autoValue = 'repeat';
+                          else if (row.manual) autoValue = 'manual';
 
                           return (
                             <TableRow key={row.RowKey}>
@@ -242,7 +268,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
 
                               <TableCell className={`${styles.stickyColumn1}`}>
                                 <div
-                                  style={{ fontWeight: "bold" }}
+                                  style={{ fontWeight: 'bold' }}
                                   dangerouslySetInnerHTML={{
                                     __html: getDeviceName(row.devEUI),
                                   }}
@@ -273,7 +299,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                       <Radio
                                         disabled={autoLogin}
                                         sx={{
-                                          "& .MuiSvgIcon-root": {
+                                          '& .MuiSvgIcon-root': {
                                             fontSize: 20,
                                           },
                                         }}
@@ -288,7 +314,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                       <Radio
                                         disabled={autoLogin}
                                         sx={{
-                                          "& .MuiSvgIcon-root": {
+                                          '& .MuiSvgIcon-root': {
                                             fontSize: 20,
                                           },
                                         }}
@@ -303,7 +329,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                       <Radio
                                         disabled={autoLogin}
                                         sx={{
-                                          "& .MuiSvgIcon-root": {
+                                          '& .MuiSvgIcon-root': {
                                             fontSize: 20,
                                           },
                                         }}
@@ -460,31 +486,31 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                   />
                                 )}
                               </TableCell> */}
-                               <TableCell className={styles.settings_input}>
-                                {autoValue === "repeat" ? (
+                              <TableCell className={styles.settings_input}>
+                                {autoValue === 'repeat' ? (
                                   <DesktopTimePicker
                                     disabled={
-                                      autoLogin || autoValue == "manual"
+                                      autoLogin || autoValue == 'manual'
                                     }
                                     value={
                                       row.turnOnTime
                                         ? dayjs()
                                             .set(
-                                              "hour",
+                                              'hour',
                                               Number(
-                                                row.turnOnTime.split(":")[0]
+                                                row.turnOnTime.split(':')[0]
                                               )
                                             )
                                             .set(
-                                              "minute",
+                                              'minute',
                                               Number(
-                                                row.turnOnTime.split(":")[1]
+                                                row.turnOnTime.split(':')[1]
                                               )
                                             )
                                             .set(
-                                              "second",
+                                              'second',
                                               Number(
-                                                row.turnOnTime.split(":")[2]
+                                                row.turnOnTime.split(':')[2]
                                               )
                                             )
                                         : null
@@ -492,8 +518,8 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                     onChange={(newTime) =>
                                       handleTimeChangeRepeat(
                                         row.RowKey,
-                                        "turnOnTime",
-                                        newTime ? newTime.toString() : ""
+                                        'turnOnTime',
+                                        newTime ? newTime.toString() : ''
                                       )
                                     }
                                     minutesStep={1}
@@ -503,7 +529,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                   <DateTimePicker
                                     key={row.RowKey}
                                     disabled={
-                                      autoLogin || autoValue == "manual"
+                                      autoLogin || autoValue == 'manual'
                                     }
                                     value={
                                       row.turnOnTime
@@ -516,17 +542,17 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                         newTime.isBefore(dayjs())
                                       ) {
                                         toast.error(
-                                          "You have selected a past date/time!"
+                                          'You have selected a past date/time!'
                                         );
                                       }
                                       handleTimeChange(
                                         row.RowKey,
-                                        "turnOnTime",
+                                        'turnOnTime',
                                         newTime
                                           ? newTime.format(
-                                              "YYYY-MM-DDTHH:mm:ss"
+                                              'YYYY-MM-DDTHH:mm:ss'
                                             )
-                                          : ""
+                                          : ''
                                       );
                                     }}
                                     minDateTime={null}
@@ -536,30 +562,30 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                 )}
                               </TableCell>
                               <TableCell className={styles.settings_input}>
-                                {autoValue === "repeat" ? (
+                                {autoValue === 'repeat' ? (
                                   <DesktopTimePicker
                                     disabled={
-                                      autoLogin || autoValue == "manual"
+                                      autoLogin || autoValue == 'manual'
                                     }
                                     value={
                                       row.turnOffTime
                                         ? dayjs()
                                             .set(
-                                              "hour",
+                                              'hour',
                                               Number(
-                                                row.turnOffTime.split(":")[0]
+                                                row.turnOffTime.split(':')[0]
                                               )
                                             )
                                             .set(
-                                              "minute",
+                                              'minute',
                                               Number(
-                                                row.turnOffTime.split(":")[1]
+                                                row.turnOffTime.split(':')[1]
                                               )
                                             )
                                             .set(
-                                              "second",
+                                              'second',
                                               Number(
-                                                row.turnOffTime.split(":")[2]
+                                                row.turnOffTime.split(':')[2]
                                               )
                                             )
                                         : null
@@ -567,8 +593,8 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                     onChange={(newTime) =>
                                       handleTimeChangeRepeat(
                                         row.RowKey,
-                                        "turnOffTime",
-                                        newTime ? newTime.toString() : ""
+                                        'turnOffTime',
+                                        newTime ? newTime.toString() : ''
                                       )
                                     }
                                     className={styles.timPicker}
@@ -576,7 +602,7 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                 ) : (
                                   <DateTimePicker
                                     disabled={
-                                      autoLogin || autoValue == "manual"
+                                      autoLogin || autoValue == 'manual'
                                     }
                                     value={
                                       row.turnOffTime
@@ -592,25 +618,25 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                         newTime.isBefore(dayjs(row.turnOnTime))
                                       ) {
                                         toast.error(
-                                          "Turn-off time cannot be earlier than Turn-on time!"
+                                          'Turn-off time cannot be earlier than Turn-on time!'
                                         );
                                         return;
                                       }
                                       handleTimeChange(
                                         row.RowKey,
-                                        "turnOffTime",
+                                        'turnOffTime',
                                         newTime
                                           ? newTime.format(
-                                              "YYYY-MM-DDTHH:mm:ss"
+                                              'YYYY-MM-DDTHH:mm:ss'
                                             )
-                                          : ""
+                                          : ''
                                       );
                                     }}
                                     showToolbar
                                     minDateTime={
                                       row.turnOnTime
                                         ? dayjs(row.turnOnTime)
-                                            .add(5, "minute")
+                                            .add(5, 'minute')
                                             .second(0)
                                             .millisecond(0)
                                         : dayjs().second(0).millisecond(0)
@@ -626,8 +652,8 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                   variant="contained"
                                   color="primary"
                                   style={{
-                                    color: "#ffffff",
-                                    verticalAlign: "middle",
+                                    color: '#ffffff',
+                                    verticalAlign: 'middle',
                                   }}
                                   disabled={
                                     loadingRows[row.RowKey] || autoLogin
@@ -635,8 +661,28 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
                                   className={`btn btn-success btn-block ${styles.save_btn}`}
                                 >
                                   {loadingRows[row.RowKey]
-                                    ? "Saving..."
-                                    : "Save"}
+                                    ? 'Saving...'
+                                    : 'Save'}
+                                </Button>
+                              </TableCell>
+                              <TableCell>
+                                <div>
+                                  {row?.primaryValve !== undefined
+                                    ? 'Secondary Valve'
+                                    : 'Primary Valve'}
+                                </div>
+                                <Button
+                                  onClick={() => openValveModel(row)}
+                                  variant="contained"
+                                  color="primary"
+                                  style={{
+                                    color: '#ffffff',
+                                    verticalAlign: 'middle',
+                                    marginTop: '10px',
+                                  }}
+                                  className={`btn btn-success btn-block ${styles.save_btn}`}
+                                >
+                                  Update
                                 </Button>
                               </TableCell>
                             </TableRow>
@@ -650,8 +696,15 @@ if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
+      <ValveModel
+        isOpen={isModelOpen}
+        closeModel={handleModelClose}
+        row={modelRow}
+        rows={rows}
+        devices={devices}
+      />
     </>
   );
 };

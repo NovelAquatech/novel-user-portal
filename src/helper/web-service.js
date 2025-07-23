@@ -434,3 +434,20 @@ export const deleteMachines = (userInfo, rowKey, devEUIs, machineName) => {
   // Call the endpoint
   return getRequest(url);
 };
+
+export const updateValveSecondaryStatus = (userInfo, data) => {
+  // Construct the URL for fetching rules
+  let url = `${
+    import.meta.env.VITE_MAKE_VALVE_SECONDARY_API_URL
+  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
+  url = `${url}?api-version=${APP_CONST.API_VERSION}`;
+  url = `${url}&sp=${APP_CONST.SP}`;
+  url = `${url}&sv=${APP_CONST.SV}`;
+  url = `${url}&sig=${import.meta.env.VITE_MAKE_VALVE_SECONDARY_API_URL_SIG}`;
+  url = `${url}&orgName=${userInfo.orgName}`;
+  url = `${url}&authToken=${userInfo.token}`;
+  console.log("Constructed Custom Alert URL:", url);
+
+  // Call the endpoint
+  return postRequest(url, data);
+};
