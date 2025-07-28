@@ -4,15 +4,11 @@ import {
   Box,
   Typography,
   Button,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { toast, Toaster } from "react-hot-toast";
-import { updateValveSecondaryStatus} from '../helper/web-service'
-import { useAuth } from '../hooks/useAuth'
+import { updateValveSecondaryStatus } from '../helper/web-service';
+import { useAuth } from '../hooks/useAuth';
 
 export const ValveModel = ({
   isOpen,
@@ -21,32 +17,34 @@ export const ValveModel = ({
   rows,
   devices,
 }) => {
-  const isSecondary = !!row?.primaryValve;
-  const [selectedPrimary, setSelectedPrimary] = useState('');
+  const isSecondary = row?.primaryValve !== undefined;
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const { user } = useAuth();
 
   const getDeviceName = (uid) => devices[uid] || '';
 
-  const validPrimaries = rows.filter(
-    (r) =>
-      r.devEUI === row?.devEUI && !r.primaryValve && r.RowKey !== row?.RowKey
-  );
+  const primaryValves = rows.filter((r) => r.primaryValve === undefined);
+  console.log(primaryValves)
+  const isLastPrimary = !isSecondary && primaryValves.length === 1;
 
   const handleAssignSecondary = () => {
-    if (!selectedPrimary) return;
-    let payload = {
+    if (isLastPrimary) {
+      toast.error("At least one valve must remain primary.");
+      return;
+    }
+
+    const payload = {
       RowKey: row.RowKey,
       PartitionKey: row.PartitionKey,
       makeSecondary: true,
       orgName: row.orgName,
-      primaryValve: selectedPrimary,
+      primaryValve: '', // no longer required
     };
     handleSave(payload);
   };
 
   const handlePromoteToPrimary = () => {
-    let payload = {
+    const payload = {
       RowKey: row.RowKey,
       PartitionKey: row.PartitionKey,
       makeSecondary: false,
@@ -60,125 +58,109 @@ export const ValveModel = ({
       setLoaderVisible(true);
       await updateValveSecondaryStatus(user, payload);
       toast.success('Settings saved successfully');
-      setLoaderVisible(false);
       closeModel();
     } catch (err) {
       toast.error('Error saving settings. Please try again.');
+    } finally {
       setLoaderVisible(false);
     }
   };
 
   return (
-    <><Toaster position="top-right" reverseOrder={false} />
-    <Modal open={isOpen} onClose={closeModel}>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 500,
-          bgcolor: 'background.paper',
-          borderRadius: 3,
-          boxShadow: 24,
-          p: 4,
-        }}
-      >
-        <Typography fontSize="16px" fontWeight={600} gutterBottom>
-          {getDeviceName(row?.devEUI)} - {row?.identifier}
-        </Typography>
-
-        <Typography fontSize="14px" color="text.secondary" gutterBottom>
-          DevEUI: <strong>{row?.devEUI}</strong>
-        </Typography>
-
-        <Box sx={{ mt: 3 }}>
-          <Typography fontSize="14px" color="text.primary">
-            {isSecondary ? (
-              <>
-                This is a <strong>Secondary Valve</strong> linked to:{' '}
-                <code>{row.primaryValve}</code>
-              </>
-            ) : (
-              <>
-                This is a <strong>Primary Valve</strong>
-              </>
-            )}
+    <>
+      <Toaster position="top-right" reverseOrder={false} />
+      <Modal open={isOpen} onClose={closeModel}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 500,
+            bgcolor: 'background.paper',
+            borderRadius: 3,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography fontSize="16px" fontWeight={600} gutterBottom>
+            {getDeviceName(row?.devEUI)} - {row?.identifier}
           </Typography>
-        </Box>
 
-        {isSecondary ? (
-          <LoadingButton
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 4, py: 1.5, fontSize: '12px' }}
-            onClick={handlePromoteToPrimary}
-            loading={isLoaderVisible}
-          >
-            Make it Primary
-          </LoadingButton>
-        ) : validPrimaries.length > 0 ? (
-          <>
-            <FormControl fullWidth sx={{ mt: 4 }}>
-              <InputLabel id="select-primary-label" sx={{ fontSize: '12px' }}>
-                Attach to Primary Valve
-              </InputLabel>
-              <Select
-                labelId="select-primary-label"
-                value={selectedPrimary}
-                label="Attach to Primary Valve"
-                onChange={(e) => setSelectedPrimary(e.target.value)}
-                sx={{ fontSize: '12px' }}
-              >
-                {validPrimaries.map((valve) => (
-                  <MenuItem
-                    key={valve.RowKey}
-                    value={valve.RowKey}
-                    sx={{ fontSize: '12px' }}
-                  >
-                    {valve.identifier} ({valve.RowKey})
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          <Typography fontSize="14px" color="text.secondary" gutterBottom>
+            DevEUI: <strong>{row?.devEUI}</strong>
+          </Typography>
+
+          <Box sx={{ mt: 3 }}>
+            <Typography fontSize="14px" color="text.primary">
+              {isSecondary ? (
+                <>
+                  This is a <strong>Secondary Valve</strong>
+                </>
+              ) : (
+                <>
+                  This is a <strong>Primary Valve</strong>
+                </>
+              )}
+            </Typography>
+          </Box>
+
+          {isSecondary ? (
             <LoadingButton
               variant="contained"
               color="primary"
               fullWidth
-              sx={{ mt: 3, py: 1.5, fontSize: '12px' }}
-              onClick={handleAssignSecondary}
-              disabled={!selectedPrimary}
+              sx={{ mt: 4, py: 1.5, fontSize: '12px' }}
+              onClick={handlePromoteToPrimary}
               loading={isLoaderVisible}
             >
-              Assign as Secondary
+              Make it Primary
             </LoadingButton>
-          </>
-        ) : (
-          <Typography sx={{ mt: 4 }} color="text.secondary" fontSize="12px">
-            No available primary valves with matching DevEUI.
-          </Typography>
-        )}
+          ) : (
+            <>
+              <LoadingButton
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ mt: 4, py: 1.5, fontSize: '12px' }}
+                onClick={handleAssignSecondary}
+                loading={isLoaderVisible}
+                disabled={isLastPrimary}
+              >
+                Make it Secondary
+              </LoadingButton>
 
-        <Button
-          onClick={closeModel}
-          fullWidth
-          sx={{
-            mt: 3,
-            py: 1.4,
-            fontSize: '12px',
-            backgroundColor: '#f5f5f5',
-            border: '1px solid #ccc',
-            color: '#000',
-            '&:hover': {
-              backgroundColor: '#eee',
-            },
-          }}
-        >
-          Cancel
-        </Button>
-      </Box>
-    </Modal>
+              {isLastPrimary && (
+                <Typography
+                  sx={{ mt: 2 }}
+                  color="error"
+                  fontSize="12px"
+                >
+                  Warning: At least one primary valve must exist.
+                </Typography>
+              )}
+            </>
+          )}
+
+          <Button
+            onClick={closeModel}
+            fullWidth
+            sx={{
+              mt: 3,
+              py: 1.4,
+              fontSize: '12px',
+              backgroundColor: '#f5f5f5',
+              border: '1px solid #ccc',
+              color: '#000',
+              '&:hover': {
+                backgroundColor: '#eee',
+              },
+            }}
+          >
+            Cancel
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };
