@@ -237,110 +237,114 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                         <TableCell>Turn on Time</TableCell>
                         <TableCell>Turn off Time</TableCell>
                         <TableCell>Actions</TableCell>
-                        <TableCell>Valve Status</TableCell>
+                        <TableCell>Valve Pressure</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {rows &&
-                        rows.map((row) => {
-                          let autoValue = null;
-                          if (row.once) autoValue = 'once';
-                          else if (row.repeat) autoValue = 'repeat';
-                          else if (row.manual) autoValue = 'manual';
+                        rows
+                          .filter((row) => row.devEUI)
+                          .map((row) => {
+                            let autoValue = null;
+                            if (row.once) autoValue = 'once';
+                            else if (row.repeat) autoValue = 'repeat';
+                            else if (row.manual) autoValue = 'manual';
 
-                          return (
-                            <TableRow key={row.RowKey}>
-                              <TableCell
-                                className={`${styles.settings_input}  ${styles.stickyColumn1}`}
-                              >
-                                <label className="switch">
-                                  <input
-                                    disabled={autoLogin}
-                                    type="checkbox"
-                                    checked={row.active}
-                                    onChange={() =>
-                                      handleSwitchChange(row.RowKey)
-                                    }
-                                  />
-                                  <span className="slider round"></span>
-                                </label>
-                              </TableCell>
-
-                              <TableCell className={`${styles.stickyColumn1}`}>
-                                <div
-                                  style={{ fontWeight: 'bold' }}
-                                  dangerouslySetInnerHTML={{
-                                    __html: getDeviceName(row.devEUI),
-                                  }}
-                                />
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: row.identifier,
-                                  }}
-                                />
-                                <div
-                                  dangerouslySetInnerHTML={{
-                                    __html: row.devEUI,
-                                  }}
-                                />
-                              </TableCell>
-                              <TableCell className={styles.settings_input}>
-                                <RadioGroup
-                                  name="controlled-radio-buttons-group"
-                                  value={autoValue}
-                                  onChange={(evt) =>
-                                    handleRadioboxChange(evt, row.RowKey)
-                                  }
-                                  className={styles.switchAutoChk}
+                            return (
+                              <TableRow key={row.RowKey}>
+                                <TableCell
+                                  className={`${styles.settings_input}  ${styles.stickyColumn1}`}
                                 >
-                                  <FormControlLabel
-                                    value="once"
-                                    control={
-                                      <Radio
-                                        disabled={autoLogin}
-                                        sx={{
-                                          '& .MuiSvgIcon-root': {
-                                            fontSize: 20,
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label="Once"
-                                    className={styles.switchAutoChkLabel}
+                                  <label className="switch">
+                                    <input
+                                      disabled={autoLogin}
+                                      type="checkbox"
+                                      checked={row.active}
+                                      onChange={() =>
+                                        handleSwitchChange(row.RowKey)
+                                      }
+                                    />
+                                    <span className="slider round"></span>
+                                  </label>
+                                </TableCell>
+
+                                <TableCell
+                                  className={`${styles.stickyColumn1}`}
+                                >
+                                  <div
+                                    style={{ fontWeight: 'bold' }}
+                                    dangerouslySetInnerHTML={{
+                                      __html: getDeviceName(row.devEUI),
+                                    }}
                                   />
-                                  <FormControlLabel
-                                    value="repeat"
-                                    control={
-                                      <Radio
-                                        disabled={autoLogin}
-                                        sx={{
-                                          '& .MuiSvgIcon-root': {
-                                            fontSize: 20,
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label="Repeat"
-                                    className={styles.switchAutoChkLabel}
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: row.identifier,
+                                    }}
                                   />
-                                  <FormControlLabel
-                                    value="manual"
-                                    control={
-                                      <Radio
-                                        disabled={autoLogin}
-                                        sx={{
-                                          '& .MuiSvgIcon-root': {
-                                            fontSize: 20,
-                                          },
-                                        }}
-                                      />
-                                    }
-                                    label="Manual"
-                                    className={styles.switchAutoChkLabel}
+                                  <div
+                                    dangerouslySetInnerHTML={{
+                                      __html: row.devEUI,
+                                    }}
                                   />
-                                </RadioGroup>
-                              </TableCell>
-                              {/* <TableCell className={styles.settings_input}>
+                                </TableCell>
+                                <TableCell className={styles.settings_input}>
+                                  <RadioGroup
+                                    name="controlled-radio-buttons-group"
+                                    value={autoValue}
+                                    onChange={(evt) =>
+                                      handleRadioboxChange(evt, row.RowKey)
+                                    }
+                                    className={styles.switchAutoChk}
+                                  >
+                                    <FormControlLabel
+                                      value="once"
+                                      control={
+                                        <Radio
+                                          disabled={autoLogin}
+                                          sx={{
+                                            '& .MuiSvgIcon-root': {
+                                              fontSize: 20,
+                                            },
+                                          }}
+                                        />
+                                      }
+                                      label="Once"
+                                      className={styles.switchAutoChkLabel}
+                                    />
+                                    <FormControlLabel
+                                      value="repeat"
+                                      control={
+                                        <Radio
+                                          disabled={autoLogin}
+                                          sx={{
+                                            '& .MuiSvgIcon-root': {
+                                              fontSize: 20,
+                                            },
+                                          }}
+                                        />
+                                      }
+                                      label="Repeat"
+                                      className={styles.switchAutoChkLabel}
+                                    />
+                                    <FormControlLabel
+                                      value="manual"
+                                      control={
+                                        <Radio
+                                          disabled={autoLogin}
+                                          sx={{
+                                            '& .MuiSvgIcon-root': {
+                                              fontSize: 20,
+                                            },
+                                          }}
+                                        />
+                                      }
+                                      label="Manual"
+                                      className={styles.switchAutoChkLabel}
+                                    />
+                                  </RadioGroup>
+                                </TableCell>
+                                {/* <TableCell className={styles.settings_input}>
                                 {autoValue === "repeat" ? (
                                   <DesktopTimePicker
                                     disabled={autoLogin}
@@ -486,208 +490,210 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   />
                                 )}
                               </TableCell> */}
-                              <TableCell className={styles.settings_input}>
-                                {autoValue === 'repeat' ? (
-                                  <DesktopTimePicker
-                                    disabled={
-                                      autoLogin || autoValue == 'manual'
-                                    }
-                                    value={
-                                      row.turnOnTime
-                                        ? dayjs()
-                                            .set(
-                                              'hour',
-                                              Number(
-                                                row.turnOnTime.split(':')[0]
-                                              )
-                                            )
-                                            .set(
-                                              'minute',
-                                              Number(
-                                                row.turnOnTime.split(':')[1]
-                                              )
-                                            )
-                                            .set(
-                                              'second',
-                                              Number(
-                                                row.turnOnTime.split(':')[2]
-                                              )
-                                            )
-                                        : null
-                                    }
-                                    onChange={(newTime) =>
-                                      handleTimeChangeRepeat(
-                                        row.RowKey,
-                                        'turnOnTime',
-                                        newTime ? newTime.toString() : ''
-                                      )
-                                    }
-                                    minutesStep={1}
-                                    className={styles.timPicker}
-                                  />
-                                ) : (
-                                  <DateTimePicker
-                                    key={row.RowKey}
-                                    disabled={
-                                      autoLogin || autoValue == 'manual'
-                                    }
-                                    value={
-                                      row.turnOnTime
-                                        ? dayjs(row.turnOnTime)
-                                        : null
-                                    }
-                                    onChange={(newTime) => {
-                                      if (
-                                        newTime &&
-                                        newTime.isBefore(dayjs())
-                                      ) {
-                                        toast.error(
-                                          'You have selected a past date/time!'
-                                        );
+                                <TableCell className={styles.settings_input}>
+                                  {autoValue === 'repeat' ? (
+                                    <DesktopTimePicker
+                                      disabled={
+                                        autoLogin || autoValue == 'manual'
                                       }
-                                      handleTimeChange(
-                                        row.RowKey,
-                                        'turnOnTime',
-                                        newTime
-                                          ? newTime.format(
-                                              'YYYY-MM-DDTHH:mm:ss'
-                                            )
-                                          : ''
-                                      );
-                                    }}
-                                    minDateTime={null}
-                                    format="YYYY-MM-DD HH:mm"
-                                    className={styles.timPicker}
-                                  />
-                                )}
-                              </TableCell>
-                              <TableCell className={styles.settings_input}>
-                                {autoValue === 'repeat' ? (
-                                  <DesktopTimePicker
-                                    disabled={
-                                      autoLogin || autoValue == 'manual'
-                                    }
-                                    value={
-                                      row.turnOffTime
-                                        ? dayjs()
-                                            .set(
-                                              'hour',
-                                              Number(
-                                                row.turnOffTime.split(':')[0]
+                                      value={
+                                        row.turnOnTime
+                                          ? dayjs()
+                                              .set(
+                                                'hour',
+                                                Number(
+                                                  row.turnOnTime.split(':')[0]
+                                                )
                                               )
-                                            )
-                                            .set(
-                                              'minute',
-                                              Number(
-                                                row.turnOffTime.split(':')[1]
+                                              .set(
+                                                'minute',
+                                                Number(
+                                                  row.turnOnTime.split(':')[1]
+                                                )
                                               )
-                                            )
-                                            .set(
-                                              'second',
-                                              Number(
-                                                row.turnOffTime.split(':')[2]
+                                              .set(
+                                                'second',
+                                                Number(
+                                                  row.turnOnTime.split(':')[2]
+                                                )
                                               )
-                                            )
-                                        : null
-                                    }
-                                    onChange={(newTime) =>
-                                      handleTimeChangeRepeat(
-                                        row.RowKey,
-                                        'turnOffTime',
-                                        newTime ? newTime.toString() : ''
-                                      )
-                                    }
-                                    className={styles.timPicker}
-                                  />
-                                ) : (
-                                  <DateTimePicker
-                                    disabled={
-                                      autoLogin || autoValue == 'manual'
-                                    }
-                                    value={
-                                      row.turnOffTime
-                                        ? dayjs(row.turnOffTime)
-                                            .second(0)
-                                            .millisecond(0)
-                                        : null
-                                    }
-                                    onChange={(newTime) => {
-                                      if (
-                                        newTime &&
-                                        row.turnOnTime &&
-                                        newTime.isBefore(dayjs(row.turnOnTime))
-                                      ) {
-                                        toast.error(
-                                          'Turn-off time cannot be earlier than Turn-on time!'
-                                        );
-                                        return;
+                                          : null
                                       }
-                                      handleTimeChange(
-                                        row.RowKey,
-                                        'turnOffTime',
-                                        newTime
-                                          ? newTime.format(
-                                              'YYYY-MM-DDTHH:mm:ss'
-                                            )
-                                          : ''
-                                      );
+                                      onChange={(newTime) =>
+                                        handleTimeChangeRepeat(
+                                          row.RowKey,
+                                          'turnOnTime',
+                                          newTime ? newTime.toString() : ''
+                                        )
+                                      }
+                                      minutesStep={1}
+                                      className={styles.timPicker}
+                                    />
+                                  ) : (
+                                    <DateTimePicker
+                                      key={row.RowKey}
+                                      disabled={
+                                        autoLogin || autoValue == 'manual'
+                                      }
+                                      value={
+                                        row.turnOnTime
+                                          ? dayjs(row.turnOnTime)
+                                          : null
+                                      }
+                                      onChange={(newTime) => {
+                                        if (
+                                          newTime &&
+                                          newTime.isBefore(dayjs())
+                                        ) {
+                                          toast.error(
+                                            'You have selected a past date/time!'
+                                          );
+                                        }
+                                        handleTimeChange(
+                                          row.RowKey,
+                                          'turnOnTime',
+                                          newTime
+                                            ? newTime.format(
+                                                'YYYY-MM-DDTHH:mm:ss'
+                                              )
+                                            : ''
+                                        );
+                                      }}
+                                      minDateTime={null}
+                                      format="YYYY-MM-DD HH:mm"
+                                      className={styles.timPicker}
+                                    />
+                                  )}
+                                </TableCell>
+                                <TableCell className={styles.settings_input}>
+                                  {autoValue === 'repeat' ? (
+                                    <DesktopTimePicker
+                                      disabled={
+                                        autoLogin || autoValue == 'manual'
+                                      }
+                                      value={
+                                        row.turnOffTime
+                                          ? dayjs()
+                                              .set(
+                                                'hour',
+                                                Number(
+                                                  row.turnOffTime.split(':')[0]
+                                                )
+                                              )
+                                              .set(
+                                                'minute',
+                                                Number(
+                                                  row.turnOffTime.split(':')[1]
+                                                )
+                                              )
+                                              .set(
+                                                'second',
+                                                Number(
+                                                  row.turnOffTime.split(':')[2]
+                                                )
+                                              )
+                                          : null
+                                      }
+                                      onChange={(newTime) =>
+                                        handleTimeChangeRepeat(
+                                          row.RowKey,
+                                          'turnOffTime',
+                                          newTime ? newTime.toString() : ''
+                                        )
+                                      }
+                                      className={styles.timPicker}
+                                    />
+                                  ) : (
+                                    <DateTimePicker
+                                      disabled={
+                                        autoLogin || autoValue == 'manual'
+                                      }
+                                      value={
+                                        row.turnOffTime
+                                          ? dayjs(row.turnOffTime)
+                                              .second(0)
+                                              .millisecond(0)
+                                          : null
+                                      }
+                                      onChange={(newTime) => {
+                                        if (
+                                          newTime &&
+                                          row.turnOnTime &&
+                                          newTime.isBefore(
+                                            dayjs(row.turnOnTime)
+                                          )
+                                        ) {
+                                          toast.error(
+                                            'Turn-off time cannot be earlier than Turn-on time!'
+                                          );
+                                          return;
+                                        }
+                                        handleTimeChange(
+                                          row.RowKey,
+                                          'turnOffTime',
+                                          newTime
+                                            ? newTime.format(
+                                                'YYYY-MM-DDTHH:mm:ss'
+                                              )
+                                            : ''
+                                        );
+                                      }}
+                                      showToolbar
+                                      minDateTime={
+                                        row.turnOnTime
+                                          ? dayjs(row.turnOnTime)
+                                              .add(5, 'minute')
+                                              .second(0)
+                                              .millisecond(0)
+                                          : dayjs().second(0).millisecond(0)
+                                      }
+                                      className={styles.timPicker}
+                                      format="YYYY-MM-DD HH:mm"
+                                    />
+                                  )}
+                                </TableCell>
+                                <TableCell>
+                                  <Button
+                                    onClick={() => handleSave(row)}
+                                    variant="contained"
+                                    color="primary"
+                                    style={{
+                                      color: '#ffffff',
+                                      verticalAlign: 'middle',
                                     }}
-                                    showToolbar
-                                    minDateTime={
-                                      row.turnOnTime
-                                        ? dayjs(row.turnOnTime)
-                                            .add(5, 'minute')
-                                            .second(0)
-                                            .millisecond(0)
-                                        : dayjs().second(0).millisecond(0)
+                                    disabled={
+                                      loadingRows[row.RowKey] || autoLogin
                                     }
-                                    className={styles.timPicker}
-                                    format="YYYY-MM-DD HH:mm"
-                                  />
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  onClick={() => handleSave(row)}
-                                  variant="contained"
-                                  color="primary"
-                                  style={{
-                                    color: '#ffffff',
-                                    verticalAlign: 'middle',
-                                  }}
-                                  disabled={
-                                    loadingRows[row.RowKey] || autoLogin
-                                  }
-                                  className={`btn btn-success btn-block ${styles.save_btn}`}
-                                >
-                                  {loadingRows[row.RowKey]
-                                    ? 'Saving...'
-                                    : 'Save'}
-                                </Button>
-                              </TableCell>
-                              <TableCell>
-                                <div>
-                                  {row?.primaryValve !== undefined
-                                    ? 'Secondary Valve'
-                                    : 'Primary Valve'}
-                                </div>
-                                <Button
-                                  onClick={() => openValveModel(row)}
-                                  variant="contained"
-                                  color="primary"
-                                  style={{
-                                    color: '#ffffff',
-                                    verticalAlign: 'middle',
-                                    marginTop: '10px',
-                                  }}
-                                  className={`btn btn-success btn-block ${styles.save_btn}`}
-                                >
-                                  Update
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
+                                    className={`btn btn-success btn-block ${styles.save_btn}`}
+                                  >
+                                    {loadingRows[row.RowKey]
+                                      ? 'Saving...'
+                                      : 'Save'}
+                                  </Button>
+                                </TableCell>
+                                <TableCell>
+                                  <div>
+                                    {row?.primaryValve !== undefined
+                                      ? 'Low Pressure'
+                                      : 'High Pressure'}
+                                  </div>
+                                  <Button
+                                    onClick={() => openValveModel(row)}
+                                    variant="contained"
+                                    color="primary"
+                                    style={{
+                                      color: '#ffffff',
+                                      verticalAlign: 'middle',
+                                      marginTop: '10px',
+                                    }}
+                                    className={`btn btn-success btn-block ${styles.save_btn}`}
+                                  >
+                                    Update
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
                     </TableBody>
                   </Table>
                 </TableContainer>

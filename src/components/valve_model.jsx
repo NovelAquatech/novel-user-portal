@@ -95,11 +95,11 @@ export const ValveModel = ({
             <Typography fontSize="14px" color="text.primary">
               {isSecondary ? (
                 <>
-                  This is a <strong>Secondary Valve</strong>
+                  This is a <strong>Low Pressure Valve</strong>
                 </>
               ) : (
                 <>
-                  This is a <strong>Primary Valve</strong>
+                  This is a <strong>High Pressure Valve</strong>
                 </>
               )}
             </Typography>
@@ -114,7 +114,7 @@ export const ValveModel = ({
               onClick={handlePromoteToPrimary}
               loading={isLoaderVisible}
             >
-              Make it Primary
+              Make it High Pressure
             </LoadingButton>
           ) : (
             <>
@@ -127,7 +127,7 @@ export const ValveModel = ({
                 loading={isLoaderVisible}
                 disabled={isLastPrimary}
               >
-                Make it Secondary
+                Make it Low Pressure
               </LoadingButton>
 
               {isLastPrimary && (
@@ -136,7 +136,7 @@ export const ValveModel = ({
                   color="error"
                   fontSize="12px"
                 >
-                  Warning: At least one primary valve must exist.
+                  Warning: At least one high pressure valve must exist.
                 </Typography>
               )}
             </>

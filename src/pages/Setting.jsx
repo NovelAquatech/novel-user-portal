@@ -341,58 +341,72 @@ export const SettingPage = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {setting.parameters.map((param, index) => (
-                            <tr key={index}>
-                              <td className={`${styles.stickyColumn1}`}>
-                                <label className="switch">
-                                  <input
-                                    type="checkbox"
-                                    disabled={autoLogin}
-                                    checked={param.alertActive}
-                                    onChange={(e) => {
-                                      setSettings((prev) => {
-                                        prev.map((s) => {
-                                          if (s.devEUI === setting.devEUI) {
-                                            s.parameters.map((p) => {
-                                              if (
-                                                p.parameter === param.parameter
-                                              ) {
-                                                p.alertActive =
-                                                  e.target.checked;
-                                              }
-                                              return p;
-                                            });
-                                          }
-                                          return s;
+                          {setting.parameters
+                            .filter((param) => {
+                              if (setting.devName === 'Control2') {
+                                return (
+                                  param.paramDisplayName !== 'Gpio 1' &&
+                                  param.paramDisplayName !== 'Gpio 2'
+                                );
+                              }
+                              return true;
+                            })
+                            .map((param, index) => (
+                              <tr key={index}>
+                                <td className={`${styles.stickyColumn1}`}>
+                                  <label className="switch">
+                                    <input
+                                      type="checkbox"
+                                      disabled={autoLogin}
+                                      checked={param.alertActive}
+                                      onChange={(e) => {
+                                        setSettings((prev) => {
+                                          prev.map((s) => {
+                                            if (s.devEUI === setting.devEUI) {
+                                              s.parameters.map((p) => {
+                                                if (
+                                                  p.parameter ===
+                                                  param.parameter
+                                                ) {
+                                                  p.alertActive =
+                                                    e.target.checked;
+                                                }
+                                                return p;
+                                              });
+                                            }
+                                            return s;
+                                          });
+                                          return prev;
                                         });
-                                        return prev;
-                                      });
-                                      setIsEligibleDevEUIForSave(
-                                        setting.devEUI
-                                      );
-                                      setIsEligibleParameterForSave(
-                                        param.parameter
-                                      );
-                                      setIsEligibleForSave(true);
+                                        setIsEligibleDevEUIForSave(
+                                          setting.devEUI
+                                        );
+                                        setIsEligibleParameterForSave(
+                                          param.parameter
+                                        );
+                                        setIsEligibleForSave(true);
+                                      }}
+                                    />
+                                    <span className="slider round"></span>
+                                  </label>
+                                </td>
+                                <td className={`${styles.stickyColumn2}`}>
+                                  <span
+                                    style={{
+                                      display: 'inline-block',
+                                      whiteSpace: 'normal',
+                                      wordWrap: 'break-word',
                                     }}
+                                  >
+                                    {param.paramDisplayName}
+                                  </span>
+                                  <input
+                                    type="hidden"
+                                    value={param.parameter}
                                   />
-                                  <span className="slider round"></span>
-                                </label>
-                              </td>
-                              <td className={`${styles.stickyColumn2}`}>
-                                <span
-                                  style={{
-                                    display: 'inline-block',
-                                    whiteSpace: 'normal',
-                                    wordWrap: 'break-word',
-                                  }}
-                                >
-                                  {param.paramDisplayName}
-                                </span>
-                                <input type="hidden" value={param.parameter} />
-                              </td>
-                              <td className={styles.settings_input}>
-                                {/* {param.parameter === "leakage_status" ? (
+                                </td>
+                                <td className={styles.settings_input}>
+                                  {/* {param.parameter === "leakage_status" ? (
                                   <div className={styles.switch_container}>
                                     <span>OFF</span>
                                     <label className="switch">
@@ -441,208 +455,218 @@ export const SettingPage = () => {
                                     <span>ON</span>
                                   </div>
                                 ) : ( */}
-                                <OutlinedInput
-                                  startAdornment={
-                                    <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: 'red' }} />
-                                    </InputAdornment>
-                                  }
-                                  defaultValue={param.min_value}
-                                  onBlur={(e) =>
-                                    handleBlur(
-                                      setting.devEUI,
-                                      param.parameter,
-                                      'min_value',
-                                      e.target.value
-                                    )
-                                  }
-                                  disabled={!param.alertActive || autoLogin}
-                                  error={
-                                    errors[`${param.parameter}_min_value`] ||
-                                    false
-                                  }
-                                  style={{
-                                    borderColor: errors[
-                                      `${param.parameter}_min_value`
-                                    ]
-                                      ? 'red'
-                                      : '',
-                                    borderWidth: errors[
-                                      `${param.parameter}_min_value`
-                                    ]
-                                      ? '2px'
-                                      : '',
-                                  }}
-                                  aria-describedby="outlined-weight-helper-text"
-                                />
-                                {/* )} */}
-                              </td>
-                              <td className={styles.settings_input}>
-                                {/* {param.parameter !== "leakage_status" ? ( */}
-                                <OutlinedInput
-                                  startAdornment={
-                                    <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: 'red' }} />
-                                    </InputAdornment>
-                                  }
-                                  defaultValue={param.currentMinAlert}
-                                  onBlur={(e) =>
-                                    handleBlur(
-                                      setting.devEUI,
-                                      param.parameter,
-                                      'currentMinAlert',
-                                      e.target.value
-                                    )
-                                  }
-                                  disabled={!param.alertActive || autoLogin}
-                                  error={
-                                    errors[
-                                      `${param.parameter}_currentMinAlert`
-                                    ] || false
-                                  }
-                                  style={{
-                                    borderColor: errors[
-                                      `${param.parameter}_currentMinAlert`
-                                    ]
-                                      ? 'red'
-                                      : '',
-                                    borderWidth: errors[
-                                      `${param.parameter}_currentMinAlert`
-                                    ]
-                                      ? '2px'
-                                      : '',
-                                  }}
-                                  aria-describedby="outlined-weight-helper-text"
-                                />
-                                {/* ) : (
+                                  <OutlinedInput
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <ErrorOutline
+                                          style={{ color: 'red' }}
+                                        />
+                                      </InputAdornment>
+                                    }
+                                    defaultValue={param.min_value}
+                                    onBlur={(e) =>
+                                      handleBlur(
+                                        setting.devEUI,
+                                        param.parameter,
+                                        'min_value',
+                                        e.target.value
+                                      )
+                                    }
+                                    disabled={!param.alertActive || autoLogin}
+                                    error={
+                                      errors[`${param.parameter}_min_value`] ||
+                                      false
+                                    }
+                                    style={{
+                                      borderColor: errors[
+                                        `${param.parameter}_min_value`
+                                      ]
+                                        ? 'red'
+                                        : '',
+                                      borderWidth: errors[
+                                        `${param.parameter}_min_value`
+                                      ]
+                                        ? '2px'
+                                        : '',
+                                    }}
+                                    aria-describedby="outlined-weight-helper-text"
+                                  />
+                                  {/* )} */}
+                                </td>
+                                <td className={styles.settings_input}>
+                                  {/* {param.parameter !== "leakage_status" ? ( */}
+                                  <OutlinedInput
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <ErrorOutline
+                                          style={{ color: 'red' }}
+                                        />
+                                      </InputAdornment>
+                                    }
+                                    defaultValue={param.currentMinAlert}
+                                    onBlur={(e) =>
+                                      handleBlur(
+                                        setting.devEUI,
+                                        param.parameter,
+                                        'currentMinAlert',
+                                        e.target.value
+                                      )
+                                    }
+                                    disabled={!param.alertActive || autoLogin}
+                                    error={
+                                      errors[
+                                        `${param.parameter}_currentMinAlert`
+                                      ] || false
+                                    }
+                                    style={{
+                                      borderColor: errors[
+                                        `${param.parameter}_currentMinAlert`
+                                      ]
+                                        ? 'red'
+                                        : '',
+                                      borderWidth: errors[
+                                        `${param.parameter}_currentMinAlert`
+                                      ]
+                                        ? '2px'
+                                        : '',
+                                    }}
+                                    aria-describedby="outlined-weight-helper-text"
+                                  />
+                                  {/* ) : (
                                   ""
                                 )} */}
-                              </td>
-                              <td className={styles.settings_input}>
-                                {/* {param.parameter !== "leakage_status" ? ( */}
-                                <OutlinedInput
-                                  startAdornment={
-                                    <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: 'red' }} />
-                                    </InputAdornment>
-                                  }
-                                  defaultValue={param.currentMaxAlert}
-                                  onBlur={(e) =>
-                                    handleBlur(
-                                      setting.devEUI,
-                                      param.parameter,
-                                      'currentMaxAlert',
-                                      e.target.value
-                                    )
-                                  }
-                                  disabled={!param.alertActive || autoLogin}
-                                  error={
-                                    errors[
-                                      `${param.parameter}_currentMaxAlert`
-                                    ] || false
-                                  }
-                                  style={{
-                                    borderColor: errors[
-                                      `${param.parameter}_currentMaxAlert`
-                                    ]
-                                      ? 'red'
-                                      : '',
-                                    borderWidth: errors[
-                                      `${param.parameter}_currentMaxAlert`
-                                    ]
-                                      ? '2px'
-                                      : '',
-                                  }}
-                                  aria-describedby="outlined-weight-helper-text"
-                                />
-                                {/* ) : (
+                                </td>
+                                <td className={styles.settings_input}>
+                                  {/* {param.parameter !== "leakage_status" ? ( */}
+                                  <OutlinedInput
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <ErrorOutline
+                                          style={{ color: 'red' }}
+                                        />
+                                      </InputAdornment>
+                                    }
+                                    defaultValue={param.currentMaxAlert}
+                                    onBlur={(e) =>
+                                      handleBlur(
+                                        setting.devEUI,
+                                        param.parameter,
+                                        'currentMaxAlert',
+                                        e.target.value
+                                      )
+                                    }
+                                    disabled={!param.alertActive || autoLogin}
+                                    error={
+                                      errors[
+                                        `${param.parameter}_currentMaxAlert`
+                                      ] || false
+                                    }
+                                    style={{
+                                      borderColor: errors[
+                                        `${param.parameter}_currentMaxAlert`
+                                      ]
+                                        ? 'red'
+                                        : '',
+                                      borderWidth: errors[
+                                        `${param.parameter}_currentMaxAlert`
+                                      ]
+                                        ? '2px'
+                                        : '',
+                                    }}
+                                    aria-describedby="outlined-weight-helper-text"
+                                  />
+                                  {/* ) : (
                                   ""
                                 )} */}
-                              </td>
-                              <td className={styles.settings_input}>
-                                {/* {param.parameter !== "leakage_status" ? ( */}
-                                <OutlinedInput
-                                  startAdornment={
-                                    <InputAdornment position="start">
-                                      <ErrorOutline style={{ color: 'red' }} />
-                                    </InputAdornment>
-                                  }
-                                  defaultValue={param.max_value}
-                                  onBlur={(e) =>
-                                    handleBlur(
-                                      setting.devEUI,
-                                      param.parameter,
-                                      'max_value',
-                                      e.target.value
-                                    )
-                                  }
-                                  disabled={!param.alertActive || autoLogin}
-                                  error={
-                                    errors[`${param.parameter}_max_value`] ||
-                                    false
-                                  }
-                                  style={{
-                                    borderColor: errors[
-                                      `${param.parameter}_max_value`
-                                    ]
-                                      ? 'red'
-                                      : '',
-                                    borderWidth: errors[
-                                      `${param.parameter}_max_value`
-                                    ]
-                                      ? '2px'
-                                      : '',
-                                  }}
-                                  aria-describedby="outlined-weight-helper-text"
-                                />
-                                {/* ) : (
+                                </td>
+                                <td className={styles.settings_input}>
+                                  {/* {param.parameter !== "leakage_status" ? ( */}
+                                  <OutlinedInput
+                                    startAdornment={
+                                      <InputAdornment position="start">
+                                        <ErrorOutline
+                                          style={{ color: 'red' }}
+                                        />
+                                      </InputAdornment>
+                                    }
+                                    defaultValue={param.max_value}
+                                    onBlur={(e) =>
+                                      handleBlur(
+                                        setting.devEUI,
+                                        param.parameter,
+                                        'max_value',
+                                        e.target.value
+                                      )
+                                    }
+                                    disabled={!param.alertActive || autoLogin}
+                                    error={
+                                      errors[`${param.parameter}_max_value`] ||
+                                      false
+                                    }
+                                    style={{
+                                      borderColor: errors[
+                                        `${param.parameter}_max_value`
+                                      ]
+                                        ? 'red'
+                                        : '',
+                                      borderWidth: errors[
+                                        `${param.parameter}_max_value`
+                                      ]
+                                        ? '2px'
+                                        : '',
+                                    }}
+                                    aria-describedby="outlined-weight-helper-text"
+                                  />
+                                  {/* ) : (
                                   ""
                                 )} */}
-                              </td>
-                              <td>
-                                <Checkbox
-                                  disabled={autoLogin}
-                                  checked={param?.repeatedAlert}
-                                  onChange={(e) => {
-                                    const newChecked = e.target.checked;
-                                    setSettings((prev) =>
-                                      prev.map((s) => {
-                                        if (s.devEUI === setting.devEUI) {
-                                          return {
-                                            ...s,
-                                            parameters: s.parameters.map(
-                                              (p) => {
-                                                if (
-                                                  p.parameter ===
-                                                  param.parameter
-                                                ) {
-                                                  return {
-                                                    ...p,
-                                                    repeatedAlert: newChecked,
-                                                  };
+                                </td>
+                                <td>
+                                  <Checkbox
+                                    disabled={autoLogin}
+                                    checked={param?.repeatedAlert}
+                                    onChange={(e) => {
+                                      const newChecked = e.target.checked;
+                                      setSettings((prev) =>
+                                        prev.map((s) => {
+                                          if (s.devEUI === setting.devEUI) {
+                                            return {
+                                              ...s,
+                                              parameters: s.parameters.map(
+                                                (p) => {
+                                                  if (
+                                                    p.parameter ===
+                                                    param.parameter
+                                                  ) {
+                                                    return {
+                                                      ...p,
+                                                      repeatedAlert: newChecked,
+                                                    };
+                                                  }
+                                                  return p;
                                                 }
-                                                return p;
-                                              }
-                                            ),
-                                          };
-                                        }
-                                        return s;
-                                      })
-                                    );
-                                    setIsEligibleDevEUIForSave(setting.devEUI);
-                                    setIsEligibleParameterForSave(
-                                      param.parameter
-                                    );
-                                    setIsEligibleForSave(true);
-                                  }}
-                                  color="primary"
-                                  sx={{
-                                    '& .MuiSvgIcon-root': { fontSize: 20 },
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                                              ),
+                                            };
+                                          }
+                                          return s;
+                                        })
+                                      );
+                                      setIsEligibleDevEUIForSave(
+                                        setting.devEUI
+                                      );
+                                      setIsEligibleParameterForSave(
+                                        param.parameter
+                                      );
+                                      setIsEligibleForSave(true);
+                                    }}
+                                    color="primary"
+                                    sx={{
+                                      '& .MuiSvgIcon-root': { fontSize: 20 },
+                                    }}
+                                  />
+                                </td>
+                              </tr>
+                            ))}
                         </tbody>
                       </table>
                     </div>
