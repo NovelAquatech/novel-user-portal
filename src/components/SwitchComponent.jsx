@@ -243,7 +243,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                     <TableBody>
                       {rows &&
                         rows
-                          .filter((row) => row.devEUI)
+                          .filter((row) => row?.devEUI)
                           .map((row) => {
                             let autoValue = null;
                             if (row.once) autoValue = 'once';

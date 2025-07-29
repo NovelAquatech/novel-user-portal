@@ -25,7 +25,7 @@ export const ValveModel = ({
 
   console.log(rows[2].devEUI)
 
-  const primaryValves = rows.filter((r) => r.primaryValve === undefined && r.devEUI !== undefined);
+  const primaryValves = rows.filter((r) => r?.primaryValve === undefined && r?.devEUI !== undefined);
   const isLastPrimary = !isSecondary && primaryValves.length === 1;
 
   const handleAssignSecondary = () => {
