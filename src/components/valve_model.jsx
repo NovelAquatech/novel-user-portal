@@ -17,13 +17,13 @@ export const ValveModel = ({
   rows,
   devices,
 }) => {
-  const isSecondary = row?.primaryValve !== undefined;
+  const isSecondary = row?.isSecondary !== undefined && row?.isSecondary;
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const { user } = useAuth();
 
   const getDeviceName = (uid) => devices[uid] || '';
 
-  const primaryValves = rows.filter((r) => r?.primaryValve === undefined && r?.devEUI !== undefined);
+  const primaryValves = rows.filter((r) => (r?.isSecondary === undefined || !r?.isSecondary) && r?.devEUI !== undefined);
   const isLastPrimary = !isSecondary && primaryValves.length === 1;
 
   const handleAssignSecondary = () => {
@@ -37,7 +37,6 @@ export const ValveModel = ({
       PartitionKey: row.PartitionKey,
       makeSecondary: true,
       orgName: row.orgName,
-      primaryValve: '', // no longer required
     };
     handleSave(payload);
   };

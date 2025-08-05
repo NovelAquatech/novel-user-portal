@@ -673,7 +673,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                 </TableCell>
                                 <TableCell>
                                   <div>
-                                    {row?.primaryValve !== undefined
+                                    {row?.isSecondary !== undefined && row?.isSecondary
                                       ? 'Low Pressure'
                                       : 'High Pressure'}
                                   </div>
