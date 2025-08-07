@@ -1,1 +1,16 @@
-{ "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }] }
+{
+  "redirects": [
+    {
+      "source": "/:path((?!machines|devices|report|setting|customsetting|survey$).*)",
+      "destination": "/",
+      "permanent": false
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/",
+      "status": 200
+    }
+  ]
+}
