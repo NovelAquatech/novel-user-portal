@@ -33,18 +33,25 @@ export const DetailedAnalytics = React.forwardRef(
     const farmer_companies = APP_CONST.farmer_companies;
     const orgName = user.orgName;
     let displayParameters = [];
+
     Object.keys(parameters).map((parameter, i) => {
       displayParameters.push(parameter);
     });
 
-    if (orgName === "JoeFarm") {
-      displayParameters = displayParameters.filter(
-        (param) =>
-          param.toLowerCase() !== "valve_1" && param.toLowerCase() !== "valve_2"
-      );
+    if (orgName === "JoeFarm" || orgName === "DeepTesting") {
+      displayParameters = displayParameters.filter((param) => {
+        const lowerParam = param.toLowerCase();
+        if (orgName === "JoeFarm") {
+          return lowerParam !== "valve_1" && lowerParam !== "valve_2";
+        }
+        if (orgName === "DeepTesting") {
+          return lowerParam !== "gpio_1" && lowerParam !== "gpio_2";
+        }
+        return true;
+      });
     }
     displayParameters.sort();
-
+    
 
     let layout = APP_CONST.default_layout;
     const [organizedSerieData, setOrganizedSerieData] = useState([]);
@@ -76,7 +83,6 @@ export const DetailedAnalytics = React.forwardRef(
         Object.keys(parameters)
       );
       series = seriesData;
-
       let sd = [];
       devices.forEach((device) => {
         // Check if the device is selected
@@ -363,7 +369,7 @@ export const DetailedAnalytics = React.forwardRef(
       const [deviceB, paramB] = b.name.split(" - ");
       return deviceA.localeCompare(deviceB) || paramA.localeCompare(paramB);
     });
-
+ 
     const updateParamName = (paramDisplayName) => {
       if (paramDisplayName.toLowerCase() == "tvoc")
         return paramDisplayName.toUpperCase();
