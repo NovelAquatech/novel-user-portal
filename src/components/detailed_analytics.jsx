@@ -51,7 +51,6 @@ export const DetailedAnalytics = React.forwardRef(
       });
     }
     displayParameters.sort();
-    
 
     let layout = APP_CONST.default_layout;
     const [organizedSerieData, setOrganizedSerieData] = useState([]);
@@ -101,6 +100,14 @@ export const DetailedAnalytics = React.forwardRef(
           let xArr = [];
           let yArr = [];
           let param = pm["value"];
+          let devEUI = null;
+
+          if (param.includes("__")) {
+            [param, devEUI] = param.split("__");
+          }
+
+          // Only process if device matches
+          if (devEUI && device.devEUI !== devEUI) return;
           // yaxis for mutiple yaxis
           let yaxis = `y`;
           let prm = parameters[pm.value];
@@ -369,7 +376,7 @@ export const DetailedAnalytics = React.forwardRef(
       const [deviceB, paramB] = b.name.split(" - ");
       return deviceA.localeCompare(deviceB) || paramA.localeCompare(paramB);
     });
- 
+
     const updateParamName = (paramDisplayName) => {
       if (paramDisplayName.toLowerCase() == "tvoc")
         return paramDisplayName.toUpperCase();
@@ -377,12 +384,43 @@ export const DetailedAnalytics = React.forwardRef(
       return paramDisplayName;
     };
 
-    const multiSelectOptions = displayParameters.map((parameter) => {
-      return {
-        label: capitalizeFirstLetter(updateParamName(parameter)),
-        value: parameter,
-      };
-    });
+    // const multiSelectOptions = displayParameters.map((parameter) => {
+    //   return {
+    //     label: capitalizeFirstLetter(updateParamName(parameter)),
+    //     value: parameter,
+    //   };
+    // });
+    const multiSelectOptions = [];
+    if (orgName === "DeepTesting") {
+      displayParameters.forEach((parameter) => {
+        if (parameter === "valve_1_state" || parameter === "valve_2_state") {
+          // Only include valve parameters for selected devices
+          devices.forEach((device) => {
+            if (selectedDevices.includes(device.devEUI)) {
+              multiSelectOptions.push({
+                label: `${capitalizeFirstLetter(updateParamName(parameter))} (${
+                  device.devName
+                })`,
+                value: `${parameter}__${device.devEUI}`, // Unique per device
+              });
+            }
+          });
+        } else {
+          multiSelectOptions.push({
+            label: capitalizeFirstLetter(updateParamName(parameter)),
+            value: parameter,
+          });
+        }
+      });
+    } else {
+      // Original logic: show all parameters normally
+      displayParameters.forEach((parameter) => {
+        multiSelectOptions.push({
+          label: capitalizeFirstLetter(updateParamName(parameter)),
+          value: parameter,
+        });
+      });
+    }
 
     return (
       <>
