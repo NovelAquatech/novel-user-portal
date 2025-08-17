@@ -384,13 +384,8 @@ export const DetailedAnalytics = React.forwardRef(
       return paramDisplayName;
     };
 
-    // const multiSelectOptions = displayParameters.map((parameter) => {
-    //   return {
-    //     label: capitalizeFirstLetter(updateParamName(parameter)),
-    //     value: parameter,
-    //   };
-    // });
     const multiSelectOptions = [];
+    // Only for DeepTesting org
     if (orgName === "DeepTesting") {
       displayParameters.forEach((parameter) => {
         if (parameter === "valve_1_state" || parameter === "valve_2_state") {
@@ -401,7 +396,7 @@ export const DetailedAnalytics = React.forwardRef(
                 label: `${capitalizeFirstLetter(updateParamName(parameter))} (${
                   device.devName
                 })`,
-                value: `${parameter}__${device.devEUI}`, // Unique per device
+                value: `${parameter}__${device.devEUI}`,
               });
             }
           });
@@ -413,7 +408,7 @@ export const DetailedAnalytics = React.forwardRef(
         }
       });
     } else {
-      // Original logic: show all parameters normally
+      // Original logic: show all parameters normally for other orgs
       displayParameters.forEach((parameter) => {
         multiSelectOptions.push({
           label: capitalizeFirstLetter(updateParamName(parameter)),
