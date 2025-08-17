@@ -33,24 +33,18 @@ export const DetailedAnalytics = React.forwardRef(
     const farmer_companies = APP_CONST.farmer_companies;
     const orgName = user.orgName;
     let displayParameters = [];
-
     Object.keys(parameters).map((parameter, i) => {
       displayParameters.push(parameter);
     });
 
-    if (orgName === "JoeFarm" || orgName === "DeepTesting") {
-      displayParameters = displayParameters.filter((param) => {
-        const lowerParam = param.toLowerCase();
-        if (orgName === "JoeFarm") {
-          return lowerParam !== "valve_1" && lowerParam !== "valve_2";
-        }
-        if (orgName === "DeepTesting") {
-          return lowerParam !== "gpio_1" && lowerParam !== "gpio_2";
-        }
-        return true;
-      });
+    if (orgName === "JoeFarm") {
+      displayParameters = displayParameters.filter(
+        (param) =>
+          param.toLowerCase() !== "valve_1" && param.toLowerCase() !== "valve_2"
+      );
     }
     displayParameters.sort();
+
 
     let layout = APP_CONST.default_layout;
     const [organizedSerieData, setOrganizedSerieData] = useState([]);
@@ -82,6 +76,7 @@ export const DetailedAnalytics = React.forwardRef(
         Object.keys(parameters)
       );
       series = seriesData;
+
       let sd = [];
       devices.forEach((device) => {
         // Check if the device is selected
@@ -100,14 +95,6 @@ export const DetailedAnalytics = React.forwardRef(
           let xArr = [];
           let yArr = [];
           let param = pm["value"];
-          let devEUI = null;
-
-          if (param.includes("__")) {
-            [param, devEUI] = param.split("__");
-          }
-
-          // Only process if device matches
-          if (devEUI && device.devEUI !== devEUI) return;
           // yaxis for mutiple yaxis
           let yaxis = `y`;
           let prm = parameters[pm.value];
@@ -384,43 +371,12 @@ export const DetailedAnalytics = React.forwardRef(
       return paramDisplayName;
     };
 
-    // const multiSelectOptions = displayParameters.map((parameter) => {
-    //   return {
-    //     label: capitalizeFirstLetter(updateParamName(parameter)),
-    //     value: parameter,
-    //   };
-    // });
-    const multiSelectOptions = [];
-    if (orgName === "DeepTesting") {
-      displayParameters.forEach((parameter) => {
-        if (parameter === "valve_1_state" || parameter === "valve_2_state") {
-          // Only include valve parameters for selected devices
-          devices.forEach((device) => {
-            if (selectedDevices.includes(device.devEUI)) {
-              multiSelectOptions.push({
-                label: `${capitalizeFirstLetter(updateParamName(parameter))} (${
-                  device.devName
-                })`,
-                value: `${parameter}__${device.devEUI}`, // Unique per device
-              });
-            }
-          });
-        } else {
-          multiSelectOptions.push({
-            label: capitalizeFirstLetter(updateParamName(parameter)),
-            value: parameter,
-          });
-        }
-      });
-    } else {
-      // Original logic: show all parameters normally
-      displayParameters.forEach((parameter) => {
-        multiSelectOptions.push({
-          label: capitalizeFirstLetter(updateParamName(parameter)),
-          value: parameter,
-        });
-      });
-    }
+    const multiSelectOptions = displayParameters.map((parameter) => {
+      return {
+        label: capitalizeFirstLetter(updateParamName(parameter)),
+        value: parameter,
+      };
+    });
 
     return (
       <>
