@@ -4,31 +4,41 @@ import {
   Box,
   Typography,
   Button,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { toast, Toaster } from "react-hot-toast";
+import { toast, Toaster } from 'react-hot-toast';
 import { updateValveSecondaryStatus } from '../helper/web-service';
 import { useAuth } from '../hooks/useAuth';
 
-export const ValveModel = ({
-  isOpen,
-  closeModel,
-  row,
-  rows,
-  devices,
-}) => {
+export const ValveModel = ({ isOpen, closeModel, row, rows, devices }) => {
   const isSecondary = row?.isSecondary !== undefined && row?.isSecondary;
   const [isLoaderVisible, setLoaderVisible] = useState(false);
+  const [selectedPrimary, setSelectedPrimary] = useState('');
   const { user } = useAuth();
 
   const getDeviceName = (uid) => devices[uid] || '';
 
-  const primaryValves = rows.filter((r) => (r?.isSecondary === undefined || !r?.isSecondary) && r?.devEUI !== undefined);
-  const isLastPrimary = !isSecondary && primaryValves.length === 1;
+  const primaryValves = rows.filter(
+    (r) =>
+      (r?.isSecondary === undefined || !r?.isSecondary) &&
+      r?.devEUI !== undefined &&
+      r?.RowKey !== row?.RowKey
+  );
+
+  const isLastPrimary = !isSecondary && primaryValves.length === 0;
 
   const handleAssignSecondary = () => {
     if (isLastPrimary) {
-      toast.error("At least one valve must remain primary.");
+      toast.error('At least one valve must remain primary.');
+      return;
+    }
+
+    if (!selectedPrimary) {
+      toast.error('Please select a primary valve.');
       return;
     }
 
@@ -37,6 +47,7 @@ export const ValveModel = ({
       PartitionKey: row.PartitionKey,
       makeSecondary: true,
       orgName: row.orgName,
+      primaryValve: selectedPrimary,
     };
     handleSave(payload);
   };
@@ -116,6 +127,32 @@ export const ValveModel = ({
             </LoadingButton>
           ) : (
             <>
+              {!isLastPrimary && (
+                <FormControl fullWidth sx={{ mt: 3 }}>
+                  <InputLabel
+                    id="primary-valve-label"
+                    sx={{ fontSize: '12px' }}
+                  >
+                    Select Primary Valve
+                  </InputLabel>
+                  <Select
+                    labelId="primary-valve-label"
+                    value={selectedPrimary}
+                    onChange={(e) => setSelectedPrimary(e.target.value)}
+                  >
+                    {primaryValves.map((pv) => (
+                      <MenuItem
+                        key={pv.RowKey}
+                        value={pv.RowKey}
+                        sx={{ fontSize: '13px' }}
+                      >
+                        {getDeviceName(pv.devEUI)} - {pv.identifier}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+
               <LoadingButton
                 variant="contained"
                 color="primary"
@@ -129,11 +166,7 @@ export const ValveModel = ({
               </LoadingButton>
 
               {isLastPrimary && (
-                <Typography
-                  sx={{ mt: 2 }}
-                  color="error"
-                  fontSize="12px"
-                >
+                <Typography sx={{ mt: 2 }} color="error" fontSize="12px">
                   Warning: At least one high pressure valve must exist.
                 </Typography>
               )}

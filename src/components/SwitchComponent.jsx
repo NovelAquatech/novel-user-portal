@@ -1,4 +1,7 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
 import styles from './SwitchComponent.module.css';
@@ -535,11 +538,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       disabled={
                                         autoLogin || autoValue == 'manual'
                                       }
-                                      value={
-                                        row.turnOnTime
-                                          ? dayjs(row.turnOnTime)
-                                          : null
-                                      }
+                                      value={ row.turnOnTime ? dayjs.utc(row.turnOnTime) : null }
                                       onChange={(newTime) => {
                                         if (
                                           newTime &&
@@ -608,13 +607,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       disabled={
                                         autoLogin || autoValue == 'manual'
                                       }
-                                      value={
-                                        row.turnOffTime
-                                          ? dayjs(row.turnOffTime)
-                                              .second(0)
-                                              .millisecond(0)
-                                          : null
-                                      }
+                                      value={ row.turnOffTime ? dayjs.utc(row.turnOffTime).second(0).millisecond(0) : null }
                                       onChange={(newTime) => {
                                         if (
                                           newTime &&
