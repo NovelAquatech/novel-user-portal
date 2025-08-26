@@ -85,7 +85,6 @@ export const ValveGroupCreateModel = ({
     setSelectedPrimary('');
     setSelectedLowPressure([]);
     onCloseCreateModel(event);
-    console.log('hello ji');
   };
 
   return (
@@ -113,9 +112,9 @@ export const ValveGroupCreateModel = ({
 
           {/* High Pressure */}
           <Typography variant="h6" sx={{ mt: 3 }}>
-            <h4>
+            <h5>
               <strong> High Pressure Valve</strong>
-            </h4>
+            </h5>
           </Typography>
           <FormControl fullWidth>
             <Select
@@ -146,9 +145,9 @@ export const ValveGroupCreateModel = ({
 
           {/* Low Pressure */}
           <Typography variant="h6" sx={{ mt: 3 }}>
-            <h4>
+            <h5>
               <strong> Low Pressure Valve</strong>
-            </h4>
+            </h5>
           </Typography>
           <FormControl fullWidth>
             <Select

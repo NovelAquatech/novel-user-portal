@@ -140,6 +140,15 @@ export const ValveSettingModel = ({
             </Box>
           )}
 
+          {valveType === 'Not Set' && (
+            <Box sx={{ mt: 3 }}>
+              <Typography fontSize="14px" color="text.primary">
+                There are no configurations for ungrouped valves. To change the
+                association, please create a new group.
+              </Typography>
+            </Box>
+          )}
+
           <>
             {isSecondary && (
               <>
