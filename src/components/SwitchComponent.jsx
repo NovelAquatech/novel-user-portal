@@ -6,8 +6,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
 import styles from './SwitchComponent.module.css';
 import { Button } from '@mui/material';
-import { toast, Toaster } from 'react-hot-toast';
-import React, { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -15,7 +15,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Checkbox,
   Paper,
   Radio,
   RadioGroup,
@@ -27,7 +26,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { ValveModel } from './valve_model';
+import ValvePressure from './ValvePressure';
 
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [loadingRows, setLoadingRows] = useState({});
@@ -35,9 +34,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   const [dateTime, setDateTime] = useState(
     dayjs().format('YYYY-MM-DD HH:mm:ss')
   );
-
-  const [isModelOpen, setModelOpen] = useState(false);
-  const [modelRow, setModelOpenRow] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -176,25 +172,13 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     }
   };
 
-  const openValveModel = (row) => {
-    setModelOpenRow(row);
-    setModelOpen(true);
-  };
-
-  const handleModelClose = async (event) => {
-    const closedByUser = !event;
-
-    setModelOpen(false);
-    setModelOpenRow(null);
-
-    if (closedByUser) {
+  const updatedData = async () => {
       try {
         const updatedData = await fetchDeviceSettings();
         setRows(updatedData.value);
       } catch (err) {
         console.error('Failed to refresh valve data:', err);
       }
-    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -240,7 +224,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                         <TableCell>Turn on Time</TableCell>
                         <TableCell>Turn off Time</TableCell>
                         <TableCell>Actions</TableCell>
-                        <TableCell>Valve Pressure</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -664,26 +647,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       : 'Save'}
                                   </Button>
                                 </TableCell>
-                                <TableCell>
-                                  <div>
-                                    {row?.isSecondary !== undefined && row?.isSecondary
-                                      ? 'Low Pressure'
-                                      : 'High Pressure'}
-                                  </div>
-                                  <Button
-                                    onClick={() => openValveModel(row)}
-                                    variant="contained"
-                                    color="primary"
-                                    style={{
-                                      color: '#ffffff',
-                                      verticalAlign: 'middle',
-                                      marginTop: '10px',
-                                    }}
-                                    className={`btn btn-success btn-block ${styles.save_btn}`}
-                                  >
-                                    Update
-                                  </Button>
-                                </TableCell>
                               </TableRow>
                             );
                           })}
@@ -693,17 +656,12 @@ const SwitchComponent = ({ devices, autoLogin }) => {
               </LocalizationProvider>
             </div>
           </div>
+
+          <ValvePressure rows={rows} devices={devices} updatedData={updatedData} />
         </div>
       ) : (
         ''
       )}
-      <ValveModel
-        isOpen={isModelOpen}
-        closeModel={handleModelClose}
-        row={modelRow}
-        rows={rows}
-        devices={devices}
-      />
     </>
   );
 };
