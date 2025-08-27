@@ -36,7 +36,7 @@ export const DetailedAnalytics = React.forwardRef(
       ? "images/logomain.png"
       : `https://api.cors.lol/?url=${user.orgDetails.icon}`;
     let displayParameters = [];
-
+    // console.log('selectedParameters:', selectedParam);
     Object.keys(parameters).map((parameter, i) => {
       displayParameters.push(parameter);
     });
@@ -56,14 +56,15 @@ export const DetailedAnalytics = React.forwardRef(
     displayParameters.sort();
 
     let layout = APP_CONST.default_layout;
+
     const [organizedSerieData, setOrganizedSerieData] = useState([]);
     const [isLoaderVisible, setLoaderVisible] = useState(false);
     const [sensorData, setSensorData] = useState([]);
     const [dataLoaded, setDataLoaded] = useState(false);
     // Updated function
+
     const detailedAnalyticsData = () => {
       let pdt = moment().add(-1, "hours");
-      let series = [];
 
       const timeRanges = {
         last_hour: moment().subtract(1, "hours"),
@@ -74,155 +75,137 @@ export const DetailedAnalytics = React.forwardRef(
         last_month: moment().subtract(1, "months"),
         last_year: moment().subtract(1, "years"),
       };
-
       if (timeRanges[selectedHourly]) {
         pdt = timeRanges[selectedHourly];
       }
 
-      // Determine the data range based on the selected hourly filter
       const { seriesData } = getOrganizedSensorData(
         sensorData,
         Object.keys(parameters)
       );
-      series = seriesData;
+      let series = seriesData;
 
       let sd = [];
+
+      // For DeepTesting org, map parameters to specific valves
+      const paramAxisMap = {};
+      if (orgName === "DeepTesting") {
+        selectedParam.forEach((pm, i) => {
+          paramAxisMap[pm.value] = i === 0 ? "y" : `y${i + 1}`;
+        });
+        
+      }
+
       devices.forEach((device) => {
-        // Check if the device is selected
-        if (!selectedDevices.includes(device.devEUI)) {
-          return;
-        }
+        if (!selectedDevices.includes(device.devEUI)) return;
 
-        // Get data for the device
         let data = series[device.devEUI];
-        if (typeof data === "undefined" || data === null) {
-          return;
-        }
+        if (!data) return;
 
-        // Process data for each selected parameter
         selectedParam.forEach((pm, index) => {
+          let param = pm.value;
+
           let xArr = [];
           let yArr = [];
-          let param = pm["value"];
-                    let devEUI = null;
+          let devEUI = null;
 
           if (param.includes("__")) {
             [param, devEUI] = param.split("__");
           }
-
-          // Only process if device matches
           if (devEUI && device.devEUI !== devEUI) return;
-          // yaxis for mutiple yaxis
-          let yaxis = `y`;
-          let prm = parameters[pm.value];
-          if (index > 0) {
-            yaxis = `y${index + 1}`;
-            layout[`yaxis${index + 1}`] = {
-              title: {
-                text: `${pm.label} (${prm?.unit ?? ""})`,
-                font: { size: 10 },
-              },
-              anchor: "free",
-              side: "left",
-              position: 0.05 * index,
-              overlaying: "y",
-            };
-          } else {
-            layout["yaxis"]["title"]["text"] = `${pm.label} (${
-              prm?.unit ?? ""
-            })`;
-          }
-          // Set xaxis domain
-          layout["xaxis"]["domain"] = [0.05 * selectedParam.length, 1];
-
+          // yaxis name: DeepTesting map OR fallback to index
+          let yaxis =
+            paramAxisMap[param] || (index === 0 ? "y" : `y${index + 1}`);
+          console.log("paramAxisMap:", yaxis);
           data.forEach((s) => {
             let cdt = moment(s.timestamp);
             let yval = s[param] ?? null;
-            if (
-              cdt.diff(pdt, "seconds") > 0 &&
-              typeof yval !== "undefined" &&
-              yval !== null
-            ) {
+            if (cdt.diff(pdt, "seconds") > 0 && yval != null) {
               xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
               yArr.push(yval);
             }
           });
 
-          // Add the series to the chart data if there is data to display
           if (xArr.length > 0 && yArr.length > 0) {
-            if (parameters[param].paramDisplayName === "Power") {
-              if (
-                !machines.some(
-                  (machine) => machine.primaryDevEUI === device.devEUI
-                )
-              ) {
-                return;
-              }
+            // Skip power if not primary device
+            if (
+              parameters[param].paramDisplayName === "Power" &&
+              !machines.some((m) => m.primaryDevEUI === device.devEUI)
+            ) {
+              return;
             }
 
+            // Label device name
             let machineName = `${device.devName} - ${parameters[param]?.paramDisplayName}`;
-
-            if (machines && machines.length > 0) {
-              const matchedMachine = machines.find(
-                (machine) =>
-                  machine.devEUIs &&
-                  JSON.parse(machine.devEUIs).includes(device.devEUI)
-              );
-
-              if (matchedMachine) {
-                machineName = `${matchedMachine.PartitionKey} - ${device.devName}: ${parameters[param]?.paramDisplayName}`;
-              }
+            const matchedMachine =
+              machines?.find(
+                (m) =>
+                  m.devEUIs && JSON.parse(m.devEUIs).includes(device.devEUI)
+              ) ?? null;
+            if (matchedMachine) {
+              machineName = `${matchedMachine.PartitionKey} - ${device.devName}: ${parameters[param]?.paramDisplayName}`;
             }
-
+            // Add trace
             sd.push({
               x: xArr,
               y: yArr,
-              yaxis: yaxis,
+              yaxis,
               type: "scatter",
               marker: { size: 5 },
               line: { width: 1 },
               name: machineName,
             });
+            let prm = parameters[pm.value];
+
+            // Configure axis in layout
+            if (index > 0) {
+              layout[`yaxis${index + 1}`] = {
+                title: {
+                  text: `${pm.label} (${prm?.unit ?? ""})`,
+                },
+                anchor: "free",
+                side: "left",
+                position: 0.05 * index,
+                overlaying: "y",
+              };
+            } else {
+              layout["yaxis"]["title"]["text"] = `${pm.label} (${
+                prm?.unit ?? ""
+              })`;
+              layout["yaxis"]["autorange"] = true;
+            }
           }
         });
       });
 
-      // Add overall people present data if selected
-      let cumulativePeoplePresentdata =
-        series[APP_CONST.overAllPeoplePresentDevEUIKey] ?? null;
-      let filterParam = selectedParam.filter(
-        (param) => param.value === "people_present"
-      );
-      if (filterParam.length > 0 && cumulativePeoplePresentdata) {
-        let xArr = [];
-        let yArr = [];
-        cumulativePeoplePresentdata.forEach((s) => {
-          let cdt = moment(s.timestamp);
-          let yval = s[filterParam[0]["value"]] ?? null;
+      // Handle cumulative people_present
+      if (selectedParam.some((p) => p.value === "people_present")) {
+        let peopleData = series[APP_CONST.overAllPeoplePresentDevEUIKey] ?? [];
+        let xArr = [],
+          yArr = [];
+        peopleData.forEach((s) => {
           if (
-            cdt.diff(pdt, "seconds") > 0 &&
-            typeof yval != "undefined" &&
-            yval != null
+            moment(s.timestamp).diff(pdt, "seconds") > 0 &&
+            s["people_present"] != null
           ) {
             xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
-            yArr.push(yval);
+            yArr.push(s["people_present"]);
           }
         });
-        if (xArr.length > 0 && yArr.length > 0) {
+        if (xArr.length > 0) {
           sd.push({
             x: xArr,
             y: yArr,
             type: "scatter",
-            marker: {
-              size: 5,
-            },
-            line: {
-              width: 1,
-            },
+            marker: { size: 5 },
+            line: { width: 1 },
             name: APP_CONST.overAllPeoplePresentDevNameKey,
           });
         }
       }
+
+      // Adjust xaxis domain based on number of selected parameters
+      layout["xaxis"]["domain"] = [0.05 * selectedParam.length, 1];
 
       setOrganizedSerieData(sd);
       setDataLoaded(true);
@@ -408,7 +391,6 @@ export const DetailedAnalytics = React.forwardRef(
         }
       });
     } else {
-      // Original logic: show all parameters normally for other orgs
       displayParameters.forEach((parameter) => {
         multiSelectOptions.push({
           label: capitalizeFirstLetter(updateParamName(parameter)),
