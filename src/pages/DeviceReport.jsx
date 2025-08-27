@@ -44,13 +44,26 @@ export default function DeviceReportPage() {
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState('last_hour');
-  const [selectedParam, setSelectedParam] = useState(
-    orgName === 'SeelyEnergyMonitor'
-      ? [APP_CONST.default_parameter_Seely]
-      : orgName === 'DeepTesting'
-      ? [APP_CONST.default_parameter_deep]
-      : [APP_CONST.default_parameter]
-  );
+  const [selectedParam, setSelectedParam] = useState([]);
+useEffect(() => {
+  if (selectedParam.length === 0) {
+    if (parameters.hasOwnProperty('temperature')) {
+      selectedParam.push({
+        label: parameters['temperature'].paramDisplayName,
+        value: 'temperature',
+      });
+    } else {
+      const firstKey = Object.keys(parameters)[0];
+      if (firstKey) {
+        selectedParam.push({
+          label: parameters[firstKey].paramDisplayName,
+          value: firstKey,
+        });
+      }
+    }
+  }
+}, [parameters]);
+
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
 
