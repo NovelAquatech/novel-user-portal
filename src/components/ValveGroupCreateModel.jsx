@@ -9,12 +9,14 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
+  Button
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { toast, Toaster } from 'react-hot-toast';
 import { updateValveSecondaryStatus } from '../helper/web-service';
 import { useAuth } from '../hooks/useAuth';
 import styles from './SwitchComponent.module.css';
+import CloseIcon from '@mui/icons-material/Close';
 
 export const ValveGroupCreateModel = ({
   isOpen,
@@ -104,6 +106,11 @@ export const ValveGroupCreateModel = ({
             p: 4,
           }}
         >
+          <Typography variant="h6" gutterBottom align="right">
+            <Button onClick={handleClose}>
+              <CloseIcon style={{ fontSize: '20px' }} />
+            </Button>
+          </Typography>
           <Typography variant="h6" gutterBottom align="center">
             <h3>
               <strong> Create Group</strong>
