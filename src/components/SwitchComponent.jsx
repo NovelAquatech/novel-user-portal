@@ -133,17 +133,22 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       toast.error('Both Turn-on and Turn-off time are required!');
       return;
     }
-    if (row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
+    if (!row.manual && row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
       toast.error('Turn-on time must be now or in the future!');
       return;
     }
 
-    if (row.turnOffTime && dayjs(row.turnOffTime).isBefore(now)) {
+    if (
+      !row.manual &&
+      row.turnOffTime &&
+      dayjs(row.turnOffTime).isBefore(now)
+    ) {
       toast.error('The turn-off time must be later than the turn-on time!');
       return;
     }
 
     if (
+      !row.manual &&
       row.turnOnTime &&
       row.turnOffTime &&
       dayjs(row.turnOffTime).isBefore(dayjs(row.turnOnTime))
@@ -173,12 +178,12 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   const updatedData = async () => {
-      try {
-        const updatedData = await fetchDeviceSettings();
-        setRows(updatedData.value);
-      } catch (err) {
-        console.error('Failed to refresh valve data:', err);
-      }
+    try {
+      const updatedData = await fetchDeviceSettings();
+      setRows(updatedData.value);
+    } catch (err) {
+      console.error('Failed to refresh valve data:', err);
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -521,7 +526,11 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       disabled={
                                         autoLogin || autoValue == 'manual'
                                       }
-                                      value={ row.turnOnTime ? dayjs.utc(row.turnOnTime) : null }
+                                      value={
+                                        row.turnOnTime
+                                          ? dayjs.utc(row.turnOnTime)
+                                          : null
+                                      }
                                       onChange={(newTime) => {
                                         if (
                                           newTime &&
@@ -590,7 +599,14 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       disabled={
                                         autoLogin || autoValue == 'manual'
                                       }
-                                      value={ row.turnOffTime ? dayjs.utc(row.turnOffTime).second(0).millisecond(0) : null }
+                                      value={
+                                        row.turnOffTime
+                                          ? dayjs
+                                              .utc(row.turnOffTime)
+                                              .second(0)
+                                              .millisecond(0)
+                                          : null
+                                      }
                                       onChange={(newTime) => {
                                         if (
                                           newTime &&
@@ -657,7 +673,11 @@ const SwitchComponent = ({ devices, autoLogin }) => {
             </div>
           </div>
 
-          <ValvePressure rows={rows} devices={devices} updatedData={updatedData} />
+          <ValvePressure
+            rows={rows}
+            devices={devices}
+            updatedData={updatedData}
+          />
         </div>
       ) : (
         ''
