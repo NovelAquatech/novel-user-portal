@@ -47,6 +47,8 @@ export default function DeviceReportPage() {
   const [selectedParam, setSelectedParam] = useState(
     orgName === 'SeelyEnergyMonitor'
       ? [APP_CONST.default_parameter_Seely]
+      : orgName === 'DeepTesting'
+      ? [APP_CONST.default_parameter_deep]
       : [APP_CONST.default_parameter]
   );
   const weatherStations = APP_CONST.weatherStations;

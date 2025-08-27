@@ -91,8 +91,9 @@ export const DetailedAnalytics = React.forwardRef(
       const paramAxisMap = {};
       if (orgName === "DeepTesting") {
         selectedParam.forEach((pm, i) => {
-          paramAxisMap[pm.value] = i === 0 ? "yaxis" : `yaxis${i + 1}`;
+          paramAxisMap[pm.value] = i === 0 ? "y" : `y${i + 1}`;
         });
+        
       }
 
       devices.forEach((device) => {
@@ -115,7 +116,7 @@ export const DetailedAnalytics = React.forwardRef(
           // yaxis name: DeepTesting map OR fallback to index
           let yaxis =
             paramAxisMap[param] || (index === 0 ? "y" : `y${index + 1}`);
-
+          console.log("paramAxisMap:", yaxis);
           data.forEach((s) => {
             let cdt = moment(s.timestamp);
             let yval = s[param] ?? null;

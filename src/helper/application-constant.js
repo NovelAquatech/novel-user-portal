@@ -5,6 +5,7 @@ export const APP_CONST = {
   SV: "1.0",
   default_parameter: { label: "Temperature", value: "temperature" },
   default_parameter_Seely: { label: "Current", value: "current" },
+  default_parameter_deep: { label: "Battery", value: "battery" },
   farmer_companies: ["JoeFarm", "FieldSolutions"],
   disable_occupant_survey: ["JoeFarm", "FieldSolutions", "SeelyEnergyMonitor"],
   enable_valve_setting_companies: ["JoeFarm", "FieldSolutions", "UNSW"],
