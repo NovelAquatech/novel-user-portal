@@ -29,11 +29,17 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import ValvePressure from './ValvePressure';
 
 const SwitchComponent = ({ devices, autoLogin }) => {
-  const [loadingRows, setLoadingRows] = useState({});
+  const [saveLoading, setSaveLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [dateTime, setDateTime] = useState(
     dayjs().format('YYYY-MM-DD HH:mm:ss')
   );
+
+  const [editedRows, setEditedRows] = useState(new Set());
+
+  const markRowEdited = (rowKey) => {
+    setEditedRows((prev) => new Set(prev).add(rowKey));
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -87,6 +93,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   });
 
   const handleSwitchChange = (rowKey) => {
+    markRowEdited(rowKey);
     setRows((prevRows) =>
       prevRows.map((row) =>
         row.RowKey === rowKey ? { ...row, active: !row.active } : row
@@ -94,6 +101,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     );
   };
   const handleTimeChangeRepeat = (rowKey, field, newTime) => {
+    markRowEdited(rowKey);
     const onlyTime = dayjs(newTime).format('HH:mm:ss');
     setRows((prevRows) =>
       prevRows.map((row) =>
@@ -103,6 +111,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   const handleTimeChange = (rowKey, field, newTime) => {
+    markRowEdited(rowKey);
     setRows((prevRows) =>
       prevRows.map((row) =>
         row.RowKey === rowKey ? { ...row, [field]: newTime } : row
@@ -111,6 +120,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   const handleRadioboxChange = (evt, rowKey) => {
+    markRowEdited(rowKey);
     const curOptionValue = evt.target.value;
     setRows((prevRows) =>
       prevRows.map((row) =>
@@ -126,63 +136,99 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     );
   };
 
-  const handleSave = async (row) => {
-    const now = dayjs();
-
-    if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
-      toast.error('Both Turn-on and Turn-off time are required!');
-      return;
-    }
-    if (!row.manual && row.turnOnTime && dayjs(row.turnOnTime).isBefore(now)) {
-      toast.error('Turn-on time must be now or in the future!');
-      return;
-    }
-
-    if (
-      !row.manual &&
-      row.turnOffTime &&
-      dayjs(row.turnOffTime).isBefore(now)
-    ) {
-      toast.error('The turn-off time must be later than the turn-on time!');
-      return;
-    }
-
-    if (
-      !row.manual &&
-      row.turnOnTime &&
-      row.turnOffTime &&
-      dayjs(row.turnOffTime).isBefore(dayjs(row.turnOnTime))
-    ) {
-      toast.error('Turn-off time cannot be earlier than Turn-on time!');
-      return;
-    }
-    setLoadingRows((prev) => ({ ...prev, [row.RowKey]: true }));
-    try {
-      await mutation.mutateAsync({
-        active: row.active,
-        RowKey: row.RowKey,
-        orgName: row.PartitionKey,
-        devEUI: row.devEUI,
-        once: row.once,
-        repeat: row.repeat,
-        manual: row.manual,
-        turnOffTime: row.turnOffTime,
-        turnOnTime: row.turnOnTime,
-      });
-      toast.success('Settings saved successfully!');
-    } catch (error) {
-      console.error('Failed to save settings:', error);
-    } finally {
-      setLoadingRows((prev) => ({ ...prev, [row.RowKey]: false }));
-    }
-  };
-
   const updatedData = async () => {
     try {
       const updatedData = await fetchDeviceSettings();
       setRows(updatedData.value);
     } catch (err) {
       console.error('Failed to refresh valve data:', err);
+    }
+  };
+
+  const handleSaveAll = async () => {
+    const now = dayjs();
+
+    const rowsToSave = rows.filter((r) => editedRows.has(r.RowKey));
+
+    for (const row of rowsToSave) {
+      if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
+        toast.error(
+          `${getDeviceName(row.devEUI)} (${
+            row.identifier
+          }): Both Turn-on and Turn-off time are required!`
+        );
+        return;
+      }
+      if (
+        !row.manual &&
+        row.turnOnTime &&
+        dayjs(row.turnOnTime).isBefore(now)
+      ) {
+        toast.error(
+          `${getDeviceName(row.devEUI)} (${
+            row.identifier
+          }): Turn-on time must be now or in the future!`
+        );
+        return;
+      }
+      if (
+        !row.manual &&
+        row.turnOffTime &&
+        dayjs(row.turnOffTime).isBefore(now)
+      ) {
+        toast.error(
+          `${getDeviceName(row.devEUI)} (${
+            row.identifier
+          }): The turn-off time must be later than the turn-on time!`
+        );
+        return;
+      }
+      if (
+        !row.manual &&
+        row.turnOnTime &&
+        row.turnOffTime &&
+        dayjs(row.turnOffTime).isBefore(dayjs(row.turnOnTime))
+      ) {
+        toast.error(
+          `${getDeviceName(row.devEUI)} (${
+            row.identifier
+          }): Turn-off time cannot be earlier than Turn-on time!`
+        );
+        return;
+      }
+
+      setSaveLoading(true);
+      try {
+        await mutation.mutateAsync({
+          active: row.active,
+          RowKey: row.RowKey,
+          orgName: row.PartitionKey,
+          devEUI: row.devEUI,
+          once: row.once,
+          repeat: row.repeat,
+          manual: row.manual,
+          turnOffTime: row.turnOffTime,
+          turnOnTime: row.turnOnTime,
+        });
+      } catch (error) {
+        toast.error(
+          `Failed to save ${getDeviceName(row.devEUI)} (${row.identifier})`
+        );
+        console.error('Failed to save settings:', error);
+        return;
+      } finally {
+        setSaveLoading(false);
+      }
+    }
+    try {
+      await axios.post(
+        'https://ug65-novel-dev-2.azurewebsites.net/api/ug65-valveControlFunction'
+      );
+      toast.success('All settings saved successfully!');
+      setEditedRows(new Set());
+    } catch (err) {
+      console.error('Valve control API call failed:', err);
+      toast.error('Settings saved, but failed to notify valve controller');
     }
   };
 
@@ -228,7 +274,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                         <TableCell>Auto</TableCell>
                         <TableCell>Turn on Time</TableCell>
                         <TableCell>Turn off Time</TableCell>
-                        <TableCell>Actions</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -644,25 +689,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     />
                                   )}
                                 </TableCell>
-                                <TableCell>
-                                  <Button
-                                    onClick={() => handleSave(row)}
-                                    variant="contained"
-                                    color="primary"
-                                    style={{
-                                      color: '#ffffff',
-                                      verticalAlign: 'middle',
-                                    }}
-                                    disabled={
-                                      loadingRows[row.RowKey] || autoLogin
-                                    }
-                                    className={`btn btn-success btn-block ${styles.save_btn}`}
-                                  >
-                                    {loadingRows[row.RowKey]
-                                      ? 'Saving...'
-                                      : 'Save'}
-                                  </Button>
-                                </TableCell>
                               </TableRow>
                             );
                           })}
@@ -671,6 +697,20 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                 </TableContainer>
               </LocalizationProvider>
             </div>
+            <Button
+              onClick={() => handleSaveAll()}
+              variant="contained"
+              color="primary"
+              style={{
+                color: '#ffffff',
+                verticalAlign: 'middle',
+                marginTop: '5px',
+                width: '140px',
+              }}
+              className={`btn btn-success btn-block ${styles.save_btn}`}
+            >
+              {saveLoading ? 'Saving...' : 'Save Settings'}
+            </Button>
           </div>
 
           <ValvePressure
