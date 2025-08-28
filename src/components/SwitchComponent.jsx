@@ -150,6 +150,11 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
     const rowsToSave = rows.filter((r) => editedRows.has(r.RowKey));
 
+    if (rowsToSave.length === 0) {
+      toast.error(`No changes to save!`);
+      return;
+    }
+
     for (const row of rowsToSave) {
       if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
         toast.error(
