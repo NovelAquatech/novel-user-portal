@@ -15,7 +15,7 @@ import {
   getDevices,
   getSensorData,
   getAdvisorySettings,
-  getAlerts,
+  getAlerts,getAverage
 } from '../helper/web-service';
 import { AvgParameters } from '../components/avg_parameters';
 import { DeviceList } from '../components/deviceList';
@@ -45,6 +45,8 @@ export default function DeviceReportPage() {
   const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState('last_hour');
   const [selectedParam, setSelectedParam] = useState([]);
+  const [avgData, setAvgData] = useState(null);
+
 useEffect(() => {
   if (selectedParam.length === 0) {
     if (parameters.hasOwnProperty('temperature')) {
@@ -125,6 +127,20 @@ useEffect(() => {
       setLoaderVisible(false);
     });
   }, [user]);
+  //Get average data
+  useEffect(() => {
+  if (selectedDevices.length === 0) {
+    setAvgData(null);
+    return;
+  }
+  getAverage(user, selectedDevices)
+    .then((response) => {
+      setAvgData(response);
+    })
+    .catch((err) => {
+      console.error("Error fetching average:", err);
+    });
+}, [selectedDevices, user]);
 
   const handleRefresh = () => {
     setLoaderVisible(true);
@@ -260,12 +276,10 @@ useEffect(() => {
           <div className="col-md-10 col-sm-9 col-xs-12">
             <h2 className="dev_ttlmain">All devices average</h2>
             <div className="dbb chartbox">
-              {last24HourEachDevice ? (
+              {avgData ? (
                 <>
                   <AvgParameters
-                    parameters={parameters}
-                    selectedDevices={selectedDevices}
-                    last24HoursData={last24HourEachDevice}
+                    avgData={avgData}
                   />
                 </>
               ) : (
