@@ -62,153 +62,187 @@ export const DetailedAnalytics = React.forwardRef(
     const [sensorData, setSensorData] = useState([]);
     const [dataLoaded, setDataLoaded] = useState(false);
     // Updated function
+const detailedAnalyticsData = () => {
+  let pdt = moment().add(-1, "hours");
+  let series = [];
 
-    const detailedAnalyticsData = () => {
-      let pdt = moment().add(-1, "hours");
+  const timeRanges = {
+    last_hour: moment().subtract(1, "hours"),
+    last_12_hour: moment().subtract(12, "hours"),
+    last_24_hour: moment().subtract(24, "hours"),
+    last_48_hour: moment().subtract(48, "hours"),
+    last_week: moment().subtract(1, "weeks"),
+    last_month: moment().subtract(1, "months"),
+    last_year: moment().subtract(1, "years"),
+  };
 
-      const timeRanges = {
-        last_hour: moment().subtract(1, "hours"),
-        last_12_hour: moment().subtract(12, "hours"),
-        last_24_hour: moment().subtract(24, "hours"),
-        last_48_hour: moment().subtract(48, "hours"),
-        last_week: moment().subtract(1, "weeks"),
-        last_month: moment().subtract(1, "months"),
-        last_year: moment().subtract(1, "years"),
-      };
-      if (timeRanges[selectedHourly]) {
-        pdt = timeRanges[selectedHourly];
+  if (timeRanges[selectedHourly]) {
+    pdt = timeRanges[selectedHourly];
+  }
+
+  const { seriesData } = getOrganizedSensorData(sensorData, Object.keys(parameters));
+  series = seriesData;
+
+  let sd = [];
+  let yAxisCount = 0;
+  let paramAxisMap = {}; // 🔑 Track param has for y-axis
+
+  devices.forEach((device) => {
+    if (!selectedDevices.includes(device.devEUI)) return;
+
+    let data = series[device.devEUI];
+    if (!data) return;
+
+    selectedParam.forEach((pm) => {
+      let xArr = [];
+      let yArr = [];
+      let param = pm["value"];
+      let devEUI = null;
+// For Valves__
+      if (param.includes("__")) {
+        [param, devEUI] = param.split("__");
       }
+      if (devEUI && device.devEUI !== devEUI) return;
 
-      const { seriesData } = getOrganizedSensorData(
-        sensorData,
-        Object.keys(parameters)
-      );
-      let series = seriesData;
-
-      let sd = [];
-
-      // For DeepTesting org, map parameters to specific valves
-      const paramAxisMap = {};
-      if (orgName === "DeepTesting") {
-        selectedParam.forEach((pm, i) => {
-          paramAxisMap[pm.value] = i === 0 ? "y" : `y${i + 1}`;
-        });
-      }
-
-      devices.forEach((device) => {
-        if (!selectedDevices.includes(device.devEUI)) return;
-
-        let data = series[device.devEUI];
-        if (!data) return;
-
-        selectedParam.forEach((pm, index) => {
-          let param = pm.value;
-
-          let xArr = [];
-          let yArr = [];
-          let devEUI = null;
-
-          if (param.includes("__")) {
-            [param, devEUI] = param.split("__");
-          }
-          if (devEUI && device.devEUI !== devEUI) return;
-          // yaxis name: DeepTesting map OR fallback to index
-          let yaxis =
-            paramAxisMap[param] || (index === 0 ? "y" : `y${index + 1}`);
-
-          data.forEach((s) => {
-            let cdt = moment(s.timestamp);
-            let yval = s[param] ?? null;
-            if (cdt.diff(pdt, "seconds") > 0 && yval != null) {
-              xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
-              yArr.push(yval);
-            }
-          });
-
-          if (xArr.length > 0 && yArr.length > 0) {
-            // Skip power if not primary device
-            if (
-              parameters[param].paramDisplayName === "Power" &&
-              !machines.some((m) => m.primaryDevEUI === device.devEUI)
-            ) {
-              return;
-            }
-
-            // Label device name
-            let machineName = `${device.devName} - ${parameters[param]?.paramDisplayName}`;
-            const matchedMachine =
-              machines?.find(
-                (m) =>
-                  m.devEUIs && JSON.parse(m.devEUIs).includes(device.devEUI)
-              ) ?? null;
-            if (matchedMachine) {
-              machineName = `${matchedMachine.PartitionKey} - ${device.devName}: ${parameters[param]?.paramDisplayName}`;
-            }
-            // Add trace
-            sd.push({
-              x: xArr,
-              y: yArr,
-              yaxis,
-              type: "scatter",
-              marker: { size: 5 },
-              line: { width: 1 },
-              name: machineName,
-            });
-            let prm = parameters[pm.value];
-
-            // Configure axis in layout
-            if (index > 0) {
-              layout[`yaxis${index + 1}`] = {
-                title: {
-                  text: `${pm.label} (${prm?.unit ?? ""})`,
-                },
-                anchor: "free",
-                side: "left",
-                position: 0.05 * index,
-                overlaying: "y",
-              };
-            } else {
-              layout["yaxis"]["title"]["text"] = `${pm.label} (${
-                prm?.unit ?? ""
-              })`;
-              layout["yaxis"]["autorange"] = true;
-            }
-          }
-        });
+      data.forEach((s) => {
+        let cdt = moment(s.timestamp);
+        let yval = s[param] ?? null;
+        if (cdt.diff(pdt, "seconds") > 0 && yval !== null && yval !== undefined) {
+          xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
+          yArr.push(yval);
+        }
       });
 
-      // Handle cumulative people_present
-      if (selectedParam.some((p) => p.value === "people_present")) {
-        let peopleData = series[APP_CONST.overAllPeoplePresentDevEUIKey] ?? [];
-        let xArr = [],
-          yArr = [];
-        peopleData.forEach((s) => {
-          if (
-            moment(s.timestamp).diff(pdt, "seconds") > 0 &&
-            s["people_present"] != null
-          ) {
-            xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
-            yArr.push(s["people_present"]);
-          }
-        });
-        if (xArr.length > 0) {
-          sd.push({
-            x: xArr,
-            y: yArr,
-            type: "scatter",
-            marker: { size: 5 },
-            line: { width: 1 },
-            name: APP_CONST.overAllPeoplePresentDevNameKey,
-          });
+      // Only assign axis if this parameter has valid data
+      if (xArr.length > 0 && yArr.length > 0) {
+        let yaxis;
+        let paramKey;
+
+        // Separate rules: For valves - per device; others - shared
+        if (param.startsWith("valve_")) {
+          paramKey = `${param}__${device.devEUI}`;
+        } else {
+          paramKey = param;
         }
+
+        if (paramAxisMap[paramKey]) {
+          yaxis = paramAxisMap[paramKey];
+        } else {
+          yAxisCount++;
+          yaxis = yAxisCount === 1 ? "y" : `y${yAxisCount}`;
+          paramAxisMap[paramKey] = yaxis;
+
+          let prm = parameters[pm.value];
+          if (yAxisCount === 1) {
+            layout["yaxis"]["title"]["text"] = `${pm.label} (${prm?.unit ?? ""})`;
+          } else {
+            layout[`yaxis${yAxisCount}`] = {
+              title: {
+                text: param.startsWith("valve_")
+                  ? `${pm.label} (${prm?.unit ?? ""})`
+                  : `${pm.label} (${prm?.unit ?? ""})`,
+                font: { size: 10 },
+              },
+              anchor: "free",
+              side: "left",
+              position: 0.05 * (yAxisCount - 1),
+              overlaying: "y",
+            };
+          }
+
+          layout["xaxis"]["domain"] = [0.05 * yAxisCount, 1];
+        }
+
+        // Handle Power param restriction
+        if (parameters[param].paramDisplayName === "Power") {
+          if (!machines.some((machine) => machine.primaryDevEUI === device.devEUI)) {
+            return;
+          }
+        }
+
+        // Device/machine display name
+        let machineName = `${device.devName} - ${parameters[param]?.paramDisplayName}`;
+        if (machines && machines.length > 0) {
+          const matchedMachine = machines.find(
+            (machine) =>
+              machine.devEUIs && JSON.parse(machine.devEUIs).includes(device.devEUI)
+          );
+          if (matchedMachine) {
+            machineName = `${matchedMachine.PartitionKey} - ${device.devName}: ${parameters[param]?.paramDisplayName}`;
+          }
+        }
+
+        sd.push({
+          x: xArr,
+          y: yArr,
+          yaxis: yaxis,
+          type: "scatter",
+          marker: { size: 5 },
+          line: { width: 1 },
+          name: machineName,
+        });
+      }
+    });
+  });
+
+  // ✅ Handle people_present with same shared-axis logic
+  let cumulativePeoplePresentdata =
+    series[APP_CONST.overAllPeoplePresentDevEUIKey] ?? null;
+  let filterParam = selectedParam.filter((param) => param.value === "people_present");
+
+  if (filterParam.length > 0 && cumulativePeoplePresentdata) {
+    let xArr = [];
+    let yArr = [];
+    cumulativePeoplePresentdata.forEach((s) => {
+      let cdt = moment(s.timestamp);
+      let yval = s[filterParam[0]["value"]] ?? null;
+      if (cdt.diff(pdt, "seconds") > 0 && yval !== null && yval !== undefined) {
+        xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
+        yArr.push(yval);
+      }
+    });
+
+    if (xArr.length > 0 && yArr.length > 0) {
+      let param = "people_present";
+      let yaxis;
+      let paramKey = param; // shared axis
+
+      if (paramAxisMap[paramKey]) {
+        yaxis = paramAxisMap[paramKey];
+      } else {
+        yAxisCount++;
+        yaxis = yAxisCount === 1 ? "y" : `y${yAxisCount}`;
+        paramAxisMap[paramKey] = yaxis;
+
+        layout[`yaxis${yAxisCount}`] = {
+          title: {
+            text: APP_CONST.overAllPeoplePresentDevNameKey,
+            font: { size: 10 },
+          },
+          anchor: "free",
+          side: "left",
+          position: 0.05 * (yAxisCount - 1),
+          overlaying: "y",
+        };
       }
 
-      // Adjust xaxis domain based on number of selected parameters
-      layout["xaxis"]["domain"] = [0.05 * selectedParam.length, 1];
+      sd.push({
+        x: xArr,
+        y: yArr,
+        yaxis: yaxis,
+        type: "scatter",
+        marker: { size: 5 },
+        line: { width: 1 },
+        name: APP_CONST.overAllPeoplePresentDevNameKey,
+      });
+    }
+  }
 
-      setOrganizedSerieData(sd);
-      setDataLoaded(true);
-    };
+  setOrganizedSerieData(sd);
+  setDataLoaded(true);
+};
+
+
 
     useEffect(() => {
       detailedAnalyticsData();
