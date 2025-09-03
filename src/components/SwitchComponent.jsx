@@ -649,15 +649,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                           ? dayjs.utc(row.turnOnTime)
                                           : null
                                       }
-                                      onChange={(newTime) => {
-                                        if (
-                                          newTime &&
-                                          newTime.isBefore(dayjs())
-                                        ) {
-                                          toast.error(
-                                            'You have selected a past date/time!'
-                                          );
-                                        }
+                                      onChange={(newTime) =>
                                         handleTimeChange(
                                           row.RowKey,
                                           'turnOnTime',
@@ -666,8 +658,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                                 'YYYY-MM-DDTHH:mm:ss'
                                               )
                                             : ''
-                                        );
-                                      }}
+                                        )
+                                      }
                                       minDateTime={null}
                                       format="YYYY-MM-DD HH:mm"
                                       className={styles.timPicker}
@@ -725,19 +717,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                               .millisecond(0)
                                           : null
                                       }
-                                      onChange={(newTime) => {
-                                        if (
-                                          newTime &&
-                                          row.turnOnTime &&
-                                          newTime.isBefore(
-                                            dayjs(row.turnOnTime)
-                                          )
-                                        ) {
-                                          toast.error(
-                                            'Turn-off time cannot be earlier than Turn-on time!'
-                                          );
-                                          return;
-                                        }
+                                      onChange={(newTime) =>
                                         handleTimeChange(
                                           row.RowKey,
                                           'turnOffTime',
@@ -746,8 +726,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                                 'YYYY-MM-DDTHH:mm:ss'
                                               )
                                             : ''
-                                        );
-                                      }}
+                                        )
+                                      }
                                       showToolbar
                                       minDateTime={
                                         row.turnOnTime
