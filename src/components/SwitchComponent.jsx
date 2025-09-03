@@ -251,7 +251,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     const currentRows = rowsRef.current;
     if (!currentRows || currentRows.length === 0) return;
 
-    const orgName = currentRows[0]?.PartitionKey || 'DeepTesting';
+    const orgName = user.orgName;
 
     try {
       const res = await axios.get(
