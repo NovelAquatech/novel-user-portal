@@ -290,6 +290,13 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     return () => clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      pollSyncStatus();
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching data</div>;
 
