@@ -7,7 +7,7 @@ import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
 import styles from './SwitchComponent.module.css';
 import { Button } from '@mui/material';
 import { toast } from 'react-hot-toast';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Table,
   TableBody,
@@ -237,6 +237,59 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     }
   };
 
+  const [lastSyncMap, setLastSyncMap] = useState({});
+
+  const SYNC_API_BASE =
+    'https://ug65-novel-dev-2.azurewebsites.net/api/ug65-valveSyncStatusFunction';
+
+  const rowsRef = useRef(rows);
+  useEffect(() => {
+    rowsRef.current = rows;
+  }, [rows]);
+
+  const pollSyncStatus = async () => {
+    const currentRows = rowsRef.current;
+    if (!currentRows || currentRows.length === 0) return;
+
+    const orgName = currentRows[0]?.PartitionKey || 'DeepTesting';
+
+    try {
+      const res = await axios.get(
+        `${SYNC_API_BASE}?orgName=${encodeURIComponent(orgName)}`
+      );
+      const syncRows = res.data?.status ?? [];
+      const byKey = new Map(syncRows.map((r) => [r.rowKey, r]));
+
+      setRows((prev) =>
+        prev.map((r) => {
+          const s = byKey.get(r.RowKey);
+          if (!s) return r;
+          if (editedRows.has(r.RowKey)) return r;
+          return {
+            ...r,
+            active:
+              typeof s.currentStatus === 'boolean' ? s.currentStatus : r.active,
+          };
+        })
+      );
+
+      setLastSyncMap((prev) => {
+        const next = { ...prev };
+        syncRows.forEach((s) => {
+          next[s.rowKey] = s.lastReportedTime || '';
+        });
+        return next;
+      });
+    } catch (e) {
+      console.error('Valve sync poll failed:', e);
+    }
+  };
+
+  useEffect(() => {
+    const id = setInterval(pollSyncStatus, 30000);
+    return () => clearInterval(id);
+  }, []);
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error fetching data</div>;
 
@@ -276,6 +329,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                         <TableCell className={`${styles.stickyColumn1}`}>
                           Device
                         </TableCell>
+                        <TableCell>Last synced</TableCell>
                         <TableCell>Auto</TableCell>
                         <TableCell>Turn on Time</TableCell>
                         <TableCell>Turn off Time</TableCell>
@@ -328,6 +382,13 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       __html: row.devEUI,
                                     }}
                                   />
+                                </TableCell>
+                                <TableCell className={styles.stickyColumn1}>
+                                  <div>
+                                    {lastSyncMap[row.RowKey]
+                                      ? lastSyncMap[row.RowKey]
+                                      : 'Loading...'}
+                                  </div>
                                 </TableCell>
                                 <TableCell className={styles.settings_input}>
                                   <RadioGroup
