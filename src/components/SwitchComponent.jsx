@@ -406,7 +406,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         <CachedIcon
                                           style={{
                                             fontSize: '24px',
-                                            color: '#E36868',
+                                            color: 'grey',
                                           }}
                                         />
                                       )
