@@ -306,7 +306,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       pollSyncStatus();
-    }, 5000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
