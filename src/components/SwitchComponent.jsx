@@ -256,12 +256,20 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     'https://ug65-novel-dev-2.azurewebsites.net/api/ug65-valveSyncStatusFunction';
 
   const rowsRef = useRef(rows);
+  const editedRowsRef = useRef(editedRows);
+  
   useEffect(() => {
     rowsRef.current = rows;
   }, [rows]);
 
+  useEffect(() => {
+  editedRowsRef.current = editedRows;
+}, [editedRows]);
+
   const pollSyncStatus = async () => {
     const currentRows = rowsRef.current;
+    const currentEditedRows = editedRowsRef.current;
+    
     if (!currentRows || currentRows.length === 0) return;
 
     const orgName = user.orgName;
@@ -277,7 +285,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         prev.map((r) => {
           const s = byKey.get(r.RowKey);
           if (!s) return r;
-          if (editedRows.has(r.RowKey)) return r;
+          if (currentEditedRows.has(r.RowKey)) return r;
           return {
             ...r,
             active:
