@@ -299,7 +299,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   useEffect(() => {
-    const id = setInterval(pollSyncStatus, 30000);
+    const id = setInterval(pollSyncStatus, 7000);
     return () => clearInterval(id);
   }, []);
 
