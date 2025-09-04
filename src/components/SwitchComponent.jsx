@@ -237,6 +237,17 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       console.error('Valve control API call failed:', err);
       toast.error('Settings saved, but failed to notify valve controller');
     }
+
+    setLastSyncMap((prev) => {
+      const next = { ...prev };
+      rowsToSave.forEach((row) => {
+        const original = data?.value?.find((d) => d.RowKey === row.RowKey);
+        if (original && original.active !== row.active) {
+          next[row.RowKey] = false;
+        }
+      });
+      return next;
+    });
   };
 
   const [lastSyncMap, setLastSyncMap] = useState({});
@@ -394,24 +405,22 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                 </TableCell>
                                 <TableCell className={styles.stickyColumn1}>
                                   <div>
-                                    {lastSyncMap[row.RowKey] ? (
-                                      lastSyncMap[row.RowKey] ? (
-                                        <CheckBoxIcon
-                                          style={{
-                                            fontSize: '24px',
-                                            color: '#5EA877',
-                                          }}
-                                        />
-                                      ) : (
-                                        <CachedIcon
-                                          style={{
-                                            fontSize: '24px',
-                                            color: 'grey',
-                                          }}
-                                        />
-                                      )
-                                    ) : (
+                                    {lastSyncMap[row.RowKey] === undefined ? (
                                       'Loading...'
+                                    ) : lastSyncMap[row.RowKey] ? (
+                                      <CheckBoxIcon
+                                        style={{
+                                          fontSize: '24px',
+                                          color: '#5EA877',
+                                        }}
+                                      />
+                                    ) : (
+                                      <CachedIcon
+                                        style={{
+                                          fontSize: '24px',
+                                          color: 'grey',
+                                        }}
+                                      />
                                     )}
                                   </div>
                                 </TableCell>
