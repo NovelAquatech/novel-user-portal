@@ -27,6 +27,8 @@ import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import ValvePressure from './ValvePressure';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CachedIcon from '@mui/icons-material/Cached';
 
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [saveLoading, setSaveLoading] = useState(false);
@@ -276,7 +278,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       setLastSyncMap((prev) => {
         const next = { ...prev };
         syncRows.forEach((s) => {
-          next[s.rowKey] = s.lastReportedTime || '';
+          next[s.rowKey] = s.synced || false;
         });
         return next;
       });
@@ -336,7 +338,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                         <TableCell className={`${styles.stickyColumn1}`}>
                           Device
                         </TableCell>
-                        <TableCell>Last synced</TableCell>
+                        <TableCell>Synced</TableCell>
                         <TableCell>Auto</TableCell>
                         <TableCell>Turn on Time</TableCell>
                         <TableCell>Turn off Time</TableCell>
@@ -392,9 +394,25 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                 </TableCell>
                                 <TableCell className={styles.stickyColumn1}>
                                   <div>
-                                    {lastSyncMap[row.RowKey]
-                                      ? lastSyncMap[row.RowKey]
-                                      : 'Loading...'}
+                                    {lastSyncMap[row.RowKey] ? (
+                                      lastSyncMap[row.RowKey] ? (
+                                        <CheckBoxIcon
+                                          style={{
+                                            fontSize: '24px',
+                                            color: '#5EA877',
+                                          }}
+                                        />
+                                      ) : (
+                                        <CachedIcon
+                                          style={{
+                                            fontSize: '24px',
+                                            color: '#E36868',
+                                          }}
+                                        />
+                                      )
+                                    ) : (
+                                      'Loading...'
+                                    )}
                                   </div>
                                 </TableCell>
                                 <TableCell className={styles.settings_input}>
