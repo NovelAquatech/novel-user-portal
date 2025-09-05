@@ -29,6 +29,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import ValvePressure from './ValvePressure';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CachedIcon from '@mui/icons-material/Cached';
+import { Tooltip } from '@mui/material';
 
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [saveLoading, setSaveLoading] = useState(false);
@@ -257,19 +258,19 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
   const rowsRef = useRef(rows);
   const editedRowsRef = useRef(editedRows);
-  
+
   useEffect(() => {
     rowsRef.current = rows;
   }, [rows]);
 
   useEffect(() => {
-  editedRowsRef.current = editedRows;
-}, [editedRows]);
+    editedRowsRef.current = editedRows;
+  }, [editedRows]);
 
   const pollSyncStatus = async () => {
     const currentRows = rowsRef.current;
     const currentEditedRows = editedRowsRef.current;
-    
+
     if (!currentRows || currentRows.length === 0) return;
 
     const orgName = user.orgName;
@@ -378,17 +379,39 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                 <TableCell
                                   className={`${styles.settings_input}  ${styles.stickyColumn1}`}
                                 >
-                                  <label className="switch">
-                                    <input
-                                      disabled={autoLogin}
-                                      type="checkbox"
-                                      checked={row.active}
-                                      onChange={() =>
-                                        handleSwitchChange(row.RowKey)
-                                      }
-                                    />
-                                    <span className="slider round"></span>
-                                  </label>
+                                  <Tooltip
+                                    title={
+                                      row.once || row.repeat
+                                        ? 'Active switch is automatically controlled in Once and Repeat Modes. To manually change the state of the device, switch the device to Manual mode first.'
+                                        : ''
+                                    }
+                                    disableHoverListener={
+                                      !(row.once || row.repeat)
+                                    }
+                                    placement="top"
+                                    slotProps={{
+                                      tooltip: {
+                                        sx: {
+                                          fontSize: '14px',
+                                          maxWidth: 350,
+                                          whiteSpace: 'normal',
+                                          marginLeft: '10px',
+                                        },
+                                      },
+                                    }}
+                                  >
+                                    <label className="switch">
+                                      <input
+                                        disabled={autoLogin}
+                                        type="checkbox"
+                                        checked={row.active}
+                                        onChange={() =>
+                                          handleSwitchChange(row.RowKey)
+                                        }
+                                      />
+                                      <span className="slider round"></span>
+                                    </label>
+                                  </Tooltip>
                                 </TableCell>
 
                                 <TableCell
