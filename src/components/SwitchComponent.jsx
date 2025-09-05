@@ -402,7 +402,9 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   >
                                     <label className="switch">
                                       <input
-                                        disabled={autoLogin}
+                                        disabled={
+                                          autoLogin || row.once || row.repeat
+                                        }
                                         type="checkbox"
                                         checked={row.active}
                                         onChange={() =>
