@@ -229,9 +229,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       }
     }
     try {
-      await axios.post(
-        'https://ug65-novel-dev-2.azurewebsites.net/api/ug65-valveControlFunction'
-      );
+      await axios.post(import.meta.env.VITE_VALVE_SAVE_FUNCTION_BASE);
       toast.success('All settings saved successfully!');
       setEditedRows(new Set());
     } catch (err) {
@@ -252,9 +250,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
 
   const [lastSyncMap, setLastSyncMap] = useState({});
-
-  const SYNC_API_BASE =
-    'https://ug65-novel-dev-2.azurewebsites.net/api/ug65-valveSyncStatusFunction';
 
   const rowsRef = useRef(rows);
   const editedRowsRef = useRef(editedRows);
@@ -277,7 +272,9 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
     try {
       const res = await axios.get(
-        `${SYNC_API_BASE}?orgName=${encodeURIComponent(orgName)}`
+        `${import.meta.env.VITE_SYNC_API_BASE}?orgName=${encodeURIComponent(
+          orgName
+        )}`
       );
       const syncRows = res.data?.status ?? [];
       const byKey = new Map(syncRows.map((r) => [r.rowKey, r]));
