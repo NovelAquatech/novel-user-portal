@@ -215,7 +215,7 @@ export const DetailedAnalytics = React.forwardRef(
     //   setOrganizedSerieData(sd);
     //   setDataLoaded(true);
     // };
-  // Updated complete function for valve setting
+    // Updated complete function for valve setting
     const detailedAnalyticsData = () => {
       let pdt = moment().add(-1, "hours");
       let series = [];
@@ -576,18 +576,15 @@ export const DetailedAnalytics = React.forwardRef(
       return paramDisplayName;
     };
     const multiSelectOptions = [];
-    // const multiSelectOptions = displayParameters.map((parameter) => {
-    //   return {
-    //     label: capitalizeFirstLetter(updateParamName(parameter)),
-    //     value: parameter,
-    //   };
-    // });
     const valveParams = ["valve_1_state", "valve_2_state"];
-
+    //Added if the device name have valve controller then add the device name with the valve_state else same
     displayParameters.forEach((parameter) => {
       if (valveParams.includes(parameter)) {
         devices.forEach((device) => {
-          if (selectedDevices.includes(device.devEUI)) {
+          const isValveController = device.devName
+            .toLowerCase()
+            .includes("valve controller");          
+          if (selectedDevices.includes(device.devEUI) && isValveController) {
             multiSelectOptions.push({
               label: `${capitalizeFirstLetter(updateParamName(parameter))} (${
                 device.devName
@@ -664,7 +661,10 @@ export const DetailedAnalytics = React.forwardRef(
             <b>
               No data available for the selected time range. The devices were
               offline during this period.
-              <p>Please choose a different time range or parameter to view the data.</p>
+              <p>
+                Please choose a different time range or parameter to view the
+                data.
+              </p>
             </b>
           </div>
         )}
