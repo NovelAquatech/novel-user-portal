@@ -15,7 +15,7 @@ import {
   getDevices,
   getSensorData,
   getAdvisorySettings,
-  getAlerts,
+  getAlerts,getAverage
 } from "../helper/web-service";
 import { AvgParameters } from "../components/avg_parameters";
 import { DeviceList } from "../components/deviceList";
@@ -51,6 +51,7 @@ export default function DeviceReportPage(){
   );
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
+   const [avgData, setAvgData] = useState(null);
 
   useEffect(() => {
     // Showing loader
@@ -110,6 +111,21 @@ export default function DeviceReportPage(){
       setLoaderVisible(false);
     });
   }, [user]);
+
+    //Get average data
+  useEffect(() => {
+  if (selectedDevices.length === 0) {
+    setAvgData(null);
+    return;
+  }
+  getAverage(user, selectedDevices)
+    .then((response) => {
+      setAvgData(response);
+    })
+    .catch((err) => {
+      console.error("Error fetching average:", err);
+    });
+}, [selectedDevices, user]);
 
   const handleRefresh = () => {
     setLoaderVisible(true);
@@ -247,12 +263,10 @@ export default function DeviceReportPage(){
             <div className="col-md-10 col-sm-9 col-xs-12">
               <h2 className="dev_ttlmain">All devices average</h2>
               <div className="dbb chartbox">
-                {last24HourEachDevice ? (
+                {avgData ? (
                   <>
                     <AvgParameters
-                      parameters={parameters}
-                      selectedDevices={selectedDevices}
-                      last24HoursData={last24HourEachDevice}
+                     avgData={avgData}
                     />
                   </>
                 ) : (
