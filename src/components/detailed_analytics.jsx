@@ -29,6 +29,7 @@ export const DetailedAnalytics = React.forwardRef(
     },
     ref
   ) => {
+    console.log('devices in detailed analytics', devices)
     const { user } = useAuth();
     const farmer_companies = APP_CONST.farmer_companies;
     const orgName = user.orgName;
@@ -577,11 +578,11 @@ export const DetailedAnalytics = React.forwardRef(
     };
     const multiSelectOptions = [];
     const valveParams = ["valve_1_state", "valve_2_state"];
-    //Added if the device name have valve controller then add the device name with the valve_state else same
+    //Added if the device type valve controller then add device name
     displayParameters.forEach((parameter) => {
       if (valveParams.includes(parameter)) {
         devices.forEach((device) => {
-          const isValveController = device.devName
+          const isValveController = device.deviceType
             .toLowerCase()
             .includes("valve controller");          
           if (selectedDevices.includes(device.devEUI) && isValveController) {

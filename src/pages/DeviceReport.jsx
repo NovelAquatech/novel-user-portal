@@ -70,8 +70,8 @@ export default function DeviceReportPage(){
         : fetchedDevices;
       if (!isDevicesFetched) setFetchedDevices(repDevices);
       deviceList = repDevices.map((device) => {
-        let { devName, devEUI } = device;
-        return { devName, devEUI };
+        let { devName, devEUI, deviceType } = device;
+        return { devName, devEUI, deviceType };
       });
       setIsDevicesFetched(true);
 
