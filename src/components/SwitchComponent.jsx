@@ -224,10 +224,9 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         );
         console.error('Failed to save settings:', error);
         return;
-      } finally {
-        setSaveLoading(false);
       }
     }
+
     try {
       await axios.post(import.meta.env.VITE_VALVE_SAVE_FUNCTION_BASE);
       toast.success('All settings saved successfully!');
@@ -235,6 +234,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     } catch (err) {
       console.error('Valve control API call failed:', err);
       toast.error('Settings saved, but failed to notify valve controller');
+    } finally {
+      setSaveLoading(false);
     }
 
     setLastSyncMap((prev) => {
