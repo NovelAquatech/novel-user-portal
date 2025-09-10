@@ -224,8 +224,6 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         );
         console.error('Failed to save settings:', error);
         return;
-      } finally {
-        setSaveLoading(false);
       }
     }
     try {
@@ -235,6 +233,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     } catch (err) {
       console.error('Valve control API call failed:', err);
       toast.error('Settings saved, but failed to notify valve controller');
+    } finally {
+      setSaveLoading(false);
     }
 
     setLastSyncMap((prev) => {
