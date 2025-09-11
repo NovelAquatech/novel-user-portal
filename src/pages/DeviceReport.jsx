@@ -128,26 +128,26 @@ export default function DeviceReportPage(){
 }, [selectedDevices, user]);
 
   const handleRefresh = () => {
-    setLoaderVisible(true);
-    const apiPromises = [getSensorData(user)];
+    // setLoaderVisible(true);
+    // const apiPromises = [getSensorData(user)];
 
-    Promise.all(apiPromises).then((responses) => {
-      // Organize sensor data
-      let repSensorData = responses[0]["value"];
-      repSensorData.forEach((sensorData) => {
-        if (sensorData.wind_speed != null) {
-          sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
-        }
-      });
+    // Promise.all(apiPromises).then((responses) => {
+    //   // Organize sensor data
+    //   let repSensorData = responses[0]["value"];
+    //   repSensorData.forEach((sensorData) => {
+    //     if (sensorData.wind_speed != null) {
+    //       sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
+    //     }
+    //   });
 
-      let { seriesData, latestData } = getOrganizedSensorData(
-        repSensorData,
-        Object.keys(parameters)
-      );
-      setSeries(seriesData);
-      setLast24HourEachDevice(latestData);
-      setLoaderVisible(false);
-    });
+    //   let { seriesData, latestData } = getOrganizedSensorData(
+    //     repSensorData,
+    //     Object.keys(parameters)
+    //   );
+    //   setSeries(seriesData);
+    //   setLast24HourEachDevice(latestData);
+    //   setLoaderVisible(false);
+    // });
     if(value === 'tab_one' ) childRef.current.fetchSensorData();
     else childRef.current.fetchRainfallData();
   };
