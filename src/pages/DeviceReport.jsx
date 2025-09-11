@@ -15,7 +15,8 @@ import {
   getDevices,
   getSensorData,
   getAdvisorySettings,
-  getAlerts,getAverage
+  getAlerts,
+  getAverage,
 } from '../helper/web-service';
 import { AvgParameters } from '../components/avg_parameters';
 import { DeviceList } from '../components/deviceList';
@@ -47,24 +48,24 @@ export default function DeviceReportPage() {
   const [selectedParam, setSelectedParam] = useState([]);
   const [avgData, setAvgData] = useState(null);
 
-useEffect(() => {
-  if (selectedParam.length === 0) {
-    if (parameters.hasOwnProperty('temperature')) {
-      selectedParam.push({
-        label: parameters['temperature'].paramDisplayName,
-        value: 'temperature',
-      });
-    } else {
-      const firstKey = Object.keys(parameters)[0];
-      if (firstKey) {
+  useEffect(() => {
+    if (selectedParam.length === 0) {
+      if (parameters.hasOwnProperty('temperature')) {
         selectedParam.push({
-          label: parameters[firstKey].paramDisplayName,
-          value: firstKey,
+          label: parameters['temperature'].paramDisplayName,
+          value: 'temperature',
         });
+      } else {
+        const firstKey = Object.keys(parameters)[0];
+        if (firstKey) {
+          selectedParam.push({
+            label: parameters[firstKey].paramDisplayName,
+            value: firstKey,
+          });
+        }
       }
     }
-  }
-}, [parameters]);
+  }, [parameters]);
 
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
@@ -129,40 +130,40 @@ useEffect(() => {
   }, [user]);
   //Get average data
   useEffect(() => {
-  if (selectedDevices.length === 0) {
-    setAvgData(null);
-    return;
-  }
-  getAverage(user, selectedDevices)
-    .then((response) => {
-      setAvgData(response);
-    })
-    .catch((err) => {
-      console.error("Error fetching average:", err);
-    });
-}, [selectedDevices, user]);
+    if (selectedDevices.length === 0) {
+      setAvgData(null);
+      return;
+    }
+    getAverage(user, selectedDevices)
+      .then((response) => {
+        setAvgData(response);
+      })
+      .catch((err) => {
+        console.error('Error fetching average:', err);
+      });
+  }, [selectedDevices, user]);
 
   const handleRefresh = () => {
-    setLoaderVisible(true);
-    const apiPromises = [getSensorData(user)];
+    // setLoaderVisible(true);
+    // const apiPromises = [getSensorData(user)];
 
-    Promise.all(apiPromises).then((responses) => {
-      // Organize sensor data
-      let repSensorData = responses[0]['value'];
-      repSensorData.forEach((sensorData) => {
-        if (sensorData.wind_speed != null) {
-          sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
-        }
-      });
+    // Promise.all(apiPromises).then((responses) => {
+    //   // Organize sensor data
+    //   let repSensorData = responses[0]['value'];
+    //   repSensorData.forEach((sensorData) => {
+    //     if (sensorData.wind_speed != null) {
+    //       sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
+    //     }
+    //   });
 
-      let { seriesData, latestData } = getOrganizedSensorData(
-        repSensorData,
-        Object.keys(parameters)
-      );
-      setSeries(seriesData);
-      setLast24HourEachDevice(latestData);
-      setLoaderVisible(false);
-    });
+    //   let { seriesData, latestData } = getOrganizedSensorData(
+    //     repSensorData,
+    //     Object.keys(parameters)
+    //   );
+    //   setSeries(seriesData);
+    //   setLast24HourEachDevice(latestData);
+    //   setLoaderVisible(false);
+    // });
     if (value === 'tab_one') childRef.current.fetchSensorData();
     else childRef.current.fetchRainfallData();
   };
@@ -278,9 +279,7 @@ useEffect(() => {
             <div className="dbb chartbox">
               {avgData ? (
                 <>
-                  <AvgParameters
-                    avgData={avgData}
-                  />
+                  <AvgParameters avgData={avgData} />
                 </>
               ) : (
                 <div className="waiting_loader">Waiting to load data....</div>
@@ -316,7 +315,7 @@ useEffect(() => {
                           <button
                             className="btn btn-info btn-sm"
                             onClick={handleRefresh}
-                          > 
+                          >
                             Refresh Sensor Data
                           </button>
                           <button
