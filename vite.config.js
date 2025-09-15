@@ -7,6 +7,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   plugins: [react()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
   base: './',
   build: {
     rollupOptions: {
