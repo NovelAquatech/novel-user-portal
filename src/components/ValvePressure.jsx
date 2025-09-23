@@ -184,7 +184,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
 
         {/* Groups */}
         {groups.map((g) => (
-          <div key={g.id} style={{ marginBottom: '5px' }}>
+          <div key={g.id} data-testid={`group-${g.id}`} style={{ marginBottom: '5px' }}>
             <div
               style={{
                 display: 'flex',
@@ -262,7 +262,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Button onClick={() => handleEdit(g.primary)}>
+                      <Button data-testid={`active-${g.primary.devEUI}-${g.primary.RowKey}`} onClick={() => handleEdit(g.primary)}>
                         <BorderColorIcon style={{ fontSize: '20px' }} />
                       </Button>
                     </TableCell>
@@ -303,7 +303,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
                         </span>
                       </TableCell>
                       <TableCell>
-                        <Button onClick={() => handleEdit(s, g)}>
+                        <Button data-testid={`active-${s.devEUI}-${s.RowKey}`}onClick={() => handleEdit(s, g)}>
                           <BorderColorIcon style={{ fontSize: '20px' }} />
                         </Button>
                       </TableCell>
@@ -317,6 +317,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
 
         <Button
           onClick={() => setCreateModelOpen(true)}
+          data-testid="create-group-button"
           variant="contained"
           color="primary"
           style={{

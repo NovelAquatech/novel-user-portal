@@ -370,8 +370,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                             let autoValue = null;
                             if (row.once) autoValue = 'once';
                             else if (row.repeat) autoValue = 'repeat';
-                            else if (row.manual) autoValue = 'manual';
-
+                            else if (row.manual) autoValue = 'manual';                            
                             return (
                               <TableRow key={row.RowKey}>
                                 <TableCell
@@ -398,7 +397,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       },
                                     }}
                                   >
-                                    <label className="switch">
+                                    <label className="switch">                                      
                                       <input
                                         disabled={
                                           autoLogin || row.once || row.repeat
@@ -408,6 +407,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         onChange={() =>
                                           handleSwitchChange(row.RowKey)
                                         }
+                                        data-testid={`active-${row.RowKey}`}
                                       />
                                       <span className="slider round"></span>
                                     </label>

@@ -126,6 +126,7 @@ export const ValveGroupCreateModel = ({
           <FormControl fullWidth>
             <Select
               labelId="primary-valve-label"
+              data-testid="primary-select"
               value={selectedPrimary}
               onChange={(e) => {
                 setSelectedPrimary(e.target.value);
@@ -159,6 +160,7 @@ export const ValveGroupCreateModel = ({
           <FormControl fullWidth>
             <Select
               labelId="low-valves-label"
+              data-testid="low-select"
               multiple
               value={selectedLowPressure}
               onChange={(e) => setSelectedLowPressure(e.target.value)}
@@ -208,6 +210,7 @@ export const ValveGroupCreateModel = ({
               className={`btn btn-success btn-block ${styles.save_btn}`}
               sx={{ py: 1 }}
               onClick={handleSave}
+              data-testid="group-save"
               loading={isLoaderVisible}
             >
               Save
