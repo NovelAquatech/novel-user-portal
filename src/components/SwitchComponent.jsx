@@ -1,13 +1,13 @@
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DesktopTimePicker } from '@mui/x-date-pickers/DesktopTimePicker';
-import styles from './SwitchComponent.module.css';
-import { Button } from '@mui/material';
-import { toast } from 'react-hot-toast';
-import { useEffect, useState, useRef } from 'react';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopTimePicker } from "@mui/x-date-pickers/DesktopTimePicker";
+import styles from "./SwitchComponent.module.css";
+import { Button } from "@mui/material";
+import { toast } from "react-hot-toast";
+import { useEffect, useState, useRef } from "react";
 import {
   Table,
   TableBody,
@@ -19,23 +19,23 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-} from '@mui/material';
-import { getValveSettings, setValveSettings } from '../helper/web-service';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import axios from 'axios';
-import { useAuth } from '../hooks/useAuth';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import ValvePressure from './ValvePressure';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CachedIcon from '@mui/icons-material/Cached';
-import { Tooltip } from '@mui/material';
+} from "@mui/material";
+import { getValveSettings, setValveSettings } from "../helper/web-service";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import ValvePressure from "./ValvePressure";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CachedIcon from "@mui/icons-material/Cached";
+import { Tooltip } from "@mui/material";
 
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [saveLoading, setSaveLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [dateTime, setDateTime] = useState(
-    dayjs().format('YYYY-MM-DD HH:mm:ss')
+    dayjs().format("YYYY-MM-DD HH:mm:ss")
   );
 
   const [editedRows, setEditedRows] = useState(new Set());
@@ -46,7 +46,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setDateTime(dayjs().format('YYYY-MM-DD HH:mm:ss'));
+      setDateTime(dayjs().format("YYYY-MM-DD HH:mm:ss"));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -56,7 +56,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   const { user } = useAuth();
 
   const getDeviceName = (uid) => {
-    return devices[uid] || '';
+    return devices[uid] || "";
   };
 
   const fetchDeviceSettings = async () => {
@@ -72,7 +72,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
   // Fetch device settings data
   const { data, isLoading, error } = useQuery(
-    'valve-settings',
+    "valve-settings",
     fetchDeviceSettings,
     {
       refetchOnWindowFocus: false,
@@ -91,7 +91,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   const mutation = useMutation(saveDeviceSettings, {
     onSuccess: () => {
       // Invalidate and refetch data after mutation
-      queryClient.invalidateQueries('deviceSettings');
+      queryClient.invalidateQueries("deviceSettings");
     },
   });
 
@@ -105,7 +105,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   };
   const handleTimeChangeRepeat = (rowKey, field, newTime) => {
     markRowEdited(rowKey);
-    const onlyTime = dayjs(newTime).format('HH:mm:ss');
+    const onlyTime = dayjs(newTime).format("HH:mm:ss");
     setRows((prevRows) =>
       prevRows.map((row) =>
         row.RowKey === rowKey ? { ...row, [field]: onlyTime } : row
@@ -130,9 +130,9 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         row.RowKey === rowKey
           ? {
               ...row,
-              once: curOptionValue == 'once' ? true : false,
-              repeat: curOptionValue == 'repeat' ? true : false,
-              manual: curOptionValue == 'manual' ? true : false,
+              once: curOptionValue == "once" ? true : false,
+              repeat: curOptionValue == "repeat" ? true : false,
+              manual: curOptionValue == "manual" ? true : false,
             }
           : row
       )
@@ -144,7 +144,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       const updatedData = await fetchDeviceSettings();
       setRows(updatedData.value);
     } catch (err) {
-      console.error('Failed to refresh valve data:', err);
+      console.error("Failed to refresh valve data:", err);
     }
   };
 
@@ -222,18 +222,18 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         toast.error(
           `Failed to save ${getDeviceName(row.devEUI)} (${row.identifier})`
         );
-        console.error('Failed to save settings:', error);
+        console.error("Failed to save settings:", error);
         return;
       }
     }
 
     try {
       await axios.post(import.meta.env.VITE_VALVE_SAVE_FUNCTION_BASE);
-      toast.success('All settings saved successfully!');
+      toast.success("All settings saved successfully!");
       setEditedRows(new Set());
     } catch (err) {
-      console.error('Valve control API call failed:', err);
-      toast.error('Settings saved, but failed to notify valve controller');
+      console.error("Valve control API call failed:", err);
+      toast.error("Settings saved, but failed to notify valve controller");
     } finally {
       setSaveLoading(false);
     }
@@ -288,7 +288,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
           return {
             ...r,
             active:
-              typeof s.currentStatus === 'boolean' ? s.currentStatus : r.active,
+              typeof s.currentStatus === "boolean" ? s.currentStatus : r.active,
           };
         })
       );
@@ -301,7 +301,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         return next;
       });
     } catch (e) {
-      console.error('Valve sync poll failed:', e);
+      console.error("Valve sync poll failed:", e);
     }
   };
 
@@ -326,13 +326,13 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         <div>
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            {' '}
-            <h2 style={{ paddingTop: '2px' }}>
+            {" "}
+            <h2 style={{ paddingTop: "2px" }}>
               <strong>Device Settings</strong>
             </h2>
             <p>
@@ -368,19 +368,19 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                           .filter((row) => row?.devEUI)
                           .map((row) => {
                             let autoValue = null;
-                            if (row.once) autoValue = 'once';
-                            else if (row.repeat) autoValue = 'repeat';
-                            else if (row.manual) autoValue = 'manual';                            
+                            if (row.once) autoValue = "once";
+                            else if (row.repeat) autoValue = "repeat";
+                            else if (row.manual) autoValue = "manual";
                             return (
-                              <TableRow key={row.RowKey}>
+                              <TableRow key={row.RowKey} data-testid={`row-${row.RowKey}`}>
                                 <TableCell
                                   className={`${styles.settings_input}  ${styles.stickyColumn1}`}
                                 >
                                   <Tooltip
                                     title={
                                       row.once || row.repeat
-                                        ? 'Active switch is automatically controlled in Once and Repeat Modes. To manually change the state of the device, switch the device to Manual mode first.'
-                                        : ''
+                                        ? "Active switch is automatically controlled in Once and Repeat Modes. To manually change the state of the device, switch the device to Manual mode first."
+                                        : ""
                                     }
                                     disableHoverListener={
                                       !(row.once || row.repeat)
@@ -389,15 +389,15 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     slotProps={{
                                       tooltip: {
                                         sx: {
-                                          fontSize: '14px',
+                                          fontSize: "14px",
                                           maxWidth: 350,
-                                          whiteSpace: 'normal',
-                                          marginLeft: '10px',
+                                          whiteSpace: "normal",
+                                          marginLeft: "10px",
                                         },
                                       },
                                     }}
                                   >
-                                    <label className="switch">                                      
+                                    <label className="switch">
                                       <input
                                         disabled={
                                           autoLogin || row.once || row.repeat
@@ -418,7 +418,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   className={`${styles.stickyColumn1}`}
                                 >
                                   <div
-                                    style={{ fontWeight: 'bold' }}
+                                    style={{ fontWeight: "bold" }}
                                     dangerouslySetInnerHTML={{
                                       __html: getDeviceName(row.devEUI),
                                     }}
@@ -437,19 +437,19 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                 <TableCell className={styles.stickyColumn1}>
                                   <div>
                                     {lastSyncMap[row.RowKey] === undefined ? (
-                                      'Loading...'
+                                      "Loading..."
                                     ) : lastSyncMap[row.RowKey] ? (
                                       <CheckBoxIcon
                                         style={{
-                                          fontSize: '24px',
-                                          color: '#5EA877',
+                                          fontSize: "24px",
+                                          color: "#5EA877",
                                         }}
                                       />
                                     ) : (
                                       <CachedIcon
                                         style={{
-                                          fontSize: '24px',
-                                          color: 'grey',
+                                          fontSize: "24px",
+                                          color: "grey",
                                         }}
                                       />
                                     )}
@@ -470,7 +470,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         <Radio
                                           disabled={autoLogin}
                                           sx={{
-                                            '& .MuiSvgIcon-root': {
+                                            "& .MuiSvgIcon-root": {
                                               fontSize: 20,
                                             },
                                           }}
@@ -485,7 +485,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         <Radio
                                           disabled={autoLogin}
                                           sx={{
-                                            '& .MuiSvgIcon-root': {
+                                            "& .MuiSvgIcon-root": {
                                               fontSize: 20,
                                             },
                                           }}
@@ -500,7 +500,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                         <Radio
                                           disabled={autoLogin}
                                           sx={{
-                                            '& .MuiSvgIcon-root': {
+                                            "& .MuiSvgIcon-root": {
                                               fontSize: 20,
                                             },
                                           }}
@@ -658,30 +658,37 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                 )}
                               </TableCell> */}
                                 <TableCell className={styles.settings_input}>
-                                  {autoValue === 'repeat' ? (
+                                  {autoValue === "repeat" ? (
                                     <DesktopTimePicker
                                       disabled={
-                                        autoLogin || autoValue == 'manual'
+                                        autoLogin || autoValue == "manual"
                                       }
+                                      slotProps={{
+                                        textField: {
+                                          inputProps: {
+                                            "data-testid": `turnOnTime-${row.RowKey}`,
+                                          },
+                                        },
+                                      }}
                                       value={
                                         row.turnOnTime
                                           ? dayjs()
                                               .set(
-                                                'hour',
+                                                "hour",
                                                 Number(
-                                                  row.turnOnTime.split(':')[0]
+                                                  row.turnOnTime.split(":")[0]
                                                 )
                                               )
                                               .set(
-                                                'minute',
+                                                "minute",
                                                 Number(
-                                                  row.turnOnTime.split(':')[1]
+                                                  row.turnOnTime.split(":")[1]
                                                 )
                                               )
                                               .set(
-                                                'second',
+                                                "second",
                                                 Number(
-                                                  row.turnOnTime.split(':')[2]
+                                                  row.turnOnTime.split(":")[2]
                                                 )
                                               )
                                           : null
@@ -689,8 +696,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       onChange={(newTime) =>
                                         handleTimeChangeRepeat(
                                           row.RowKey,
-                                          'turnOnTime',
-                                          newTime ? newTime.toString() : ''
+                                          "turnOnTime",
+                                          newTime ? newTime.toString() : ""
                                         )
                                       }
                                       minutesStep={1}
@@ -700,8 +707,15 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     <DateTimePicker
                                       key={row.RowKey}
                                       disabled={
-                                        autoLogin || autoValue == 'manual'
+                                        autoLogin || autoValue == "manual"
                                       }
+                                      slotProps={{
+                                        textField: {
+                                          inputProps: {
+                                            "data-testid": `turnOnTime-${row.RowKey}`,
+                                          },
+                                        },
+                                      }}
                                       value={
                                         row.turnOnTime
                                           ? dayjs.utc(row.turnOnTime)
@@ -710,12 +724,12 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       onChange={(newTime) =>
                                         handleTimeChange(
                                           row.RowKey,
-                                          'turnOnTime',
+                                          "turnOnTime",
                                           newTime
                                             ? newTime.format(
-                                                'YYYY-MM-DDTHH:mm:ss'
+                                                "YYYY-MM-DDTHH:mm:ss"
                                               )
-                                            : ''
+                                            : ""
                                         )
                                       }
                                       minDateTime={null}
@@ -725,30 +739,37 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   )}
                                 </TableCell>
                                 <TableCell className={styles.settings_input}>
-                                  {autoValue === 'repeat' ? (
+                                  {autoValue === "repeat" ? (
                                     <DesktopTimePicker
                                       disabled={
-                                        autoLogin || autoValue == 'manual'
+                                        autoLogin || autoValue == "manual"
                                       }
+                                      slotProps={{
+                                        textField: {
+                                          inputProps: {
+                                            "data-testid": `turnOffTime-${row.RowKey}`,
+                                          },
+                                        },
+                                      }}
                                       value={
                                         row.turnOffTime
                                           ? dayjs()
                                               .set(
-                                                'hour',
+                                                "hour",
                                                 Number(
-                                                  row.turnOffTime.split(':')[0]
+                                                  row.turnOffTime.split(":")[0]
                                                 )
                                               )
                                               .set(
-                                                'minute',
+                                                "minute",
                                                 Number(
-                                                  row.turnOffTime.split(':')[1]
+                                                  row.turnOffTime.split(":")[1]
                                                 )
                                               )
                                               .set(
-                                                'second',
+                                                "second",
                                                 Number(
-                                                  row.turnOffTime.split(':')[2]
+                                                  row.turnOffTime.split(":")[2]
                                                 )
                                               )
                                           : null
@@ -756,8 +777,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       onChange={(newTime) =>
                                         handleTimeChangeRepeat(
                                           row.RowKey,
-                                          'turnOffTime',
-                                          newTime ? newTime.toString() : ''
+                                          "turnOffTime",
+                                          newTime ? newTime.toString() : ""
                                         )
                                       }
                                       className={styles.timPicker}
@@ -765,8 +786,15 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   ) : (
                                     <DateTimePicker
                                       disabled={
-                                        autoLogin || autoValue == 'manual'
+                                        autoLogin || autoValue == "manual"
                                       }
+                                      slotProps={{
+                                        textField: {
+                                          inputProps: {
+                                            "data-testid": `turnOffTime-${row.RowKey}`,
+                                          },
+                                        },
+                                      }}
                                       value={
                                         row.turnOffTime
                                           ? dayjs
@@ -778,19 +806,19 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                       onChange={(newTime) =>
                                         handleTimeChange(
                                           row.RowKey,
-                                          'turnOffTime',
+                                          "turnOffTime",
                                           newTime
                                             ? newTime.format(
-                                                'YYYY-MM-DDTHH:mm:ss'
+                                                "YYYY-MM-DDTHH:mm:ss"
                                               )
-                                            : ''
+                                            : ""
                                         )
                                       }
                                       showToolbar
                                       minDateTime={
                                         row.turnOnTime
                                           ? dayjs(row.turnOnTime)
-                                              .add(5, 'minute')
+                                              .add(5, "minute")
                                               .second(0)
                                               .millisecond(0)
                                           : dayjs().second(0).millisecond(0)
@@ -813,14 +841,14 @@ const SwitchComponent = ({ devices, autoLogin }) => {
               variant="contained"
               color="primary"
               style={{
-                color: '#ffffff',
-                verticalAlign: 'middle',
-                marginTop: '5px',
-                width: '140px',
+                color: "#ffffff",
+                verticalAlign: "middle",
+                marginTop: "5px",
+                width: "140px",
               }}
               className={`btn btn-success btn-block ${styles.save_btn}`}
             >
-              {saveLoading ? 'Saving...' : 'Save Settings'}
+              {saveLoading ? "Saving..." : "Save Settings"}
             </Button>
           </div>
 
@@ -831,7 +859,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
           />
         </div>
       ) : (
-        ''
+        ""
       )}
     </>
   );

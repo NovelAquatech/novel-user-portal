@@ -1,4 +1,10 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+  within,
+} from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
 import axios from "axios";
@@ -6,7 +12,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import SwitchComponent from "../SwitchComponent";
 import { AuthProvider } from "../../hooks/useAuth";
 import { MemoryRouter } from "react-router-dom";
-
+import dayjs from "dayjs";
+import userEvent from "@testing-library/user-event";
 
 vi.mock("axios");
 
@@ -41,8 +48,8 @@ function makeValve({
     repeat: false,
     manual,
     active,
-    turnOnTime: "2025-09-21T00:00:00",
-    turnOffTime: "2025-09-22T00:02:00",
+    turnOnTime: "2025-09-25T21:55:00",
+    turnOffTime: "2025-09-25T23:15:00",
   };
 }
 
@@ -82,12 +89,12 @@ beforeEach(() => {
     "user",
     JSON.stringify({
       orgName: "DeepTesting",
-      token: "MTM1NDQ3ODU1MjAyNS0wOS0yMVQxMjozNzo1OC44NDY5MDQyWg==",
+      token: "NjI3MzYxNTIzMjAyNS0wOS0yNVQxNTo0Mjo0OC4zMTEyMzUyWg==",
     })
   );
 });
 afterEach(() => {
-  localStorage.clear(); 
+  localStorage.clear();
 });
 
 describe("SwitchComponent integration", () => {
@@ -175,7 +182,7 @@ describe("SwitchComponent integration", () => {
           ],
         },
       },
-    ]); 
+    ]);
     const primarySwitch = await screen.findByTestId("active-24e124460d323974");
     expect(primarySwitch.checked).toBeTruthy();
 
@@ -882,8 +889,8 @@ describe("SwitchComponent integration", () => {
       { timeout: 10000 }
     );
   });
-  it("should NOT activate High pressure valve when in manual mode and low-pressure valves are off", async () => {
-      await setupSwitchComponent([
+  it("should not activate High pressure valve when in manual mode and low-pressure valves are off", async () => {
+    await setupSwitchComponent([
       // 1️⃣ Initial load
       {
         data: {
@@ -966,13 +973,12 @@ describe("SwitchComponent integration", () => {
           ],
         },
       },
-      
     ]);
 
     // ✅ Ensure primary starts off
     const primarySwitch = await screen.findByTestId("active-24e124460d323974");
-    expect(primarySwitch.checked).toBeTruthy(); 
- 
+    expect(primarySwitch.checked).toBeTruthy();
+
     await waitFor(
       () =>
         expect(
@@ -980,5 +986,425 @@ describe("SwitchComponent integration", () => {
         ).toBeFalsy(),
       { timeout: 10000 }
     );
+  });
+  it("should activate High pressure valve when in manual mode and low-pressure valves are on", async () => {
+    await setupSwitchComponent([
+      // 1️⃣ Initial load
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: true,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              manual: true,
+              active: true,
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              manual: true,
+              active: false,
+            }),
+          ],
+        },
+      },
+      // 2️⃣ Poll 1
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", true),
+            statusResponse("24e124460d323974_valve_2", false),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 3️⃣ Poll 2
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", true),
+            statusResponse("24e124460d323974_valve_2", true),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 4️⃣ Reload settings
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: true,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              active: true,
+              manual: true,
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              active: false,
+              manual: true,
+            }),
+          ],
+        },
+      },
+    ]);
+
+    // ✅ Ensure primary starts off
+    const primarySwitch = await screen.findByTestId("active-24e124460d323974");
+    expect(primarySwitch.checked).toBeTruthy();
+
+    await waitFor(
+      () =>
+        expect(
+          screen.getByTestId("active-24e124460d323974").checked
+        ).toBeTruthy(),
+      { timeout: 10000 }
+    );
+  });
+  it("user can activate low pressure valve when in manual mode", async () => {
+    await setupSwitchComponent([
+      // 1️⃣ Initial load
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: false,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              manual: true,
+              active: false,
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              manual: true,
+              active: false,
+            }),
+          ],
+        },
+      },
+      // 2️⃣ Poll 1
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", false),
+            statusResponse("24e124460d323974_valve_2", false),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 3️⃣ Poll 2
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", false),
+            statusResponse("24e124460d323974_valve_2", true),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 4️⃣ Reload settings
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: false,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              active: true,
+              manual: true,
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              active: false,
+              manual: true,
+            }),
+          ],
+        },
+      },
+    ]);
+
+    // ✅ Ensure primary starts off
+    const primarySwitch = await screen.findByTestId(
+      "active-24e124460d323974_valve_2"
+    );
+    fireEvent.click(primarySwitch);
+
+    // ✅ Immediately check it's active
+    expect(primarySwitch.checked).toBeTruthy();
+    await waitFor(
+      () =>
+        expect(
+          screen.getByTestId("active-24e124460d323974_valve_2").checked
+        ).toBeTruthy(),
+      { timeout: 10000 }
+    );
+  });
+  it("should allow user to activate a secondary valve for a specific time range", async () => {
+    const futureTime = dayjs().add(1, "hour").format("YYYY-MM-DD HH:mm");
+    const turnOffTime = dayjs().add(2, "hour").format("YYYY-MM-DD HH:mm");
+
+    await setupSwitchComponent([
+      // 1️⃣ Initial load
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: true,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              once: true,
+              active: true,
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              manual: true,
+              active: false,
+            }),
+          ],
+        },
+      },
+      // 2️⃣ Poll 1
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", false),
+            statusResponse("24e124460d323974_valve_2", false),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 3️⃣ Poll 2
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", false),
+            statusResponse("24e124460d323974_valve_2", true),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 4️⃣ Reload settings (still off)
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: false,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              active: true,
+              once: true,
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              active: false,
+              manual: true,
+            }),
+          ],
+        },
+      },
+    ]);
+
+    const turnOnPicker = await screen.findByTestId(
+      "turnOnTime-24e124460d323974_valve_2"
+    );
+    const turnOffPicker = await screen.findByTestId(
+      "turnOffTime-24e124460d323974_valve_2"
+    );
+
+    await userEvent.type(turnOnPicker, futureTime);
+    await userEvent.tab();
+    await userEvent.type(turnOffPicker, turnOffTime);
+    await userEvent.tab();
+    expect(turnOnPicker.value).toBe(futureTime);
+    expect(turnOffPicker.value).toBe(turnOffTime);
+
+    const saveButton = screen.getByText(/Save Settings/i);
+    fireEvent.click(saveButton);
+
+    await waitFor(() => {
+      const secondarySwitch = screen.getByTestId(
+        "active-24e124460d323974_valve_2"
+      );
+      expect(secondarySwitch.checked).toBeTruthy();
+    });
+  });
+  it("should allow user to stop a valve by changing the mode manual in between the set time", async () => {
+    await setupSwitchComponent([
+      // 1️⃣ Initial load
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: true,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              once: true,
+              active: true,
+              turnOnTime: "2025-09-25T21:55:00",
+              turnOffTime: "2025-09-25T23:15:00",
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              manual: true,
+              active: false,
+            }),
+          ],
+        },
+      },
+      // 2️⃣ Poll 1
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", false),
+            statusResponse("24e124460d323974_valve_2", true),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 3️⃣ Poll 2
+      {
+        data: {
+          status: [
+            statusResponse("24e124460d323974", false),
+            statusResponse("24e124460d323974_valve_2", true),
+            statusResponse("24e124460e222845", false),
+          ],
+        },
+      },
+      // 4️⃣ Reload settings (still off)
+      {
+        data: {
+          value: [
+            makeValve({
+              id: "24e124460d323974",
+              devEUI: "24e124460d323974",
+              identifier: "valve_1",
+              isSecondary: false,
+              manual: true,
+              active: false,
+            }),
+            makeValve({
+              id: "24e124460d323974_valve_2",
+              devEUI: "24e124460d323974",
+              identifier: "valve_2",
+              isSecondary: true,
+              active: true,
+              manual: true,
+              turnOnTime: "",
+              turnOffTime: "",
+            }),
+            makeValve({
+              id: "24e124460e222845",
+              devEUI: "24e124460e222845",
+              identifier: "valve_3",
+              isSecondary: true,
+              active: false,
+              manual: true,
+            }),
+          ],
+        },
+      },
+    ]);
+    const valveRow = screen.getByTestId("row-24e124460d323974_valve_2");
+
+    const manualRadio = within(valveRow).getByLabelText("Manual");
+    await userEvent.click(manualRadio);
+
+    const saveButton = screen.getByText(/Save Settings/i);
+    await userEvent.click(saveButton);
+
+    const turnOnPicker = screen.getByTestId(
+      "turnOnTime-24e124460d323974_valve_2"
+    );
+    const turnOffPicker = screen.getByTestId(
+      "turnOffTime-24e124460d323974_valve_2"
+    );
+
+    expect(turnOnPicker.value).toBe("2025-09-25 21:55");
+    expect(turnOffPicker.value).toBe("2025-09-25 23:15");
   });
 });
