@@ -5,7 +5,7 @@ import { Navbar } from "../components/nav";
 import { Footer } from "../components/footer";
 import { DeviceModel } from "../components/device_model";
 import { useAuth } from "../hooks/useAuth";
-import { getDevices, setDeviceEmail } from "../helper/web-service";
+import { getDevices, setDeviceEmail, addDevice } from "../helper/web-service";
 import { differenceDate } from "../helper/utils";
 import { useCacheStatus } from "../hooks/useCacheStatus";
 import { Chip, Autocomplete, TextField, Button } from "@mui/material";
@@ -159,6 +159,23 @@ export const DevicePage = () => {
           : newInputValue,
     }));
   };
+  const updatedData = async () => {
+  setLoaderVisible(true);
+  try {
+    const data = await getDevices(user);
+    const deviceList = data.value || [];
+    const dTypes = [...new Set(deviceList.map((d) => d.deviceType))];
+    setDevices(deviceList);
+    setOrgDevices(deviceList);
+    setDeviceTypes(dTypes);
+    setFetchedDevices(deviceList);
+    toast.success("Device list updated.");
+  } catch (err) {
+    toast.error("Error refreshing device list.");
+  } finally {
+    setLoaderVisible(false);
+  }
+ };
 
   const onCloseCreateModal = async (event) => {
     const closedByUser = !event;
@@ -397,7 +414,7 @@ export const DevicePage = () => {
       )}
       <AddDeviceModal
         isOpen={isCreateModalOpen}
-        // deviceEUI={deviceEUI}
+        onDeviceAdded={updatedData}
         onCloseCreateModal={onCloseCreateModal}
       />
       <Footer />

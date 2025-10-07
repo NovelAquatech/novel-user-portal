@@ -7,22 +7,39 @@ import styles from "./SwitchComponent.module.css";
 import { useAuth } from "../hooks/useAuth";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast, Toaster } from "react-hot-toast";
+import { addDevice } from "../helper/web-service";
 
-export const AddDeviceModal = ({ isOpen, devEUI, onCloseCreateModal }) => {
+export const AddDeviceModal = ({
+  isOpen,
+  onCloseCreateModal,
+  onDeviceAdded,
+}) => {
   const { user } = useAuth();
   const [isLoaderVisible, setLoaderVisible] = useState(false);
+  const [devEUI, setDevEUI] = useState("");
   const handleSave = async () => {
+    if (!devEUI) {
+      toast.error("Please enter a DevEUI.");
+      return;
+    }
     try {
       setLoaderVisible(true);
-      toast.success("Group saved successfully");
-      handleClose();
+      const response = await addDevice(user, devEUI);
+      if (response?.success) {
+        toast.success("Device saved successfully");
+        handleClose();
+        onDeviceAdded();
+      } else {
+        toast.error(response?.message || "Unable to add device.");
+      }
     } catch (err) {
-      toast.error("Error saving group. Please try again.");
+      toast.error("Error adding device. Please try again.");
     } finally {
       setLoaderVisible(false);
     }
   };
   const handleClose = (event) => {
+    setDevEUI("");
     onCloseCreateModal(event);
   };
   return (
@@ -55,14 +72,13 @@ export const AddDeviceModal = ({ isOpen, devEUI, onCloseCreateModal }) => {
           <FormControl fullWidth>
             <InputLabel htmlFor="component-outlined">DevEUI</InputLabel>
             <OutlinedInput
-              id="component-outlined"
-              defaultValue="Please enter the devEUI"
-              label="devEUI"
+              id="devEUI-input"
+              value={devEUI}
+              onChange={(e) => setDevEUI(e.target.value.trim())}
+              label="DevEUI"
+              placeholder="Enter DevEUI"
             />
           </FormControl>
-          {/* <Typography fontSize="14px" color="text.secondary" gutterBottom>
-            DevEUI: <strong>{devEUI}</strong>
-          </Typography> */}
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <LoadingButton
               variant="contained"
