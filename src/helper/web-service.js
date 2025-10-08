@@ -471,7 +471,7 @@ export const getAverage = (userInfo, devEUIs) => {
   return getRequest(url);
 };
 
-export const addDevice = (userInfo, devEUIs) => {
+export const addDevice = (userInfo, devEUI) => {
   // Construct the URL for fetching rules
   let url = `${
     import.meta.env.VITE_GET_ADD_DEVICE_API_URL
@@ -481,7 +481,7 @@ export const addDevice = (userInfo, devEUIs) => {
   url = `${url}&sv=${APP_CONST.SV}`;
   url = `${url}&sig=${import.meta.env.VITE_GET_ADD_DEVICE_API_URL_SIG}`;  
   url = `${url}&authToken=${userInfo.token}`;
-  url = `${url}&deviceEUI=${devEUIs}`;
+  url = `${url}&deviceEUI=${devEUI}`;
  
   console.log("Added device:", url);
 

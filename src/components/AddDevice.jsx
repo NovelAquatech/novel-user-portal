@@ -25,13 +25,11 @@ export const AddDeviceModal = ({
     try {
       setLoaderVisible(true);
       const response = await addDevice(user, devEUI);
-      if (response?.success) {
-        toast.success("Device saved successfully");
+      console.log("res", response);     
+        toast.success("Device added successfully");
         handleClose();
         onDeviceAdded();
-      } else {
-        toast.error(response?.message || "Unable to add device.");
-      }
+   
     } catch (err) {
       toast.error("Error adding device. Please try again.");
     } finally {
