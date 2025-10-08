@@ -1,12 +1,12 @@
 name: Run Tests on Dev Branch
 on:
- workflow_dispatch:
-  # push:
-  #   branches:
-  #     - test
-  # pull_request:
-  #   branches:
-  #     - test
+#  workflow_dispatch:
+  push:
+    branches:
+      - test
+  pull_request:
+    branches:
+      - test
 
 jobs:
   test:
