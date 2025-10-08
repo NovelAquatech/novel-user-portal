@@ -15,7 +15,10 @@ import { MemoryRouter } from "react-router-dom";
 import dayjs from "dayjs";
 import userEvent from "@testing-library/user-event";
 
-vi.mock("axios");
+vi.mock("axios", () => ({
+  get: vi.fn(),
+  post: vi.fn(),
+}));
 
 // 🔹 Utility: sequence mocking
 export function mockAxiosSequence(responses) {
