@@ -1,17 +1,19 @@
-import { useState, useEffect, createElement } from 'react';
-import { CirclesWithBar } from 'react-loader-spinner';
-import * as MaterialDesign from 'react-icons/md';
-import { Navbar } from '../components/nav';
-import { Footer } from '../components/footer';
-import { DeviceModel } from '../components/device_model';
-import { useAuth } from '../hooks/useAuth';
-import { getDevices, setDeviceEmail } from '../helper/web-service';
-import { differenceDate } from '../helper/utils';
-import { useCacheStatus } from '../hooks/useCacheStatus';
-import { Chip, Autocomplete, TextField } from '@mui/material';
-import { toast, Toaster } from 'react-hot-toast';
-import { FaMapMarkerAlt } from 'react-icons/fa';
-import axios from 'axios';
+import { useState, useEffect, createElement } from "react";
+import { CirclesWithBar } from "react-loader-spinner";
+import * as MaterialDesign from "react-icons/md";
+import { Navbar } from "../components/nav";
+import { Footer } from "../components/footer";
+import { DeviceModel } from "../components/device_model";
+import { useAuth } from "../hooks/useAuth";
+import { getDevices, setDeviceEmail, addDevice } from "../helper/web-service";
+import { differenceDate } from "../helper/utils";
+import { useCacheStatus } from "../hooks/useCacheStatus";
+import { Chip, Autocomplete, TextField, Button } from "@mui/material";
+import styles from "../components/SwitchComponent.module.css";
+import { toast, Toaster } from "react-hot-toast";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { AddDeviceModal } from "../components/AddDevice";
+import axios from "axios";
 
 export const DevicePage = () => {
   const { user } = useAuth();
@@ -23,14 +25,15 @@ export const DevicePage = () => {
   } = useCacheStatus();
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
-  const [selectedDeviceType, setSelectedDeviceType] = useState('');
+  const [selectedDeviceType, setSelectedDeviceType] = useState("");
   const [isOpen, setOpen] = useState(false);
   const [orgDevices, setOrgDevices] = useState([]);
   const [devices, setDevices] = useState([]);
   const [deviceTypes, setDeviceTypes] = useState([]);
   const [emailErorrs, setEmailErrors] = useState({});
   const [autoLogin, setAutoLogin] = useState([]);
-  const [inputEmailValue, setInputEmailValue] = useState('');
+  const [inputEmailValue, setInputEmailValue] = useState("");
+  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
 
   useEffect(() => {
     setLoaderVisible(true);
@@ -90,7 +93,7 @@ export const DevicePage = () => {
       await axios.post(apiSaveUrl, payload);
       toast.success(`Email ${event.event} successfully!`);
     } catch (err) {
-      toast.error('Error saving email. Please try again.');
+      toast.error("Error saving email. Please try again.");
     }
   };
 
@@ -100,11 +103,11 @@ export const DevicePage = () => {
   };
 
   const handleEmailAdd = (event, device) => {
-    if (event != 'blur' && event.key !== 'Enter') return;
-    let errorMsg = '';
+    if (event != "blur" && event.key !== "Enter") return;
+    let errorMsg = "";
     let isValid = true;
     let emailList = JSON.parse(device.email);
-    const currentInputValue = inputEmailValue[device.devEUI] || '';
+    const currentInputValue = inputEmailValue[device.devEUI] || "";
     if (!currentInputValue) isValid = false;
     else if (emailList.includes(currentInputValue)) {
       isValid = false;
@@ -123,9 +126,9 @@ export const DevicePage = () => {
         return d;
       });
       setDevices(updatedDevices);
-      setInputEmailValue((prev) => ({ ...prev, [device.devEUI]: '' }));
+      setInputEmailValue((prev) => ({ ...prev, [device.devEUI]: "" }));
       setEmailErrors((prev) => ({ ...prev, [device.devEUI]: false }));
-      handleSave(device, updatedEmails, { event: 'saved' });
+      handleSave(device, updatedEmails, { event: "saved" });
     } else if (errorMsg) {
       toast.error(errorMsg);
       setEmailErrors((prev) => ({ ...prev, [device.devEUI]: true }));
@@ -141,7 +144,7 @@ export const DevicePage = () => {
       }
       return d;
     });
-    handleSave(device, updatedEmails, { event: 'deleted' });
+    handleSave(device, updatedEmails, { event: "deleted" });
     setDevices(updatedDevices);
   };
 
@@ -149,12 +152,34 @@ export const DevicePage = () => {
     setInputEmailValue((prev) => ({
       ...prev,
       [deviceEUI]:
-        event?.type === 'keydown'
+        event?.type === "keydown"
           ? isValidEmail(prev[deviceEUI])
-            ? ''
+            ? ""
             : prev[deviceEUI]
           : newInputValue,
     }));
+  };
+  const updatedData = async () => {
+  setLoaderVisible(true);
+  try {
+    const data = await getDevices(user);
+    const deviceList = data.value || [];
+    const dTypes = [...new Set(deviceList.map((d) => d.deviceType))];
+    setDevices(deviceList);
+    setOrgDevices(deviceList);
+    setDeviceTypes(dTypes);
+    setFetchedDevices(deviceList);
+  } catch (err) {
+    toast.error("Error refreshing device list.");
+  } finally {
+    setLoaderVisible(false);
+  }
+ };
+
+  const onCloseCreateModal = async (event) => {
+    const closedByUser = !event;
+    setCreateModalOpen(false);
+    if (closedByUser) updatedData();
   };
 
   return (
@@ -175,23 +200,23 @@ export const DevicePage = () => {
 
           <div
             className="col-md-12 col-sm-12 col-xs-12"
-            style={{ marginTop: '-20px' }}
+            style={{ marginTop: "-20px" }}
           >
             <div className="x_panel">
               <div className="col-md-12 col-sm-12 col-xs-12">
                 <div
                   className={
-                    user.orgName == 'UNSW' || user.orgName == 'UNSW2'
-                      ? 'ttl_main sm-padding'
-                      : 'ttl_main'
+                    user.orgName == "UNSW" || user.orgName == "UNSW2"
+                      ? "ttl_main sm-padding"
+                      : "ttl_main"
                   }
                 >
-                  <h2 style={{ textAlign: 'center' }}>
+                  <h2 style={{ textAlign: "center" }}>
                     <strong
                       className={
-                        user.orgName == 'SeelyEnergyMonitor'
-                          ? 'show-elm'
-                          : 'hide-elm'
+                        user.orgName == "SeelyEnergyMonitor"
+                          ? "show-elm"
+                          : "hide-elm"
                       }
                     >
                       Seeley Energy Monitor
@@ -208,24 +233,39 @@ export const DevicePage = () => {
                     </p>
                   </div>
                   <div className="col-md-6 col-sm-6 col-xs-6 txtrgt">
-                    {user.orgName === 'JoeFarm' && (
+                    {user.orgName === "JoeFarm" && (
                       <button
                         className="btn btn-info btn-sm"
                         style={{
-                          marginTop: '10px',
-                          marginLeft: 'auto',
+                          marginTop: "10px",
+                          marginLeft: "auto",
                         }}
                         onClick={() =>
                           window.open(
-                            'https://maps.app.goo.gl/TA5SowVoHuABRwms9',
-                            '_blank'
+                            "https://maps.app.goo.gl/TA5SowVoHuABRwms9",
+                            "_blank"
                           )
                         }
                       >
-                        <FaMapMarkerAlt style={{ marginRight: '5px' }} />
+                        <FaMapMarkerAlt style={{ marginRight: "5px" }} />
                         Click To View Farm
                       </button>
                     )}
+                    <Button
+                      onClick={() => setCreateModalOpen(true)}
+                      variant="contained"
+                      color="primary"
+                      style={{
+                        color: "#ffffff",
+                        verticalAlign: "middle",
+                        marginTop: "5px",
+                        marginRight:"10px",
+                        width: "120px",
+                      }}
+                      className={`btn btn-success btn-block ${styles.save_btn}`}
+                    >
+                      + Add Device
+                    </Button>
                     <select value={selectedDeviceType} onChange={handleChange}>
                       <option value="">Filter Device Type</option>
                       {deviceTypes.map((type, i) => {
@@ -240,11 +280,11 @@ export const DevicePage = () => {
                 </div>
               </div>
               <div className="x_content">
-                <div style={{ overflowX: 'auto' }}>
+                <div style={{ overflowX: "auto" }}>
                   <table
                     id="datatable"
                     className="table table-striped"
-                    style={{ minWidth: '1000px' }}
+                    style={{ minWidth: "1000px" }}
                   >
                     <thead>
                       <tr>
@@ -264,12 +304,12 @@ export const DevicePage = () => {
                         return (
                           <tr key={i}>
                             <td>
-                              <MaterialDesign.MdAir color="#00bdd5" size={20} />{' '}
+                              <MaterialDesign.MdAir color="#00bdd5" size={20} />{" "}
                               {device.devName}
                             </td>
                             <td>{delta}</td>
                             <td>{device.deviceType}</td>
-                            <td style={{ width: '600px' }}>
+                            <td style={{ width: "600px" }}>
                               <Autocomplete
                                 size="small"
                                 disabled={autoLogin}
@@ -278,10 +318,10 @@ export const DevicePage = () => {
                                 options={[]}
                                 disableClearable
                                 value={
-                                  device.email ? JSON.parse(device.email) : ''
+                                  device.email ? JSON.parse(device.email) : ""
                                 }
                                 inputValue={
-                                  inputEmailValue[device.devEUI] || ''
+                                  inputEmailValue[device.devEUI] || ""
                                 }
                                 onInputChange={(_, newInputValue) =>
                                   handleInputEmailChange(
@@ -312,20 +352,20 @@ export const DevicePage = () => {
                                     placeholder="Type and press enter"
                                     onKeyDown={(e) => handleEmailAdd(e, device)}
                                     onBlur={() =>
-                                      handleEmailAdd('blur', device)
+                                      handleEmailAdd("blur", device)
                                     }
                                     error={emailErorrs[device.devEUI] || false}
                                     style={{
                                       borderColor: emailErorrs[device.devEUI]
-                                        ? 'red'
-                                        : '',
+                                        ? "red"
+                                        : "",
                                       borderWidth: emailErorrs[device.devEUI]
-                                        ? '2px'
-                                        : '',
+                                        ? "2px"
+                                        : "",
                                     }}
                                   />
                                 )}
-                                style={{ marginTop: '-6px' }}
+                                style={{ marginTop: "-6px" }}
                               />
                             </td>
                             <th>
@@ -338,11 +378,11 @@ export const DevicePage = () => {
                                   let device = null;
                                   try {
                                     device = JSON.parse(
-                                      event.target.getAttribute('data-device')
+                                      event.target.getAttribute("data-device")
                                     );
                                   } catch (err) {
                                     console.log(
-                                      'Error occurred to parse the data-device'
+                                      "Error occurred to parse the data-device"
                                     );
                                   }
                                   setOpen(true);
@@ -369,8 +409,13 @@ export const DevicePage = () => {
           device={selectedDevice}
         />
       ) : (
-        ''
+        ""
       )}
+      <AddDeviceModal
+        isOpen={isCreateModalOpen}
+        onDeviceAdded={updatedData}
+        onCloseCreateModal={onCloseCreateModal}
+      />
       <Footer />
     </>
   );
