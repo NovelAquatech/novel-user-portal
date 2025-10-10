@@ -169,7 +169,6 @@ export const DevicePage = () => {
     setOrgDevices(deviceList);
     setDeviceTypes(dTypes);
     setFetchedDevices(deviceList);
-    toast.success("Device list updated.");
   } catch (err) {
     toast.error("Error refreshing device list.");
   } finally {
