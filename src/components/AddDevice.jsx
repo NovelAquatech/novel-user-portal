@@ -17,21 +17,20 @@ export const AddDeviceModal = ({
   const { user } = useAuth();
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [devEUI, setDevEUI] = useState("");
+   const [errorMessage, setErrorMessage] = useState("");
   const handleSave = async () => {
     if (!devEUI) {
-      toast.error("Please enter a DevEUI.");
+      setErrorMessage("Please enter a valid DevEUI.");
       return;
     }
     try {
       setLoaderVisible(true);
-      const response = await addDevice(user, devEUI);
-      console.log("res", response);     
-        toast.success("Device added successfully");
-        handleClose();
-        onDeviceAdded();
-   
+      const response = await addDevice(user, devEUI);   
+      toast.success("Device added successfully");
+      handleClose();
+      onDeviceAdded();
     } catch (err) {
-      toast.error("Error adding device. Please try again.");
+      setErrorMessage("Invalid Device EUI"|| err.message);
     } finally {
       setLoaderVisible(false);
     }
@@ -57,16 +56,23 @@ export const AddDeviceModal = ({
             p: 4,
           }}
         >
-          <Typography variant="h6" gutterBottom align="right">
+          <Box
+            gutterBottom
+            align="left"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 6,
+            }}
+          >
+            <Typography variant="h5" component="h3">
+              <strong>Add Device</strong>
+            </Typography>
             <Button onClick={handleClose}>
-              <CloseIcon style={{ fontSize: "20px" }} />
+              <CloseIcon sx={{ fontSize: "20px" }} />
             </Button>
-          </Typography>
-          <Typography variant="h6" gutterBottom align="center">
-            <h3>
-              <strong> Add Device </strong>
-            </h3>
-          </Typography>
+          </Box>
           <FormControl fullWidth>
             <InputLabel htmlFor="component-outlined">DevEUI</InputLabel>
             <OutlinedInput
@@ -77,6 +83,15 @@ export const AddDeviceModal = ({
               placeholder="Enter DevEUI"
             />
           </FormControl>
+                    {/* Error Message (inline) */}
+          {errorMessage && (
+            <Typography
+              variant="body2"
+              sx={{ color: "error.main", mt: 1, textAlign: "left" }}
+            >
+              {errorMessage}
+            </Typography>
+          )}
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <LoadingButton
               variant="contained"
