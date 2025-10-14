@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
-import {
-  Modal,
+import { 
   Box,
   Typography,
   MenuItem,
   Select,
   FormControl,
-  Button,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { toast, Toaster } from "react-hot-toast";
 import { updateValveSecondaryStatus } from "../helper/web-service";
 import { useAuth } from "../hooks/useAuth";
 import styles from "./SwitchComponent.module.css";
-import CloseIcon from "@mui/icons-material/Close";
 import { BaseModal } from "./Popup";
 
 export const ValveSettingModel = ({

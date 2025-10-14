@@ -1,12 +1,19 @@
 
 export const BaseModal = ({ isOpen, closeModal, title, children, footer, width = 500 }) => {
   const isMobile = window.innerWidth <= 600;
+    const handleBackdropClick = (event) => {
+    // Close only if user clicked directly on the backdrop, not inside modal-content
+    if (event.target === event.currentTarget) {
+      closeModal(event);
+    }
+  };
 
   return (
     <div
       className={isOpen ? "modal fade in" : "modal fade"}
       tabIndex="-1"
       role="dialog"
+      onClick={handleBackdropClick}
       style={{
         display: isOpen ? "flex" : "none",
         position: "fixed",

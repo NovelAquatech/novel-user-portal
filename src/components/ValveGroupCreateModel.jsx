@@ -1,7 +1,5 @@
 import { useState } from "react";
 import {
-  Modal,
-  Box,
   Typography,
   MenuItem,
   Select,
@@ -9,14 +7,12 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
-  Button,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { toast, Toaster } from "react-hot-toast";
 import { updateValveSecondaryStatus } from "../helper/web-service";
 import { useAuth } from "../hooks/useAuth";
 import styles from "./SwitchComponent.module.css";
-import CloseIcon from "@mui/icons-material/Close";
 import { BaseModal } from "./Popup";
 
 export const ValveGroupCreateModel = ({
@@ -29,6 +25,7 @@ export const ValveGroupCreateModel = ({
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [selectedPrimary, setSelectedPrimary] = useState("");
   const [selectedLowPressure, setSelectedLowPressure] = useState([]);
+  const [errMsg, setErrMsg] = useState("");
 
   const getDeviceName = (uid) => devices[uid] || "";
 
@@ -42,12 +39,12 @@ export const ValveGroupCreateModel = ({
 
   const handleSave = async () => {
     if (!selectedPrimary) {
-      toast.error("Please select a High Pressure Valve.");
+      setErrMsg("Please select a High Pressure Valve.");
       return;
     }
 
     if (selectedLowPressure.length === 0) {
-      toast.error("Please select at least one Low Pressure Valve.");
+      setErrMsg("Please select at least one Low Pressure Valve.");
       return;
     }
 
@@ -78,7 +75,7 @@ export const ValveGroupCreateModel = ({
       toast.success("Group saved successfully");
       handleClose();
     } catch (err) {
-      toast.error("Error saving group. Please try again.");
+      setErrMsg("Error saving group. Please try again.");
     } finally {
       setLoaderVisible(false);
     }
@@ -88,6 +85,7 @@ export const ValveGroupCreateModel = ({
     setSelectedPrimary("");
     setSelectedLowPressure([]);
     onCloseCreateModel(event);
+    setErrMsg("");
   };
 
   return (
@@ -183,6 +181,11 @@ export const ValveGroupCreateModel = ({
               ))
             )}
           </Select>
+          {errMsg && (
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+              {errMsg}
+            </Typography>
+          )}
         </FormControl>
       </BaseModal>
     </>

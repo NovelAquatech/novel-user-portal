@@ -12,12 +12,13 @@ async function getRequest(url) {
       method: "GET",
       headers: requestHeader,
     });
+       const data = await response.json();
     if (!response.ok) {
       throw new Error(
-        `Unable to get response for status: ${response.status} and ${response.message}`
+        data.message || `Unable to get response for status: ${response.status}`
       );
     }
-    return await response.json();
+    return data;
   } catch (error) {
     throw error;
   }

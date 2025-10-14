@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { Modal, Box, Typography, FormControl, Button } from "@mui/material";
+import { FormControl, FormHelperText } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import styles from "./SwitchComponent.module.css";
 import { useAuth } from "../hooks/useAuth";
-import CloseIcon from "@mui/icons-material/Close";
 import { toast, Toaster } from "react-hot-toast";
 import { addDevice } from "../helper/web-service";
 import { BaseModal } from "./Popup";
@@ -19,9 +18,21 @@ export const AddDeviceModal = ({
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [devEUI, setDevEUI] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const handleChange = (e) => {
+    const value = e.target.value.trim();
+    setDevEUI(value);
+    if (errorMessage) setErrorMessage("");
+    if (value.length > 0 && value.length < 12) {
+      setErrorMessage("DevEUI must be at least 12 characters long.");
+    }
+  };
   const handleSave = async () => {
     if (!devEUI) {
       setErrorMessage("Please enter a valid DevEUI.");
+      return;
+    }
+    if (devEUI.length < 12) {
+      setErrorMessage("DevEUI must be at least 12 characters long.");
       return;
     }
     try {
@@ -31,13 +42,14 @@ export const AddDeviceModal = ({
       handleClose();
       onDeviceAdded();
     } catch (err) {
-      setErrorMessage("Invalid Device EUI" || err.message);
+      setErrorMessage(err.message);
     } finally {
       setLoaderVisible(false);
     }
   };
   const handleClose = (event) => {
     setDevEUI("");
+    setErrorMessage("");
     onCloseCreateModal(event);
   };
   return (
@@ -64,19 +76,18 @@ export const AddDeviceModal = ({
           <OutlinedInput
             id="devEUI-input"
             value={devEUI}
-            onChange={(e) => setDevEUI(e.target.value.trim())}
+            onChange={handleChange}
             label="DevEUI"
             placeholder="Enter DevEUI"
           />
+          {errorMessage && (
+            <FormHelperText
+              sx={{ color: "error.main", mt: 1, textAlign: "left" }}
+            >
+              {errorMessage}
+            </FormHelperText>
+          )}
         </FormControl>
-        {errorMessage && (
-          <Typography
-            variant="body2"
-            sx={{ color: "error.main", mt: 1, textAlign: "left" }}
-          >
-            {errorMessage}
-          </Typography>
-        )}
       </BaseModal>
     </>
   );
