@@ -182,7 +182,7 @@ export const ValveGroupCreateModel = ({
             )}
           </Select>
           {errMsg && (
-            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+            <Typography color="error" variant="body2" sx={{ mt: 1, fontSize: "12px" }}>
               {errMsg}
             </Typography>
           )}

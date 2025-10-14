@@ -82,7 +82,7 @@ export const AddDeviceModal = ({
           />
           {errorMessage && (
             <FormHelperText
-              sx={{ color: "error.main", mt: 1, textAlign: "left" }}
+              sx={{ color: "error.main", mt: 1, textAlign: "left", fontSize: "12px" }}
             >
               {errorMessage}
             </FormHelperText>
