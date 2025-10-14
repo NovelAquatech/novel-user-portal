@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -6,14 +6,15 @@ import {
   MenuItem,
   Select,
   FormControl,
-  Button
-} from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-import { toast, Toaster } from 'react-hot-toast';
-import { updateValveSecondaryStatus } from '../helper/web-service';
-import { useAuth } from '../hooks/useAuth';
-import styles from './SwitchComponent.module.css';
-import CloseIcon from '@mui/icons-material/Close';
+  Button,
+} from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { toast, Toaster } from "react-hot-toast";
+import { updateValveSecondaryStatus } from "../helper/web-service";
+import { useAuth } from "../hooks/useAuth";
+import styles from "./SwitchComponent.module.css";
+import CloseIcon from "@mui/icons-material/Close";
+import { BaseModal } from "./Popup";
 
 export const ValveSettingModel = ({
   isOpen,
@@ -26,12 +27,12 @@ export const ValveSettingModel = ({
   const valveType =
     row?.isSecondary !== undefined
       ? row?.isSecondary
-        ? 'Low Pressure'
-        : 'High Pressure'
-      : 'Not Set';
+        ? "Low Pressure"
+        : "High Pressure"
+      : "Not Set";
   const isSecondary = row?.isSecondary !== undefined && row?.isSecondary;
   const [isLoaderVisible, setLoaderVisible] = useState(false);
-  const [selectedPrimary, setSelectedPrimary] = useState('');
+  const [selectedPrimary, setSelectedPrimary] = useState("");
   const { user } = useAuth();
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export const ValveSettingModel = ({
       setSelectedPrimary(row.primaryValve);
   }, [isSecondary, row]);
 
-  const getDeviceName = (uid) => devices[uid] || '';
+  const getDeviceName = (uid) => devices[uid] || "";
 
   const primaryValves = rows.filter(
     (r) => r?.isSecondary === false && r?.devEUI !== undefined
@@ -48,7 +49,7 @@ export const ValveSettingModel = ({
 
   const handleAssignSecondary = async () => {
     if (!selectedPrimary) {
-      toast.error('Please select a primary valve.');
+      toast.error("Please select a primary valve.");
       return;
     }
     const payload = {
@@ -79,14 +80,14 @@ export const ValveSettingModel = ({
           setLoaderVisible(true);
           await updateValveSecondaryStatus(user, payload);
         } catch (err) {
-          console.log('Error saving settings. Please try again.');
+          console.log("Error saving settings. Please try again.");
         }
       }
 
-      toast.success('Settings saved successfully');
+      toast.success("Settings saved successfully");
       onCloseSettingModel();
     } catch (err) {
-      toast.error('Error saving settings. Please try again.');
+      toast.error("Error saving settings. Please try again.");
     } finally {
       setLoaderVisible(false);
     }
@@ -95,31 +96,36 @@ export const ValveSettingModel = ({
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <Modal open={isOpen} onClose={onCloseSettingModel}>
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 500,
-            bgcolor: 'background.paper',
-            borderRadius: 3,
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography variant="h6" gutterBottom align="right">
-            <Button onClick={onCloseSettingModel}>
-              <CloseIcon style={{ fontSize: '20px' }} />
-            </Button>
-          </Typography>
-          <Typography variant="h6" gutterBottom align="center">
-            <h3>
-              <strong> Settings </strong>
-            </h3>
-          </Typography>
-
+      <BaseModal
+        isOpen={isOpen}
+        closeModal={onCloseSettingModel}
+        title="Settings"
+        footer={
+          <div>
+            {isSecondary ? (
+              <LoadingButton
+                variant="contained"
+                color="primary"
+                className={`btn btn-success  ${styles.save_btn}`}
+                onClick={handleAssignSecondary}
+                loading={isLoaderVisible}
+              >
+                Save
+              </LoadingButton>
+            ) : (
+              <LoadingButton
+                variant="contained"
+                color="primary"
+                className={`btn btn-success ${styles.save_btn}`}
+                onClick={onCloseSettingModel}
+              >
+                Close
+              </LoadingButton>
+            )}
+          </div>
+        }
+      >
+        <>
           <Typography
             fontSize="16px"
             fontWeight={600}
@@ -137,7 +143,7 @@ export const ValveSettingModel = ({
             Pressure: {valveType}
           </Typography>
 
-          {valveType === 'High Pressure' && (
+          {valveType === "High Pressure" && (
             <Box sx={{ mt: 3 }}>
               <Typography fontSize="14px" color="text.primary">
                 There are no configurations for high pressure valves. To change
@@ -147,7 +153,7 @@ export const ValveSettingModel = ({
             </Box>
           )}
 
-          {valveType === 'Not Set' && (
+          {valveType === "Not Set" && (
             <Box sx={{ mt: 3 }}>
               <Typography fontSize="14px" color="text.primary">
                 There are no configurations for ungrouped valves. To change the
@@ -156,7 +162,7 @@ export const ValveSettingModel = ({
             </Box>
           )}
 
-          <>
+      
             {isSecondary && (
               <>
                 <Box sx={{ mt: 3 }}>
@@ -179,7 +185,7 @@ export const ValveSettingModel = ({
                       <MenuItem
                         key={pv.RowKey}
                         value={pv.RowKey}
-                        sx={{ fontSize: '13px' }}
+                        sx={{ fontSize: "13px" }}
                       >
                         {getDeviceName(pv.devEUI)} - {pv.identifier}
                       </MenuItem>
@@ -188,48 +194,9 @@ export const ValveSettingModel = ({
                 </FormControl>
               </>
             )}
-
-            {isSecondary ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <LoadingButton
-                  variant="contained"
-                  color="primary"
-                  style={{
-                    color: '#ffffff',
-                    verticalAlign: 'middle',
-                    marginTop: '40px',
-                    width: '150px',
-                  }}
-                  className={`btn btn-success btn-block ${styles.save_btn}`}
-                  sx={{ py: 1, fontSize: '12px' }}
-                  onClick={handleAssignSecondary}
-                  loading={isLoaderVisible}
-                >
-                  Save
-                </LoadingButton>
-              </Box>
-            ) : (
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <LoadingButton
-                  variant="contained"
-                  color="primary"
-                  style={{
-                    color: '#ffffff',
-                    verticalAlign: 'middle',
-                    marginTop: '40px',
-                    width: '150px',
-                  }}
-                  className={`btn btn-success btn-block ${styles.save_btn}`}
-                  sx={{ py: 1, fontSize: '12px' }}
-                  onClick={onCloseSettingModel}
-                >
-                  Close
-                </LoadingButton>
-              </Box>
-            )}
-          </>
-        </Box>
-      </Modal>
+          
+        </>
+      </BaseModal>
     </>
   );
 };

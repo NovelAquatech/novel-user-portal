@@ -160,21 +160,21 @@ export const DevicePage = () => {
     }));
   };
   const updatedData = async () => {
-  setLoaderVisible(true);
-  try {
-    const data = await getDevices(user);
-    const deviceList = data.value || [];
-    const dTypes = [...new Set(deviceList.map((d) => d.deviceType))];
-    setDevices(deviceList);
-    setOrgDevices(deviceList);
-    setDeviceTypes(dTypes);
-    setFetchedDevices(deviceList);
-  } catch (err) {
-    toast.error("Error refreshing device list.");
-  } finally {
-    setLoaderVisible(false);
-  }
- };
+    setLoaderVisible(true);
+    try {
+      const data = await getDevices(user);
+      const deviceList = data.value || [];
+      const dTypes = [...new Set(deviceList.map((d) => d.deviceType))];
+      setDevices(deviceList);
+      setOrgDevices(deviceList);
+      setDeviceTypes(dTypes);
+      setFetchedDevices(deviceList);
+    } catch (err) {
+      toast.error("Error refreshing device list.");
+    } finally {
+      setLoaderVisible(false);
+    }
+  };
 
   const onCloseCreateModal = async (event) => {
     const closedByUser = !event;
@@ -259,7 +259,7 @@ export const DevicePage = () => {
                         color: "#ffffff",
                         verticalAlign: "middle",
                         marginTop: "5px",
-                        marginRight:"10px",
+                        marginRight: "10px",
                         width: "120px",
                       }}
                       className={`btn btn-success btn-block ${styles.save_btn}`}
@@ -280,7 +280,7 @@ export const DevicePage = () => {
                 </div>
               </div>
               <div className="x_content">
-                <div style={{ overflowX: "auto" }}>
+                <div style={{ overflowX: "auto", marginBottom: "200px" }}>
                   <table
                     id="datatable"
                     className="table table-striped"
@@ -416,7 +416,7 @@ export const DevicePage = () => {
         onDeviceAdded={updatedData}
         onCloseCreateModal={onCloseCreateModal}
       />
-      <Footer />
+      <Footer/>
     </>
   );
 };
