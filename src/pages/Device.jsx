@@ -5,16 +5,80 @@ import { Navbar } from "../components/nav";
 import { Footer } from "../components/footer";
 import { DeviceModel } from "../components/device_model";
 import { useAuth } from "../hooks/useAuth";
-import { getDevices, setDeviceEmail, addDevice } from "../helper/web-service";
+import { getDevices, setDeviceEmail } from "../helper/web-service";
 import { differenceDate } from "../helper/utils";
 import { useCacheStatus } from "../hooks/useCacheStatus";
-import { Chip, Autocomplete, TextField, Button } from "@mui/material";
+import {
+  Chip,
+  Autocomplete,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+  Typography,
+} from "@mui/material";
 import styles from "../components/SwitchComponent.module.css";
 import { toast, Toaster } from "react-hot-toast";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { AddDeviceModal } from "../components/AddDevice";
 import axios from "axios";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
+const DeviceTypeFilter = ({
+  selectedDeviceType,
+  handleChange,
+  deviceTypes,
+}) => {
+  return (
+    <FormControl
+      size="small"
+      variant="outlined"
+      sx={{
+        minWidth: 180,
+        "& .MuiOutlinedInput-notchedOutline": {
+          border: "none", // remove border
+        },
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+          border: "none",
+        },
+        "& .MuiSelect-icon": {
+          display: "none", // remove right-side SVG arrow
+        },
+      }}
+    >
+      <Select
+        value={selectedDeviceType}
+        onChange={handleChange}
+        displayEmpty
+        renderValue={(selected) => {
+          return (
+            <Box display="flex" alignItems="center" gap={1}>
+              <FilterListIcon fontSize="large" color="action" />
+              <Typography
+                variant="body2"
+                sx={{ lineHeight: 1.5, fontSize: "12px", color: "#555" }}
+              >
+                {selected || "Filter Device Type"}
+              </Typography>
+            </Box>
+          );
+        }}
+      >
+        <MenuItem value="">
+          <em>All</em>
+        </MenuItem>
+        {deviceTypes.map((type, i) => (
+          <MenuItem key={i} value={type}>
+            {type}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
 export const DevicePage = () => {
   const { user } = useAuth();
   const {
@@ -160,21 +224,21 @@ export const DevicePage = () => {
     }));
   };
   const updatedData = async () => {
-  setLoaderVisible(true);
-  try {
-    const data = await getDevices(user);
-    const deviceList = data.value || [];
-    const dTypes = [...new Set(deviceList.map((d) => d.deviceType))];
-    setDevices(deviceList);
-    setOrgDevices(deviceList);
-    setDeviceTypes(dTypes);
-    setFetchedDevices(deviceList);
-  } catch (err) {
-    toast.error("Error refreshing device list.");
-  } finally {
-    setLoaderVisible(false);
-  }
- };
+    setLoaderVisible(true);
+    try {
+      const data = await getDevices(user);
+      const deviceList = data.value || [];
+      const dTypes = [...new Set(deviceList.map((d) => d.deviceType))];
+      setDevices(deviceList);
+      setOrgDevices(deviceList);
+      setDeviceTypes(dTypes);
+      setFetchedDevices(deviceList);
+    } catch (err) {
+      toast.error("Error refreshing device list.");
+    } finally {
+      setLoaderVisible(false);
+    }
+  };
 
   const onCloseCreateModal = async (event) => {
     const closedByUser = !event;
@@ -251,36 +315,41 @@ export const DevicePage = () => {
                         Click To View Farm
                       </button>
                     )}
-                    <Button
-                      onClick={() => setCreateModalOpen(true)}
-                      variant="contained"
-                      color="primary"
+                    <div
                       style={{
-                        color: "#ffffff",
-                        verticalAlign: "middle",
-                        marginTop: "5px",
-                        marginRight:"10px",
-                        width: "120px",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        gap: "10px",
+                        marginTop: "10px",
                       }}
-                      className={`btn btn-success btn-block ${styles.save_btn}`}
                     >
-                      + Add Device
-                    </Button>
-                    <select value={selectedDeviceType} onChange={handleChange}>
-                      <option value="">Filter Device Type</option>
-                      {deviceTypes.map((type, i) => {
-                        return (
-                          <option value={type} key={i}>
-                            {type}
-                          </option>
-                        );
-                      })}
-                    </select>
+                      <DeviceTypeFilter
+                        selectedDeviceType={selectedDeviceType}
+                        handleChange={handleChange}
+                        deviceTypes={deviceTypes}
+                      />
+                      <Button
+                        onClick={() => setCreateModalOpen(true)}
+                        variant="contained"
+                        color="primary"
+                        style={{
+                          color: "#ffffff",
+                          verticalAlign: "middle",
+                          marginTop: "5px",
+                          marginRight: "10px",
+                          width: "130px",
+                        }}
+                        className={`btn btn-success ${styles.save_btn}`}
+                      >
+                        + Add Device
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="x_content">
-                <div style={{ overflowX: "auto" }}>
+                <div style={{ overflowX: "auto", marginBottom: "200px" }}>
                   <table
                     id="datatable"
                     className="table table-striped"

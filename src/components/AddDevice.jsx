@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { Modal, Box, Typography, FormControl, Button } from "@mui/material";
+import { FormControl, FormHelperText } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import styles from "./SwitchComponent.module.css";
 import { useAuth } from "../hooks/useAuth";
-import CloseIcon from "@mui/icons-material/Close";
 import { toast, Toaster } from "react-hot-toast";
 import { addDevice } from "../helper/web-service";
+import { BaseModal } from "./Popup";
 
 export const AddDeviceModal = ({
   isOpen,
@@ -17,86 +17,78 @@ export const AddDeviceModal = ({
   const { user } = useAuth();
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [devEUI, setDevEUI] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const handleChange = (e) => {
+    const value = e.target.value.trim();
+    setDevEUI(value);
+    if (errorMessage) setErrorMessage("");
+    if (value.length > 0 && value.length < 12) {
+      setErrorMessage("DevEUI must be at least 12 characters long.");
+    }
+  };
   const handleSave = async () => {
     if (!devEUI) {
-      toast.error("Please enter a DevEUI.");
+      setErrorMessage("Please enter a valid DevEUI.");
+      return;
+    }
+    if (devEUI.length < 12) {
+      setErrorMessage("DevEUI must be at least 12 characters long.");
       return;
     }
     try {
       setLoaderVisible(true);
       const response = await addDevice(user, devEUI);
-      console.log("res", response);     
-        toast.success("Device added successfully");
-        handleClose();
-        onDeviceAdded();
-   
+      toast.success("Device added successfully");
+      handleClose();
+      onDeviceAdded();
     } catch (err) {
-      toast.error("Error adding device. Please try again.");
+      setErrorMessage(err.message);
     } finally {
       setLoaderVisible(false);
     }
   };
   const handleClose = (event) => {
     setDevEUI("");
+    setErrorMessage("");
     onCloseCreateModal(event);
   };
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <Modal open={isOpen} onClose={handleClose}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 500,
-            bgcolor: "background.paper",
-            borderRadius: 3,
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography variant="h6" gutterBottom align="right">
-            <Button onClick={handleClose}>
-              <CloseIcon style={{ fontSize: "20px" }} />
-            </Button>
-          </Typography>
-          <Typography variant="h6" gutterBottom align="center">
-            <h3>
-              <strong> Add Device </strong>
-            </h3>
-          </Typography>
-          <FormControl fullWidth>
-            <InputLabel htmlFor="component-outlined">DevEUI</InputLabel>
-            <OutlinedInput
-              id="devEUI-input"
-              value={devEUI}
-              onChange={(e) => setDevEUI(e.target.value.trim())}
-              label="DevEUI"
-              placeholder="Enter DevEUI"
-            />
-          </FormControl>
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <LoadingButton
-              variant="contained"
-              color="primary"
-              style={{
-                color: "#ffffff",
-                verticalAlign: "middle",
-                width: "150px",
-                marginTop: "40px",
-              }}
-              className={`btn btn-success btn-block ${styles.save_btn}`}
-              sx={{ py: 1 }}
-              onClick={handleSave}
-              loading={isLoaderVisible}
+      <BaseModal
+        isOpen={isOpen}
+        closeModal={handleClose}
+        title="Create Group"
+        footer={
+          <LoadingButton
+            variant="contained"
+            color="primary"
+            className={`btn btn-success ${styles.save_btn}`}
+            onClick={handleSave}
+            loading={isLoaderVisible}
+          >
+            Save
+          </LoadingButton>
+        }
+      >
+        <FormControl fullWidth>
+          <InputLabel htmlFor="component-outlined">DevEUI</InputLabel>
+          <OutlinedInput
+            id="devEUI-input"
+            value={devEUI}
+            onChange={handleChange}
+            label="DevEUI"
+            placeholder="Enter DevEUI"
+          />
+          {errorMessage && (
+            <FormHelperText
+              sx={{ color: "error.main", mt: 1, textAlign: "left", fontSize: "12px" }}
             >
-              Save
-            </LoadingButton>
-          </Box>
-        </Box>
-      </Modal>
+              {errorMessage}
+            </FormHelperText>
+          )}
+        </FormControl>
+      </BaseModal>
     </>
   );
 };
