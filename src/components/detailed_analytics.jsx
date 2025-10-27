@@ -82,8 +82,8 @@ export const DetailedAnalytics = React.forwardRef(
       };
 
       if (selectedHourly === "custom") {
-        pdt = moment(customFrom);
-        pdtEnd = moment(customTo);
+        pdt = moment(customFrom).startOf("day");
+        pdtEnd = moment(customTo).endOf("day");
       } else if (timeRanges[selectedHourly]) {
         pdt = timeRanges[selectedHourly];
         pdtEnd = moment();

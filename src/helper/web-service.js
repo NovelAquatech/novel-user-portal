@@ -12,7 +12,7 @@ async function getRequest(url) {
       method: "GET",
       headers: requestHeader,
     });
-       const data = await response.json();
+    const data = await response.json();
     if (!response.ok) {
       throw new Error(
         data.message || `Unable to get response for status: ${response.status}`
@@ -95,7 +95,7 @@ export const getDevices = (userInfo) => {
 //   let url = `${
 //     import.meta.env.VITE_GET_SENSOR_API_URL
 //   }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-  
+
 //   url = `${url}?api-version=${APP_CONST.API_VERSION}`;
 //   url = `${url}&sp=${APP_CONST.SP}`;
 //   url = `${url}&sv=${APP_CONST.SV}`;
@@ -114,20 +114,27 @@ export const getDevices = (userInfo) => {
 //       last_month: moment().subtract(1, "months"),
 //       last_year: moment().subtract(1, "years"),
 //     };
-  
+
 //     const dateStart = timeRanges[timeFilter]?.toISOString();
 //     const dateEnd = moment().toISOString();
-  
+
 //     url = `${url}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
 //   }
-  
+
 //   // Call API endpoint
 //   return getRequest(url);
 // };
 
-export const getSensorData = (userInfo, timeFilter = false, customFrom = null, customTo = null) => {
-  let url = `${import.meta.env.VITE_GET_SENSOR_API_URL}/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-  
+export const getSensorData = (
+  userInfo,
+  timeFilter = false,
+  customFrom = null,
+  customTo = null
+) => {
+  let url = `${
+    import.meta.env.VITE_GET_SENSOR_API_URL
+  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
+
   url = `${url}?api-version=${APP_CONST.API_VERSION}`;
   url = `${url}&sp=${APP_CONST.SP}`;
   url = `${url}&sv=${APP_CONST.SV}`;
@@ -148,8 +155,8 @@ export const getSensorData = (userInfo, timeFilter = false, customFrom = null, c
   let dateStart, dateEnd;
 
   if (timeFilter === "custom" && customFrom && customTo) {
-    dateStart = moment(customFrom).toISOString();
-    dateEnd = moment(customTo).toISOString();
+    dateStart = moment(customFrom).startOf("day").toISOString();
+    dateEnd = moment(customTo).endOf("day").toISOString();
   } else if (timeRanges[timeFilter]) {
     dateStart = timeRanges[timeFilter].toISOString();
     dateEnd = moment().toISOString();
@@ -162,12 +169,11 @@ export const getSensorData = (userInfo, timeFilter = false, customFrom = null, c
   return getRequest(url);
 };
 
-
 export const getRainfallData = (userInfo, timeFilter = false) => {
   let url = `${
     import.meta.env.VITE_GET_SENSOR_API_URL
   }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-  
+
   url = `${url}?api-version=${APP_CONST.API_VERSION}`;
   url = `${url}&sp=${APP_CONST.SP}`;
   url = `${url}&sv=${APP_CONST.SV}`;
@@ -183,16 +189,15 @@ export const getRainfallData = (userInfo, timeFilter = false) => {
       monthly: moment().subtract(1, "months"),
       yearly: moment().subtract(1, "years"),
     };
-  
+
     const dateStart = timeRanges[timeFilter]?.toISOString();
     const dateEnd = moment().toISOString();
-  
+
     url = `${url}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
-  }  
+  }
 
   return getRequest(url);
 };
-
 
 export const getAdvisorySettingData = (userInfo) => {
   // For URL
@@ -498,11 +503,13 @@ export const getAverage = (userInfo, devEUIs) => {
   url = `${url}?api-version=${APP_CONST.API_VERSION}`;
   url = `${url}&sp=${APP_CONST.SP}`;
   url = `${url}&sv=${APP_CONST.SV}`;
-  url = `${url}&sig=${import.meta.env.VITE_GET_AVG_SELECTED_DEVICE_API_URL_SIG}`;
-  url = `${url}&orgName=${userInfo.orgName}`
+  url = `${url}&sig=${
+    import.meta.env.VITE_GET_AVG_SELECTED_DEVICE_API_URL_SIG
+  }`;
+  url = `${url}&orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
-  url = `${url}&devEUIs=${(JSON.stringify(devEUIs))}`;
- 
+  url = `${url}&devEUIs=${JSON.stringify(devEUIs)}`;
+
   console.log("Constructed average data for selected device:", url);
 
   // Call the endpoint
@@ -517,10 +524,10 @@ export const addDevice = (userInfo, devEUI) => {
   url = `${url}?api-version=${APP_CONST.API_VERSION}`;
   url = `${url}&sp=${APP_CONST.SP}`;
   url = `${url}&sv=${APP_CONST.SV}`;
-  url = `${url}&sig=${import.meta.env.VITE_GET_ADD_DEVICE_API_URL_SIG}`;  
+  url = `${url}&sig=${import.meta.env.VITE_GET_ADD_DEVICE_API_URL_SIG}`;
   url = `${url}&authToken=${userInfo.token}`;
   url = `${url}&deviceEUI=${devEUI}`;
- 
+
   console.log("Added device:", url);
 
   // Call the endpoint
