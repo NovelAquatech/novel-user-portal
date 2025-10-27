@@ -58,7 +58,7 @@ export const AddDeviceModal = ({
       <BaseModal
         isOpen={isOpen}
         closeModal={handleClose}
-        title="Create Group"
+        title="Add Device"
         footer={
           <LoadingButton
             variant="contained"
