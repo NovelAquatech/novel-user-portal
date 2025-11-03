@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { APP_CONST } from "../helper/application-constant";
 import { useCacheStatus } from "../hooks/useCacheStatus";
 import { useQueryClient } from 'react-query';
+import logo from "../assets/images/logomain.png";
 
 export const Navbar = () => {
   const { user, removeUserData } = useAuth();
@@ -12,7 +13,7 @@ export const Navbar = () => {
   const { setIsDevicesFetched } = useCacheStatus();
 
   const orgName = user.orgName;
-  const orgIcon = (farmer_companies.includes(orgName) && orgName !== "JoeFarm") ? "images/logomain.png" : user.orgDetails.icon;
+  const orgIcon =  user.orgDetails.icon ? user.orgDetails.icon : logo;
 
   const handleLogout = (event) => {
     console.log("--- Inside handleLogout ---");
