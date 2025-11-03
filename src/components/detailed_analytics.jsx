@@ -38,13 +38,13 @@ export const DetailedAnalytics = React.forwardRef(
       displayParameters.push(parameter);
     });
 
-    if (orgName === "JoeFarm" || orgName === "DeepTesting") {
+    if (["JoeFarm", "DeepTesting", "Jesse"].includes(orgName)) {
       displayParameters = displayParameters.filter((param) => {
         const lowerParam = param.toLowerCase();
         if (orgName === "JoeFarm") {
           return lowerParam !== "valve_1" && lowerParam !== "valve_2";
         }
-        if (orgName === "DeepTesting") {
+        if (orgName === "DeepTesting" || orgName === "Jesse")  {
           return lowerParam !== "gpio_1" && lowerParam !== "gpio_2";
         }
         return true;
