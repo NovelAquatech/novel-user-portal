@@ -73,15 +73,11 @@ export const Navbar = () => {
             <li>
               <NavLink to="/setting">Setting</NavLink>
             </li>
-            <li
-              style={{
-                display: disable_occupant_survey.includes(orgName)
-                  ? "none"
-                  : "block",
-              }}
-            >
-              <NavLink to="/survey">Occupant Survey</NavLink>
-            </li>
+               {user.orgDetails.occupantSurvey ? (
+              <li>
+                <NavLink to="/survey">Occupant Survey</NavLink>
+              </li>
+            ) : null}
             {/* Show the Custom Setting tab only if orgName is in weatherStations */}
             <li
               style={{

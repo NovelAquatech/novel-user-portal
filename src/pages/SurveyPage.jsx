@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Navbar } from "../components/nav";
 import { Footer } from "../components/footer";
 import { CirclesWithBar } from "react-loader-spinner";
-import { APP_CONST } from "../helper/application-constant";
 import { useAuth } from "../hooks/useAuth";
 import { QRCodeCanvas } from "qrcode.react";
 
@@ -16,25 +15,14 @@ export const SurveyPage = () => {
   const { user } = useAuth();
   const orgName = user.orgName;
 
-  let googleDocLink = user.orgDetails.occupantSurvey.googleDocLink
-    // orgName === "Kolkata"
-    //   ? APP_CONST.googleDocLinkKolSensors1
-    //   : orgName === "UNSW"
-    //   ? APP_CONST.googleDocLinkUNSW
-    //   : orgName === "UNSW2"
-    //   ? APP_CONST.googleDocLinkUNSW2
-    //   : APP_CONST.googleDocLinkSeely;
+  let googleDocLink = user.orgDetails.occupantSurvey
+    ? user.orgDetails.occupantSurvey
+    : null;
 
-  let googleFormURL =user.orgDetails.occupantSurvey.googleFormLink
-    // orgName === "Kolkata"
-    //   ? APP_CONST.googleFormLinkKolSensors1
-    //   : orgName === "UNSW"
-    //   ? APP_CONST.googleFormLinkUNSW
-    //   : orgName === "UNSW2"
-    //   ? APP_CONST.googleFormLinkUNSW2
-    //   : orgName === "Seely"
-    //   ? APP_CONST.googleFormLinkSeely
-    //   : "";
+  let googleFormURL = user.orgDetails.surveyForm
+    ? user.orgDetails.surveyForm
+    : "";
+
   return (
     <>
       <CirclesWithBar
