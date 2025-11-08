@@ -15,7 +15,8 @@ import {
   getDevices,
   getSensorData,
   getAdvisorySettings,
-  getAlerts,getAverage
+  getAlerts,
+  getAverage,
 } from "../helper/web-service";
 import { AvgParameters } from "../components/avg_parameters";
 import { DeviceList } from "../components/deviceList";
@@ -28,7 +29,7 @@ import {
 import RainFallBarGraph from "../components/RainFallBarGraph";
 import { FaDownload } from "react-icons/fa";
 
-export default function DeviceReportPage(){
+export default function DeviceReportPage() {
   const { user } = useAuth();
   const {
     isDevicesFetched,
@@ -42,7 +43,7 @@ export default function DeviceReportPage(){
   const [series, setSeries] = useState(null);
   const [devices, setDevices] = useState([]);
   const [selectedDevices, setSelectedDevices] = useState([]);
-  const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
+  // const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState("last_hour");
   const [selectedParam, setSelectedParam] = useState(
     orgName === "SeelyEnergyMonitor"
@@ -51,7 +52,7 @@ export default function DeviceReportPage(){
   );
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
-   const [avgData, setAvgData] = useState(null);
+  const [avgData, setAvgData] = useState(null);
 
   useEffect(() => {
     // Showing loader
@@ -76,7 +77,9 @@ export default function DeviceReportPage(){
       setIsDevicesFetched(true);
 
       // Organized parameters
-      let repAdvisorySettings = responses[1]["value"];
+      let repAdvisorySettings = responses[1];
+      setAlerts(repAdvisorySettings);
+      // console.log("alert", repAdvisorySettings);
       // Changing m/s to km/h unit
       repAdvisorySettings.forEach((item) => {
         if (item.parameter === "wind_speed") {
@@ -84,9 +87,11 @@ export default function DeviceReportPage(){
         }
       });
       let parameters = getOrganizedParameters(repAdvisorySettings);
+      console.log(parameters)
 
       // Organized sensor data
       let repSensorData = responses[2]["value"];
+
       repSensorData.forEach((sensorData) => {
         if (sensorData.wind_speed != null) {
           // Check if wind_speed exists and is not null
@@ -99,33 +104,34 @@ export default function DeviceReportPage(){
       );
 
       // Alerts
-      let alertsResp = responses[3]?.["value"] || [];
-      setAlerts(alertsResp);
+      // let alertsResp = responses[3]?.["value"] || [];
+      // setAlerts(alertsResp);
+      // console.log('alert', alertsResp)
 
       // Set state
       setParameters(parameters);
       setSeries(seriesData);
       setDevices(deviceList);
       setSelectedDevices(deviceList.map((device) => device.devEUI));
-      setLast24HourEachDevice(latestData);
+      // setLast24HourEachDevice(latestData);
       setLoaderVisible(false);
     });
   }, [user]);
 
-    //Get average data
+  //Get average data
   useEffect(() => {
-  if (selectedDevices.length === 0) {
-    setAvgData(null);
-    return;
-  }
-  getAverage(user, selectedDevices)
-    .then((response) => {
-      setAvgData(response);
-    })
-    .catch((err) => {
-      console.error("Error fetching average:", err);
-    });
-}, [selectedDevices, user]);
+    if (selectedDevices.length === 0) {
+      setAvgData(null);
+      return;
+    }
+    getAverage(user, selectedDevices)
+      .then((response) => {
+        setAvgData(response);
+      })
+      .catch((err) => {
+        console.error("Error fetching average:", err);
+      });
+  }, [selectedDevices, user]);
 
   const handleRefresh = () => {
     // setLoaderVisible(true);
@@ -148,7 +154,7 @@ export default function DeviceReportPage(){
     //   setLast24HourEachDevice(latestData);
     //   setLoaderVisible(false);
     // });
-    if(value === 'tab_one' ) childRef.current.fetchSensorData();
+    if (value === "tab_one") childRef.current.fetchSensorData();
     else childRef.current.fetchRainfallData();
   };
 
@@ -217,187 +223,164 @@ export default function DeviceReportPage(){
         wrapperClass="loader"
         visible={isLoaderVisible}
       />
-        <div>
-          <h2>
-            <strong>Device Data</strong>
-          </h2>
+      <div>
+        <h2>
+          <strong>Device Data</strong>
+        </h2>
 
-          <div className="row report_page">
-            <div className="col-md-2 col-sm-3 col-xs-12">
-              <h2 className="dev_ttlmain">Devices</h2>
-              <div className="dbb chtbox">
-                <div className="reports-button-container">
-                  <span
-                    className="label label-primary"
-                    style={{ padding: "6px", cursor: "pointer" }}
-                    onClick={handleChecked}
-                  >
-                    Check All
-                  </span>
-                  <span
-                    className="label label-primary"
-                    style={{
-                      padding: "6px",
-                      cursor: "pointer",
-                    }}
-                    onClick={handleUnchecked}
-                  >
-                    Uncheck All
-                  </span>
-                </div>
-                <div className="list">
-                  {devices.length > 0 ? (
-                    <DeviceList
-                      deviceList={devices}
-                      selectedDeviceList={selectedDevices}
-                      changeHandeler={handleCheckboxChange}
-                    ></DeviceList>
-                  ) : (
-                    <div className="waiting_loader">
-                      Waiting to load data....
-                    </div>
-                  )}
-                </div>
+        <div className="row report_page">
+          <div className="col-md-2 col-sm-3 col-xs-12">
+            <h2 className="dev_ttlmain">Devices</h2>
+            <div className="dbb chtbox">
+              <div className="reports-button-container">
+                <span
+                  className="label label-primary"
+                  style={{ padding: "6px", cursor: "pointer" }}
+                  onClick={handleChecked}
+                >
+                  Check All
+                </span>
+                <span
+                  className="label label-primary"
+                  style={{
+                    padding: "6px",
+                    cursor: "pointer",
+                  }}
+                  onClick={handleUnchecked}
+                >
+                  Uncheck All
+                </span>
               </div>
-            </div>
-            <div className="col-md-10 col-sm-9 col-xs-12">
-              <h2 className="dev_ttlmain">All devices average</h2>
-              <div className="dbb chartbox">
-                {avgData ? (
-                  <>
-                    <AvgParameters
-                     avgData={avgData}
-                    />
-                  </>
+              <div className="list">
+                {devices.length > 0 ? (
+                  <DeviceList
+                    deviceList={devices}
+                    selectedDeviceList={selectedDevices}
+                    changeHandeler={handleCheckboxChange}
+                  ></DeviceList>
                 ) : (
-                  <div className="waiting_loader">
-                    Waiting to load data....
-                  </div>
+                  <div className="waiting_loader">Waiting to load data....</div>
                 )}
               </div>
-              <h2 className="dev_ttlmain">Detailed analytics</h2>
-              <div className="dbb chtbox">
-                {series ? (
-                  <>
-                    <TabContext value={value}>
-                      <Box
-                        sx={{
-                          borderBottom: 1,
-                          borderColor: "divider",
-                        }}
+            </div>
+          </div>
+          <div className="col-md-10 col-sm-9 col-xs-12">
+            <h2 className="dev_ttlmain">All devices average</h2>
+            <div className="dbb chartbox">
+              {avgData ? (
+                <>
+                  <AvgParameters avgData={avgData} />
+                </>
+              ) : (
+                <div className="waiting_loader">Waiting to load data....</div>
+              )}
+            </div>
+            <h2 className="dev_ttlmain">Detailed analytics</h2>
+            <div className="dbb chtbox">
+              {series ? (
+                <>
+                  <TabContext value={value}>
+                    <Box
+                      sx={{
+                        borderBottom: 1,
+                        borderColor: "divider",
+                      }}
+                    >
+                      <TabList
+                        onChange={handleChange}
+                        aria-label="lab API tabs example"
                       >
-                        <TabList
-                          onChange={handleChange}
-                          aria-label="lab API tabs example"
-                        >
+                        <Tab
+                          label="Detailed Analysis"
+                          value="tab_one"
+                          className="tab-btn"
+                        />
+                        {weatherStations.includes(orgName) ? (
                           <Tab
-                            label="Detailed Analysis"
-                            value="tab_one"
+                            label="Rainfall"
+                            value="tab_two"
                             className="tab-btn"
                           />
-                          {weatherStations.includes(orgName) ? (
-                            <Tab
-                              label="Rainfall"
-                              value="tab_two"
-                              className="tab-btn"
-                            />
-                          ) : (
-                            ""
-                          )}
-                          <span
-                            className="label label-primary"
-                            style={{
-                              padding: "6px",
-                              cursor: "pointer",
-                              marginTop: "auto",
-                              marginBottom: "12px",
-                              marginLeft: "10px",
-                            }}
-                            onClick={handleRefresh}
-                          >
-                            Refresh Sensor Data
-                          </span>
-                          <button
-                            className="btn btn-info btn-sm"
-                            style={{
-                              marginTop: "10px",
-                              marginLeft: "auto",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                            onClick={handleChartDownloadAsPdf}
-                          >
-                            <FaDownload
-                              style={{ marginRight: "5px" }}
-                            />
-                            Download as PDF
-                          </button>
-
-                          <button
-                            className="btn btn-info btn-sm"
-                            style={{
-                              marginTop: "10px",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                            onClick={handleChartDownloadAsExcel}
-                          >
-                            <FaDownload
-                              style={{ marginRight: "5px" }}
-                            />
-                            Download as Excel
-                          </button>
-                        </TabList>
-                      </Box>
-                      <TabPanel
-                        value="tab_one"
-                        style={{ padding: "24px 0" }}
-                      >
-                        <DetailedAnalytics
-                          parameters={parameters}
-                          devices={devices}
-                          selectedDevices={selectedDevices}
-                          selectedHourly={selectedHourly}
-                          selectedParam={selectedParam}
-                          setSelectedHourly={setSelectedHourly}
-                          setSelectedParam={setSelectedParam}
-                          ref={childRef}
-                        ></DetailedAnalytics>
-                      </TabPanel>
-                      {weatherStations.includes(orgName) ? (
-                        <TabPanel
-                          value="tab_two"
-                          style={{ padding: "24px 0" }}
+                        ) : (
+                          ""
+                        )}
+                        <span
+                          className="label label-primary"
+                          style={{
+                            padding: "6px",
+                            cursor: "pointer",
+                            marginTop: "auto",
+                            marginBottom: "12px",
+                            marginLeft: "10px",
+                          }}
+                          onClick={handleRefresh}
                         >
-                          <RainFallBarGraph
-                            selectedDevices={selectedDevices}
-                            ref={childRef}
-                          />
-                        </TabPanel>
-                      ) : (
-                        ""
-                      )}
-                    </TabContext>
-                  </>
-                ) : (
-                  <div className="waiting_loader">
-                    Waiting to load data....
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="col-md-12 col-sm-12 col-xs-12">
-              <h2 className="dev_ttlmain">Device advisories</h2>
-              {last24HourEachDevice ? (
-                <AlertAdvisories alerts={alerts} />
+                          Refresh Sensor Data
+                        </span>
+                        <button
+                          className="btn btn-info btn-sm"
+                          style={{
+                            marginTop: "10px",
+                            marginLeft: "auto",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          onClick={handleChartDownloadAsPdf}
+                        >
+                          <FaDownload style={{ marginRight: "5px" }} />
+                          Download as PDF
+                        </button>
+
+                        <button
+                          className="btn btn-info btn-sm"
+                          style={{
+                            marginTop: "10px",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          onClick={handleChartDownloadAsExcel}
+                        >
+                          <FaDownload style={{ marginRight: "5px" }} />
+                          Download as Excel
+                        </button>
+                      </TabList>
+                    </Box>
+                    <TabPanel value="tab_one" style={{ padding: "24px 0" }}>
+                      <DetailedAnalytics
+                        parameters={parameters}
+                        devices={devices}
+                        selectedDevices={selectedDevices}
+                        selectedHourly={selectedHourly}
+                        selectedParam={selectedParam}
+                        setSelectedHourly={setSelectedHourly}
+                        setSelectedParam={setSelectedParam}
+                        ref={childRef}
+                      ></DetailedAnalytics>
+                    </TabPanel>
+                    {weatherStations.includes(orgName) ? (
+                      <TabPanel value="tab_two" style={{ padding: "24px 0" }}>
+                        <RainFallBarGraph
+                          selectedDevices={selectedDevices}
+                          ref={childRef}
+                        />
+                      </TabPanel>
+                    ) : (
+                      ""
+                    )}
+                  </TabContext>
+                </>
               ) : (
-                <div className="waiting_loader">
-                  Waiting to load data....
-                </div>
+                <div className="waiting_loader">Waiting to load data....</div>
               )}
             </div>
           </div>
+          <div className="col-md-12 col-sm-12 col-xs-12">
+            <h2 className="dev_ttlmain">Device advisories</h2>
+            {/* {last24HourEachDevice ? ( */}
+            <AlertAdvisories alerts={alerts} />
+          </div>
         </div>
+      </div>
     </>
   );
 }
