@@ -1,20 +1,20 @@
-import React from "react";
-import Plot from "react-plotly.js";
-import moment from "moment";
-import { MultiSelect } from "react-multi-select-component";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
-import { useState, useEffect } from "react";
-import { APP_CONST } from "../helper/application-constant";
-import { useAuth } from "../hooks/useAuth";
+import React from 'react';
+import Plot from 'react-plotly.js';
+import moment from 'moment';
+import { MultiSelect } from 'react-multi-select-component';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import { useState, useEffect } from 'react';
+import { APP_CONST } from '../helper/application-constant';
+import { useAuth } from '../hooks/useAuth';
 import {
   getOrganizedSensorData,
   organizedExportedData,
   capitalizeFirstLetter,
-} from "../helper/utils";
-import { downloadExcel } from "../helper/download-utils";
-import { CirclesWithBar } from "react-loader-spinner";
-import { getSensorData } from "../helper/web-service";
+} from '../helper/utils';
+import { downloadExcel } from '../helper/download-utils';
+import { CirclesWithBar } from 'react-loader-spinner';
+import { getSensorData } from '../helper/web-service';
 export const DetailedAnalytics = React.forwardRef(
   (
     {
@@ -33,7 +33,7 @@ export const DetailedAnalytics = React.forwardRef(
     const farmer_companies = APP_CONST.farmer_companies;
     const orgName = user.orgName;
     const orgIcon = farmer_companies.includes(orgName)
-      ? "images/logomain.png"
+      ? 'images/logomain.png'
       : `https://api.cors.lol/?url=${user.orgDetails.icon}`;
     let displayParameters = [];
 
@@ -41,14 +41,14 @@ export const DetailedAnalytics = React.forwardRef(
       displayParameters.push(parameter);
     });
 
-    if (orgName === "JoeFarm" || orgName === "DeepTesting") {
+    if (orgName === 'JoeFarm' || orgName === 'DeepTesting') {
       displayParameters = displayParameters.filter((param) => {
         const lowerParam = param.toLowerCase();
-        if (orgName === "JoeFarm") {
-          return lowerParam !== "valve_1" && lowerParam !== "valve_2";
+        if (orgName === 'JoeFarm') {
+          return lowerParam !== 'valve_1' && lowerParam !== 'valve_2';
         }
-        if (orgName === "DeepTesting") {
-          return lowerParam !== "gpio_1" && lowerParam !== "gpio_2";
+        if (orgName === 'DeepTesting') {
+          return lowerParam !== 'gpio_1' && lowerParam !== 'gpio_2';
         }
         return true;
       });
@@ -62,28 +62,28 @@ export const DetailedAnalytics = React.forwardRef(
     const [sensorData, setSensorData] = useState([]);
     const [dataLoaded, setDataLoaded] = useState(false);
     const [customFrom, setCustomFrom] = useState(
-      moment().subtract(1, "days").format("YYYY-MM-DD")
+      moment().subtract(1, 'days').format('YYYY-MM-DD')
     );
-    const [customTo, setCustomTo] = useState(moment().format("YYYY-MM-DD"));
+    const [customTo, setCustomTo] = useState(moment().format('YYYY-MM-DD'));
     // Updated function
     const detailedAnalyticsData = () => {
-      let pdt = moment().add(-1, "hours");
+      let pdt = moment().add(-1, 'hours');
       let pdtEnd = moment();
       let series = [];
 
       const timeRanges = {
-        last_hour: moment().subtract(1, "hours"),
-        last_12_hour: moment().subtract(12, "hours"),
-        last_24_hour: moment().subtract(24, "hours"),
-        last_48_hour: moment().subtract(48, "hours"),
-        last_week: moment().subtract(1, "weeks"),
-        last_month: moment().subtract(1, "months"),
-        last_year: moment().subtract(1, "years"),
+        last_hour: moment().subtract(1, 'hours'),
+        last_12_hour: moment().subtract(12, 'hours'),
+        last_24_hour: moment().subtract(24, 'hours'),
+        last_48_hour: moment().subtract(48, 'hours'),
+        last_week: moment().subtract(1, 'weeks'),
+        last_month: moment().subtract(1, 'months'),
+        last_year: moment().subtract(1, 'years'),
       };
 
-      if (selectedHourly === "custom") {
-        pdt = moment(customFrom).startOf("day");
-        pdtEnd = moment(customTo).endOf("day");
+      if (selectedHourly === 'custom') {
+        pdt = moment(customFrom).startOf('day');
+        pdtEnd = moment(customTo).endOf('day');
       } else if (timeRanges[selectedHourly]) {
         pdt = timeRanges[selectedHourly];
         pdtEnd = moment();
@@ -108,11 +108,11 @@ export const DetailedAnalytics = React.forwardRef(
         selectedParam.forEach((pm) => {
           let xArr = [];
           let yArr = [];
-          let param = pm["value"];
+          let param = pm['value'];
           let devEUI = null;
           // For Valves__
-          if (param.includes("__")) {
-            [param, devEUI] = param.split("__");
+          if (param.includes('__')) {
+            [param, devEUI] = param.split('__');
           }
           if (devEUI && device.devEUI !== devEUI) return;
 
@@ -120,11 +120,11 @@ export const DetailedAnalytics = React.forwardRef(
             let cdt = moment(s.timestamp);
             let yval = s[param] ?? null;
             if (
-              cdt.isBetween(pdt, pdtEnd, "seconds", "[]") &&
+              cdt.isBetween(pdt, pdtEnd, 'seconds', '[]') &&
               yval !== null &&
               yval !== undefined
             ) {
-              xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
+              xArr.push(moment(s.timestamp).format('YYYY-MM-DD H:mm:ss'));
               yArr.push(yval);
             }
           });
@@ -135,7 +135,7 @@ export const DetailedAnalytics = React.forwardRef(
             let paramKey;
 
             // Separate rules: For valves - per device; others - shared
-            if (param.startsWith("valve_")) {
+            if (param.startsWith('valve_')) {
               paramKey = `${param}__${device.devEUI}`;
             } else {
               paramKey = param;
@@ -145,34 +145,34 @@ export const DetailedAnalytics = React.forwardRef(
               yaxis = paramAxisMap[paramKey];
             } else {
               yAxisCount++;
-              yaxis = yAxisCount === 1 ? "y" : `y${yAxisCount}`;
+              yaxis = yAxisCount === 1 ? 'y' : `y${yAxisCount}`;
               paramAxisMap[paramKey] = yaxis;
 
               let prm = parameters[pm.value];
               if (yAxisCount === 1) {
-                layout["yaxis"]["title"]["text"] = `${pm.label} (${
-                  prm?.unit ?? ""
+                layout['yaxis']['title']['text'] = `${pm.label} (${
+                  prm?.unit ?? ''
                 })`;
               } else {
                 layout[`yaxis${yAxisCount}`] = {
                   title: {
-                    text: param.startsWith("valve_")
-                      ? `${pm.label} (${prm?.unit ?? ""})`
-                      : `${pm.label} (${prm?.unit ?? ""})`,
+                    text: param.startsWith('valve_')
+                      ? `${pm.label} (${prm?.unit ?? ''})`
+                      : `${pm.label} (${prm?.unit ?? ''})`,
                     font: { size: 10 },
                   },
-                  anchor: "free",
-                  side: "left",
+                  anchor: 'free',
+                  side: 'left',
                   position: 0.05 * (yAxisCount - 1),
-                  overlaying: "y",
+                  overlaying: 'y',
                 };
               }
 
-              layout["xaxis"]["domain"] = [0.05 * yAxisCount, 1];
+              layout['xaxis']['domain'] = [0.05 * yAxisCount, 1];
             }
 
             // Handle Power param restriction
-            if (parameters[param].paramDisplayName === "Power") {
+            if (parameters[param].paramDisplayName === 'Power') {
               if (
                 !machines.some(
                   (machine) => machine.primaryDevEUI === device.devEUI
@@ -199,7 +199,7 @@ export const DetailedAnalytics = React.forwardRef(
               x: xArr,
               y: yArr,
               yaxis: yaxis,
-              type: "scatter",
+              type: 'scatter',
               marker: { size: 5 },
               line: { width: 1 },
               name: machineName,
@@ -212,7 +212,7 @@ export const DetailedAnalytics = React.forwardRef(
       let cumulativePeoplePresentdata =
         series[APP_CONST.overAllPeoplePresentDevEUIKey] ?? null;
       let filterParam = selectedParam.filter(
-        (param) => param.value === "people_present"
+        (param) => param.value === 'people_present'
       );
 
       if (filterParam.length > 0 && cumulativePeoplePresentdata) {
@@ -220,19 +220,19 @@ export const DetailedAnalytics = React.forwardRef(
         let yArr = [];
         cumulativePeoplePresentdata.forEach((s) => {
           let cdt = moment(s.timestamp);
-          let yval = s[filterParam[0]["value"]] ?? null;
+          let yval = s[filterParam[0]['value']] ?? null;
           if (
-            cdt.isBetween(pdt, pdtEnd, "seconds", "[]") &&
+            cdt.isBetween(pdt, pdtEnd, 'seconds', '[]') &&
             yval !== null &&
             yval !== undefined
           ) {
-            xArr.push(moment(s.timestamp).format("YYYY-MM-DD H:mm:ss"));
+            xArr.push(moment(s.timestamp).format('YYYY-MM-DD H:mm:ss'));
             yArr.push(yval);
           }
         });
 
         if (xArr.length > 0 && yArr.length > 0) {
-          let param = "people_present";
+          let param = 'people_present';
           let yaxis;
           let paramKey = param; // shared axis
 
@@ -240,7 +240,7 @@ export const DetailedAnalytics = React.forwardRef(
             yaxis = paramAxisMap[paramKey];
           } else {
             yAxisCount++;
-            yaxis = yAxisCount === 1 ? "y" : `y${yAxisCount}`;
+            yaxis = yAxisCount === 1 ? 'y' : `y${yAxisCount}`;
             paramAxisMap[paramKey] = yaxis;
 
             layout[`yaxis${yAxisCount}`] = {
@@ -248,10 +248,10 @@ export const DetailedAnalytics = React.forwardRef(
                 text: APP_CONST.overAllPeoplePresentDevNameKey,
                 font: { size: 10 },
               },
-              anchor: "free",
-              side: "left",
+              anchor: 'free',
+              side: 'left',
               position: 0.05 * (yAxisCount - 1),
-              overlaying: "y",
+              overlaying: 'y',
             };
           }
 
@@ -259,7 +259,7 @@ export const DetailedAnalytics = React.forwardRef(
             x: xArr,
             y: yArr,
             yaxis: yaxis,
-            type: "scatter",
+            type: 'scatter',
             marker: { size: 5 },
             line: { width: 1 },
             name: APP_CONST.overAllPeoplePresentDevNameKey,
@@ -292,18 +292,18 @@ export const DetailedAnalytics = React.forwardRef(
           customFrom,
           customTo
         );
-        const sensorData = sensorDataResp?.["value"];
+        const sensorData = sensorDataResp?.['value'];
         if (sensorData) {
           setSensorData(sensorData);
         }
       } catch (error) {
-        console.error("Error fetching Sensor data:", error);
+        console.error('Error fetching Sensor data:', error);
       } finally {
         setLoaderVisible(false);
       }
     };
     useEffect(() => {
-      if (selectedHourly === "custom") {
+      if (selectedHourly === 'custom') {
         fetchSensorData();
       } else {
         fetchSensorData();
@@ -316,22 +316,22 @@ export const DetailedAnalytics = React.forwardRef(
     const convertToBase64 = (imgUrl) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        img.crossOrigin = "Anonymous";
+        img.crossOrigin = 'Anonymous';
         img.onload = () => {
           try {
-            const canvas = document.createElement("canvas");
+            const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
-            const ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
-            const dataURL = canvas.toDataURL("image/png");
+            const dataURL = canvas.toDataURL('image/png');
             resolve(dataURL);
           } catch (err) {
             reject(err);
           }
         };
         img.onerror = (err) => {
-          console.error("Error loading image:", err, "URL:", imgUrl);
+          console.error('Error loading image:', err, 'URL:', imgUrl);
           reject(new Error(`Failed to load image from URL: ${imgUrl}`));
         };
         img.src = imgUrl;
@@ -340,23 +340,23 @@ export const DetailedAnalytics = React.forwardRef(
 
     const downloadChartAsPDF = () => {
       return new Promise((resolve, reject) => {
-        const chartElement = document.getElementById("chart-container");
+        const chartElement = document.getElementById('chart-container');
 
         html2canvas(chartElement)
           .then((canvas) => {
-            const imgData = canvas.toDataURL("image/png");
+            const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF();
 
-            pdf.addImage(imgData, "PNG", 10, 50, 190, 100);
+            pdf.addImage(imgData, 'PNG', 10, 50, 190, 100);
 
             convertToBase64(orgIcon)
               .then((base64Image) => {
                 if (base64Image)
-                  pdf.addImage(base64Image, "PNG", 80, 10, 50, 0);
+                  pdf.addImage(base64Image, 'PNG', 80, 10, 50, 0);
               })
               .catch((error) => {
                 console.error(
-                  "Error converting image to Base64, skipping icon:",
+                  'Error converting image to Base64, skipping icon:',
                   error
                 );
               })
@@ -367,13 +367,13 @@ export const DetailedAnalytics = React.forwardRef(
                   {
                     text: `Report Type: ${selectedParam
                       .map((item) => item.label)
-                      .join(", ")}`,
+                      .join(', ')}`,
                     x: 10,
                     y: 40,
                   },
                 ];
 
-                pdf.setFont("helvetica");
+                pdf.setFont('helvetica');
                 pdf.setFontSize(10);
                 hiddenDetails.forEach((detail) => {
                   pdf.text(detail.text, detail.x, detail.y);
@@ -387,7 +387,7 @@ export const DetailedAnalytics = React.forwardRef(
               });
           })
           .catch((error) => {
-            console.error("Error generating PDF:", error);
+            console.error('Error generating PDF:', error);
             reject(error);
           });
       });
@@ -397,7 +397,7 @@ export const DetailedAnalytics = React.forwardRef(
       return new Promise((resolve, reject) => {
         try {
           const columns = [
-            { title: "Date", dataKey: "timestamp" },
+            { title: 'Date', dataKey: 'timestamp' },
             ...displayParameters.map((parameter) => {
               return {
                 title: capitalizeFirstLetter(parameter),
@@ -429,23 +429,23 @@ export const DetailedAnalytics = React.forwardRef(
     }));
 
     const sortedData = [...organizedSerieData].sort((a, b) => {
-      const [deviceA, paramA] = a.name.split(" - ");
-      const [deviceB, paramB] = b.name.split(" - ");
+      const [deviceA, paramA] = a.name.split(' - ');
+      const [deviceB, paramB] = b.name.split(' - ');
       return deviceA.localeCompare(deviceB) || paramA.localeCompare(paramB);
     });
 
     const updateParamName = (paramDisplayName) => {
-      if (paramDisplayName.toLowerCase() == "tvoc")
+      if (paramDisplayName.toLowerCase() == 'tvoc')
         return paramDisplayName.toUpperCase();
-      if (paramDisplayName.toLowerCase() == "co2") return "CO₂";
+      if (paramDisplayName.toLowerCase() == 'co2') return 'CO₂';
       return paramDisplayName;
     };
 
     const multiSelectOptions = [];
     // Only for DeepTesting org
-    if (orgName === "DeepTesting") {
+    if (orgName === 'DeepTesting') {
       displayParameters.forEach((parameter) => {
-        if (parameter === "valve_1_state" || parameter === "valve_2_state") {
+        if (parameter === 'valve_1_state' || parameter === 'valve_2_state') {
           // Only include valve parameters for selected devices
           devices.forEach((device) => {
             if (selectedDevices.includes(device.devEUI)) {
@@ -476,35 +476,72 @@ export const DetailedAnalytics = React.forwardRef(
     return (
       <>
         <div className="row">
-          <div className="col-xs-12" style={{ display: "flex" }}>
-            <select
-              name="hourly_filter"
-              value={selectedHourly}
-              onChange={handleHourlyFilterChange}
-            >
-              <option value="last_hour">Last hour</option>
-              <option value="last_12_hour">Last 12 hours</option>
-              <option value="last_24_hour">Last 24 hours</option>
-              <option value="last_48_hour">Last 48 hours</option>
-              <option value="last_week">Last Week</option>
-              <option value="last_month">Last Month</option>
-              <option value="last_year">Last Year</option>
-              <option value="custom">Custom Range</option>
-            </select>
-            {selectedHourly === "custom" && (
+          <div className="col-xs-12" style={{ display: 'flex' }}>
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <select
+                name="hourly_filter"
+                value={selectedHourly}
+                onChange={handleHourlyFilterChange}
+                style={{
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  padding: '8px 40px 8px 12px',
+                  border: '1px solid #CCCCCC',
+                  borderRadius: 4,
+                  fontSize: 13.4,
+                  height: 40,
+                  backgroundColor: 'white',
+                }}
+              >
+                <option value="last_hour">Last hour</option>
+                <option value="last_12_hour">Last 12 hours</option>
+                <option value="last_24_hour">Last 24 hours</option>
+                <option value="last_48_hour">Last 48 hours</option>
+                <option value="last_week">Last Week</option>
+                <option value="last_month">Last Month</option>
+                <option value="last_year">Last Year</option>
+                <option value="custom">Custom Range</option>
+              </select>
+
+              {/* MUI-style arrow */}
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 24 24"
+                fill="none"
+                style={{
+                  position: 'absolute',
+                  right: 10,
+                  top: '52%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none',
+                }}
+              >
+                <path
+                  d="M7 9l5 5 5-5"
+                  stroke="#9E9E9E"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            {selectedHourly === 'custom' && (
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  marginLeft: "10px",
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  marginLeft: '10px',
                 }}
               >
                 <label>From:</label>
                 <input
                   type="date"
                   style={{
-                    height: "38px",
+                    height: '38px',
                   }}
                   value={customFrom}
                   onChange={(e) => setCustomFrom(e.target.value)}
@@ -515,7 +552,7 @@ export const DetailedAnalytics = React.forwardRef(
                   value={customTo}
                   onChange={(e) => setCustomTo(e.target.value)}
                   style={{
-                    height: "38px",
+                    height: '38px',
                   }}
                 />
               </div>
@@ -548,16 +585,16 @@ export const DetailedAnalytics = React.forwardRef(
                 displayModeBar: false,
               }}
               useResizeHandler={true}
-              style={{ width: "100%", marginLeft: "-15px" }}
+              style={{ width: '100%', marginLeft: '-15px' }}
             />
           </div>
         ) : (
           <div
             style={{
-              paddingTop: "50px",
-              paddingBottom: "80px",
-              height: "410px",
-              fontSize: "15px",
+              paddingTop: '50px',
+              paddingBottom: '80px',
+              height: '410px',
+              fontSize: '15px',
             }}
           >
             <b>
