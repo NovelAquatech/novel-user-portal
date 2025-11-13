@@ -40,7 +40,7 @@ export const Navbar = () => {
           <a className="navbar-brand" href="/novel/report">
             <img
               src={orgIcon}
-              className={orgName == "UNSW" ? "orglog" : "orglog orglog2"}
+              className={orgName == "UNSW" || orgName == "UNSW2" ? "orglog UNSW2Org" : "orglog orglog2"}
               style={{
                 ...(orgName === "JoeFarm" ? { width: "100%" } : {}),
                 maxWidth: "90%",
@@ -89,7 +89,7 @@ export const Navbar = () => {
             </li>
           </ul>
           <ul className="nav navbar-nav navbar-right">
-            <li style={{ marginTop: "10px" }}>
+            <li style={{ marginTop: "12px" }}>
               <button
                 type="button"
                 className="btn btn-info btn-sm"

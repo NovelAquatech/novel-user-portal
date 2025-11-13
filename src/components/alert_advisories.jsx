@@ -130,7 +130,7 @@ export const AlertAdvisories = ({ alerts }) => {
       )}
     </>
   ) : (
-    <div style={{ textAlign: 'center', height: '100px' }}>
+    <div style={{ textAlign: 'center', height: '100px', paddingTop: '25px' }}>
       <b>No device advisories found.</b>
     </div>
   );

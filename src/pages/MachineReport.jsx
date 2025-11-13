@@ -251,9 +251,9 @@ export default function MachineReportPage() {
         visible={isLoaderVisible}
       />
 
-      <div className="col-md-12 col-sm-12 col-xs-12">
+      <div>
         <div>
-          <h2>
+          <h2 style={{marginLeft: '-3px'}}>
             <strong>Machine Data</strong>
           </h2>
 
@@ -304,7 +304,7 @@ export default function MachineReportPage() {
               </div>
             </div>
             <div className="col-md-10 col-sm-9 col-xs-12">
-              <h2 className="dev_ttlmain">All Machines Power</h2>
+              <h2 className="dev_ttlmain mobile-margin">All Machines Power</h2>
               <div className="dbb chartbox">
                 {latestPowerData.length > 0 ? (
                   <Carousel
@@ -343,7 +343,7 @@ export default function MachineReportPage() {
                   <div className="waiting_loader">Waiting to load data....</div>
                 )}
               </div>
-              <h2 className="dev_ttlmain">Detailed analytics</h2>
+              <h2 className="dev_ttlmain" style={{marginTop: '20px'}}>Detailed analytics</h2>
               <div className="dbb chtbox">
                 {series ? (
                   <>

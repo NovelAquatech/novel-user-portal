@@ -606,19 +606,56 @@ export const DetailedAnalytics = React.forwardRef(
       <>
         <div className="row">
           <div className="col-xs-12" style={{ display: "flex" }}>
-            <select
-              name="hourly_filter"
-              value={selectedHourly}
-              onChange={handleHourlyFilterChange}
-            >
-              <option value="last_hour">Last hour</option>
-              <option value="last_12_hour">Last 12 hours</option>
-              <option value="last_24_hour">Last 24 hours</option>
-              <option value="last_48_hour">Last 48 hours</option>
-              <option value="last_week">Last Week</option>
-              <option value="last_month">Last Month</option>
-              <option value="last_year">Last Year</option>
-            </select>
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <select
+                name="hourly_filter"
+                value={selectedHourly}
+                onChange={handleHourlyFilterChange}
+                style={{
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                  padding: '8px 40px 8px 12px',
+                  border: '1px solid #CCCCCC',
+                  borderRadius: 4,
+                  fontSize: 13.4,
+                  height: 40,
+                  backgroundColor: 'white',
+                }}
+              >
+                <option value="last_hour">Last hour</option>
+                <option value="last_12_hour">Last 12 hours</option>
+                <option value="last_24_hour">Last 24 hours</option>
+                <option value="last_48_hour">Last 48 hours</option>
+                <option value="last_week">Last Week</option>
+                <option value="last_month">Last Month</option>
+                <option value="last_year">Last Year</option>
+                <option value="custom">Custom Range</option>
+              </select>
+
+              {/* MUI-style arrow */}
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 24 24"
+                fill="none"
+                style={{
+                  position: 'absolute',
+                  right: 10,
+                  top: '52%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none',
+                }}
+              >
+                <path
+                  d="M7 9l5 5 5-5"
+                  stroke="#9E9E9E"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
 
             <MultiSelect
               options={multiSelectOptions}
