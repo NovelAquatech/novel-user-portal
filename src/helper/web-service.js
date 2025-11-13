@@ -241,7 +241,7 @@ export const getAdvisorySettings = (userInfo) => {
   url = `${url}&sv=${APP_CONST.SV}`;
   url = `${url}&sig=${import.meta.env.VITE_GET_ADV_API_URL_SIG}`;
   url = `${url}&authToken=${userInfo.token}`;
-  console.log("Constructed URL:", url);
+  //console.log("Constructed URL:", url);
   // Call end point
   return getRequest(url);
 };

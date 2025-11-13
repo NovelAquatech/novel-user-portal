@@ -95,7 +95,7 @@ export default function DeviceReportPage() {
       // Organized parameters
       let repAdvisorySettings = responses[1]["value"];   
       let defaultParams =responses[1]["defaultSetting"]
-      console.log("Default Params:", defaultParams);
+
       // Changing m/s to km/h unit
       repAdvisorySettings.forEach((item) => {
         if (item.parameter === "wind_speed") {
