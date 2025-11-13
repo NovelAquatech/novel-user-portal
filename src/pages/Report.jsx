@@ -14,6 +14,14 @@ export const ReportPage = () => {
 
   const [activeTab, setActiveTab] = useState(user.orgName === "SeelyEnergyMonitor" ? "machine" : "device");
 
+   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+  useEffect(() => {
+    const handler = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+
   return (
     <>
       <div className="formbodymain">
@@ -22,8 +30,8 @@ export const ReportPage = () => {
             <Navbar />
           </div>
           <div className="col-md-12 col-sm-12 col-xs-12">
-            <div className="x_panel">
-              <div className="col-md-12 col-sm-12 col-xs-12">
+            <div className={isDesktop ? 'x_panel' : ''}>
+              <div className={isDesktop ? "col-md-12 col-sm-12 col-xs-12" : "" }>
                 <div
                   className={
                     user.orgName == "UNSW" || user.orgName == "UNSW2"
