@@ -118,14 +118,21 @@
 
 .navbar-header .navbar-brand .orglog {
   margin: auto 0;
-  max-height: 100px !important;
+  max-height: 40px !important;
 }
 
 .navbar-header .navbar-brand .orglog2 {
   width: 120px;
 }
 
+.navbar-header .navbar-brand .UNSW2Org {
+  max-width: 40px !important;
+}
+
 @media (max-width: 768px) { 
+  .mobile-margin {
+    margin-top: 20px;
+  }
   .sm-padding {
     margin-top: 0px;
   }

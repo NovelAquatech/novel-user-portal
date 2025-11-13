@@ -218,7 +218,7 @@ export default function DeviceReportPage(){
         visible={isLoaderVisible}
       />
         <div>
-          <h2>
+          <h2 style={{marginLeft: '-3px'}}>
             <strong>Device Data</strong>
           </h2>
 
@@ -261,7 +261,7 @@ export default function DeviceReportPage(){
               </div>
             </div>
             <div className="col-md-10 col-sm-9 col-xs-12">
-              <h2 className="dev_ttlmain">All devices average</h2>
+              <h2 className="dev_ttlmain mobile-margin">All devices average</h2>
               <div className="dbb chartbox">
                 {avgData ? (
                   <>
@@ -275,7 +275,7 @@ export default function DeviceReportPage(){
                   </div>
                 )}
               </div>
-              <h2 className="dev_ttlmain">Detailed analytics</h2>
+              <h2 className="dev_ttlmain" style={{marginTop: '20px'}}>Detailed analytics</h2>
               <div className="dbb chtbox">
                 {series ? (
                   <>
@@ -387,9 +387,11 @@ export default function DeviceReportPage(){
               </div>
             </div>
             <div className="col-md-12 col-sm-12 col-xs-12">
-              <h2 className="dev_ttlmain">Device advisories</h2>
+              <h2 className="dev_ttlmain" style={{marginTop: '20px'}}>Device advisories</h2>
               {last24HourEachDevice ? (
+                <div style={{marginTop: '-8px'}}>
                 <AlertAdvisories alerts={alerts} />
+                </div>
               ) : (
                 <div className="waiting_loader">
                   Waiting to load data....
