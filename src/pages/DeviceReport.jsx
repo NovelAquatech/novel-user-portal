@@ -1,33 +1,33 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-import { CirclesWithBar } from 'react-loader-spinner';
-import 'react-multi-carousel/lib/styles.css';
-import { useAuth } from '../hooks/useAuth';
-import { useCacheStatus } from '../hooks/useCacheStatus';
-import { APP_CONST } from '../helper/application-constant';
-import { convertMsToKmh } from '../helper/utils';
+import React from "react";
+import { useState, useEffect } from "react";
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import { CirclesWithBar } from "react-loader-spinner";
+import "react-multi-carousel/lib/styles.css";
+import { useAuth } from "../hooks/useAuth";
+import { useCacheStatus } from "../hooks/useCacheStatus";
+import { APP_CONST } from "../helper/application-constant";
+import { convertMsToKmh } from "../helper/utils";
 import {
   getDevices,
   getSensorData,
   getAdvisorySettings,
   getAlerts,
   getAverage,
-} from '../helper/web-service';
-import { AvgParameters } from '../components/avg_parameters';
-import { DeviceList } from '../components/deviceList';
-import { AlertAdvisories } from '../components/alert_advisories';
-import { DetailedAnalytics } from '../components/detailed_analytics';
+} from "../helper/web-service";
+import { AvgParameters } from "../components/avg_parameters";
+import { DeviceList } from "../components/deviceList";
+import { AlertAdvisories } from "../components/alert_advisories";
+import { DetailedAnalytics } from "../components/detailed_analytics";
 import {
   getOrganizedParameters,
   getOrganizedSensorData,
-} from '../helper/utils';
-import RainFallBarGraph from '../components/RainFallBarGraph';
-import { FaDownload } from 'react-icons/fa';
+} from "../helper/utils";
+import RainFallBarGraph from "../components/RainFallBarGraph";
+import { FaDownload } from "react-icons/fa";
 
 export default function DeviceReportPage() {
   const { user } = useAuth();
@@ -44,28 +44,28 @@ export default function DeviceReportPage() {
   const [devices, setDevices] = useState([]);
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
-  const [selectedHourly, setSelectedHourly] = useState('last_hour');
+  const [selectedHourly, setSelectedHourly] = useState("last_hour");
   const [selectedParam, setSelectedParam] = useState([]);
-  const [avgData, setAvgData] = useState(null);
+  const [avgData, setAvgData] = useState([]);
 
-  useEffect(() => {
-    if (selectedParam.length === 0) {
-      if (parameters.hasOwnProperty('temperature')) {
-        selectedParam.push({
-          label: parameters['temperature'].paramDisplayName,
-          value: 'temperature',
-        });
-      } else {
-        const firstKey = Object.keys(parameters)[0];
-        if (firstKey) {
-          selectedParam.push({
-            label: parameters[firstKey].paramDisplayName,
-            value: firstKey,
-          });
-        }
-      }
-    }
-  }, [parameters]);
+  // useEffect(() => {
+  //   if (selectedParam.length === 0) {
+  //     if (parameters.hasOwnProperty("temperature")) {
+  //       selectedParam.push({
+  //         label: parameters["temperature"].paramDisplayName,
+  //         value: "temperature",
+  //       });
+  //     } else {
+  //       const firstKey = Object.keys(parameters)[0];
+  //       if (firstKey) {
+  //         selectedParam.push({
+  //           label: parameters[firstKey].paramDisplayName,
+  //           value: firstKey,
+  //         });
+  //       }
+  //     }
+  //   }
+  // }, [parameters]);
 
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
@@ -83,7 +83,7 @@ export default function DeviceReportPage() {
       // Organized devices
       let deviceList = [];
       let repDevices = !isDevicesFetched
-        ? responses[0]['value']
+        ? responses[0]["value"]
         : fetchedDevices;
       if (!isDevicesFetched) setFetchedDevices(repDevices);
       deviceList = repDevices.map((device) => {
@@ -93,17 +93,19 @@ export default function DeviceReportPage() {
       setIsDevicesFetched(true);
 
       // Organized parameters
-      let repAdvisorySettings = responses[1]['value'];
+      let repAdvisorySettings = responses[1]["value"];   
+      let defaultParams =responses[1]["defaultSetting"]
+
       // Changing m/s to km/h unit
       repAdvisorySettings.forEach((item) => {
-        if (item.parameter === 'wind_speed') {
-          item.unit = 'km/h';
+        if (item.parameter === "wind_speed") {
+          item.unit = "km/h";
         }
       });
       let parameters = getOrganizedParameters(repAdvisorySettings);
 
       // Organized sensor data
-      let repSensorData = responses[2]['value'];
+      let repSensorData = responses[2]["value"];
       repSensorData.forEach((sensorData) => {
         if (sensorData.wind_speed != null) {
           // Check if wind_speed exists and is not null
@@ -116,7 +118,7 @@ export default function DeviceReportPage() {
       );
 
       // Alerts
-      let alertsResp = responses[3]?.['value'] || [];
+      let alertsResp = responses[3]?.["value"] || [];
       setAlerts(alertsResp);
 
       // Set state
@@ -126,22 +128,22 @@ export default function DeviceReportPage() {
       setSelectedDevices(deviceList.map((device) => device.devEUI));
       setLast24HourEachDevice(latestData);
       setLoaderVisible(false);
+          if (defaultParams) {
+      setSelectedParam([defaultParams]);
+    }
     });
   }, [user]);
   //Get average data
   useEffect(() => {
-    if (selectedDevices.length === 0) {
-      setAvgData(null);
-      return;
-    }
     getAverage(user, selectedDevices)
       .then((response) => {
-        setAvgData(response);
+        setAvgData(response.value);
       })
       .catch((err) => {
-        console.error('Error fetching average:', err);
+        console.error("Error fetching average:", err);
       });
   }, [selectedDevices, user]);
+  // console.log("average data", avgData);
 
   const handleRefresh = () => {
     // setLoaderVisible(true);
@@ -164,14 +166,14 @@ export default function DeviceReportPage() {
     //   setLast24HourEachDevice(latestData);
     //   setLoaderVisible(false);
     // });
-    if (value === 'tab_one') childRef.current.fetchSensorData();
+    if (value === "tab_one") childRef.current.fetchSensorData();
     else childRef.current.fetchRainfallData();
   };
 
   const handleCheckboxChange = (event) => {
     event.stopPropagation();
     event.preventDefault();
-    console.log('--- Inside handleCheckboxChange ---');
+    console.log("--- Inside handleCheckboxChange ---");
     let value = event.target.value;
     let isChecked = event.target.checked;
     if (isChecked) {
@@ -184,18 +186,18 @@ export default function DeviceReportPage() {
   const handleChecked = (event) => {
     event.stopPropagation();
     event.preventDefault();
-    console.log('--- Inside handleChecked ---');
+    console.log("--- Inside handleChecked ---");
     setSelectedDevices(devices.map((device) => device.devEUI));
   };
 
   const handleUnchecked = (event) => {
     event.stopPropagation();
     event.preventDefault();
-    console.log('--- Inside handleUnchecked ---');
+    console.log("--- Inside handleUnchecked ---");
     setSelectedDevices([]);
   };
 
-  const [value, setValue] = React.useState('tab_one');
+  const [value, setValue] = React.useState("tab_one");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -208,7 +210,7 @@ export default function DeviceReportPage() {
     try {
       await childRef.current.downloadChartAsPDF();
     } finally {
-      console.log('PDF generation process is done');
+      console.log("PDF generation process is done");
       setLoaderVisible(false);
     }
   };
@@ -219,7 +221,7 @@ export default function DeviceReportPage() {
       await childRef.current.downloadChartAsExcel();
       setLoaderVisible(false);
     } finally {
-      console.log('PDF generation process is done');
+      console.log("PDF generation process is done");
       setLoaderVisible(false);
     }
   };
@@ -245,7 +247,7 @@ export default function DeviceReportPage() {
               <div className="reports-button-container">
                 <span
                   className="label label-primary"
-                  style={{ padding: '6px', cursor: 'pointer' }}
+                  style={{ padding: "6px", cursor: "pointer" }}
                   onClick={handleChecked}
                 >
                   Check All
@@ -253,8 +255,8 @@ export default function DeviceReportPage() {
                 <span
                   className="label label-primary"
                   style={{
-                    padding: '6px',
-                    cursor: 'pointer',
+                    padding: "6px",
+                    cursor: "pointer",
                   }}
                   onClick={handleUnchecked}
                 >
@@ -277,20 +279,14 @@ export default function DeviceReportPage() {
           <div className="col-md-10 col-sm-9 col-xs-12">
             <h2 className="dev_ttlmain mobile-margin">All devices average</h2>
             <div className="dbb chartbox">
-              {avgData ? (
-                <>
-                  <AvgParameters avgData={avgData} />
-                </>
-              ) : (
-                <div className="waiting_loader">Waiting to load data....</div>
-              )}
+              <AvgParameters avgData={avgData} />
             </div>
             <h2 className="dev_ttlmain" style={{marginTop: '20px'}}>Detailed analytics</h2>
             <div className="dbb chtbox">
               {series ? (
                 <>
                   <TabContext value={value}>
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                       <div className="tab-toolbar">
                         <TabList
                           onChange={handleChange}
@@ -322,7 +318,7 @@ export default function DeviceReportPage() {
                             className="btn btn-info btn-sm"
                             onClick={handleChartDownloadAsPdf}
                           >
-                            <FaDownload style={{ marginRight: '5px' }} />
+                            <FaDownload style={{ marginRight: "5px" }} />
                             Download as PDF
                           </button>
 
@@ -330,14 +326,14 @@ export default function DeviceReportPage() {
                             className="btn btn-info btn-sm"
                             onClick={handleChartDownloadAsExcel}
                           >
-                            <FaDownload style={{ marginRight: '5px' }} />
+                            <FaDownload style={{ marginRight: "5px" }} />
                             Download as Excel
                           </button>
                         </div>
                       </div>
                     </Box>
 
-                    <TabPanel value="tab_one" style={{ padding: '24px 0' }}>
+                    <TabPanel value="tab_one" style={{ padding: "24px 0" }}>
                       <DetailedAnalytics
                         parameters={parameters}
                         devices={devices}
@@ -350,14 +346,14 @@ export default function DeviceReportPage() {
                       ></DetailedAnalytics>
                     </TabPanel>
                     {weatherStations.includes(orgName) ? (
-                      <TabPanel value="tab_two" style={{ padding: '24px 0' }}>
+                      <TabPanel value="tab_two" style={{ padding: "24px 0" }}>
                         <RainFallBarGraph
                           selectedDevices={selectedDevices}
                           ref={childRef}
                         />
                       </TabPanel>
                     ) : (
-                      ''
+                      ""
                     )}
                   </TabContext>
                 </>

@@ -1,16 +1,10 @@
-import React from 'react';
-import { GaugeComponent } from 'react-gauge-component';
-export const GaugeChart = ({
-  min_value,
-  max_value,
-  low_thohresld,
-  high_thohresld,
-  formattedAvg,
-}) => {
+import React from "react";
+import { GaugeComponent } from "react-gauge-component";
+export const GaugeChart = ({ data }) => {
   return (
     <div
       className="compass-container gauge"
-      style={{ display: 'flex', flexDirection: 'column' }}
+      style={{ display: "flex", flexDirection: "column" }}
     >
       <GaugeComponent
         type="semicircle"
@@ -20,23 +14,23 @@ export const GaugeChart = ({
           cornerRadius: 1,
           subArcs: [
             {
-              limit: low_thohresld,
-              color: '#F5CD19',
+              limit: data.currentMinAlert ?? data.min_value ?? 0,
+              color: "#F5CD19",
               showTick: false,
             },
             {
-              limit: high_thohresld,
-              color: '#75e64d',
+              limit: data.currentMaxAlert ?? data.max_value ?? 100,
+              color: "#75e64d",
               showTick: false,
             },
             {
-              color: '#F5CD19',
+              color: "#F5CD19",
               showTick: false,
             },
           ],
         }}
         pointer={{
-          color: '#345243',
+          color: "#345243",
           length: 0.8,
           width: 10,
         }}
@@ -46,13 +40,13 @@ export const GaugeChart = ({
             hide: true,
           },
           tickLabels: {
-            type: 'outer',
+            type: "outer",
             defaultTickValueConfig: {
               formatTextValue: (value) => value,
               style: {
-                fontSize: '11px',
-                fill: '#464A4F',
-                width: '100px',
+                fontSize: "11px",
+                fill: "#464A4F",
+                width: "100px",
               },
             },
             defaultTickLineConfig: {
@@ -61,9 +55,9 @@ export const GaugeChart = ({
             ticks: [],
           },
         }}
-        value={formattedAvg}
-        minValue={min_value}
-        maxValue={max_value}
+        value={data.average ?? 0}
+        minValue={data.min_value ?? 0}
+        maxValue={data.max_value ?? 100}
       />
     </div>
   );
