@@ -3,7 +3,7 @@ export const APP_CONST = {
   API_VERSION: "2016-10-01",
   SP: "/triggers/When_a_HTTP_request_is_received/run",
   SV: "1.0",
-  default_parameter: { label: "Temperature", value: "temperature" },
+  // default_parameter: { label: "Temperature", value: "temperature" },
   default_parameter_Seely: { label: "Current", value: "current" },  
   farmer_companies: ["JoeFarm", "FieldSolutions"],
   disable_occupant_survey: ["JoeFarm", "FieldSolutions", "SeelyEnergyMonitor"],

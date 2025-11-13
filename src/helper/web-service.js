@@ -231,7 +231,7 @@ export const getParameters = (userInfo) => {
 };
 
 // src/helper/web-service.js
-export const getAdvisorySettings = (userInfo, parameter = null) => {
+export const getAdvisorySettings = (userInfo) => {
   // For URL
   let url = `${
     import.meta.env.VITE_GET_ADV_API_URL
@@ -240,12 +240,8 @@ export const getAdvisorySettings = (userInfo, parameter = null) => {
   url = `${url}&sp=${APP_CONST.SP}`;
   url = `${url}&sv=${APP_CONST.SV}`;
   url = `${url}&sig=${import.meta.env.VITE_GET_ADV_API_URL_SIG}`;
-  url = `${url}&orgName=${userInfo.orgName}`;
-  if (parameter) {
-    url = `${url}&parameter=${parameter}`;
-  }
   url = `${url}&authToken=${userInfo.token}`;
-  console.log("Constructed URL:", url); // Log the URL
+  console.log("Constructed URL:", url);
   // Call end point
   return getRequest(url);
 };
@@ -495,27 +491,13 @@ export const updateValveSecondaryStatus = (userInfo, data) => {
   return postRequest(url, data);
 };
 
-export const getAverage = (userInfo, devEUIs) => {
-  // Construct the URL for fetching rules
-  let url = `${
-    import.meta.env.VITE_GET_AVG_SELECTED_DEVICE_API_URL
-  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-  url = `${url}?api-version=${APP_CONST.API_VERSION}`;
-  url = `${url}&sp=${APP_CONST.SP}`;
-  url = `${url}&sv=${APP_CONST.SV}`;
-  url = `${url}&sig=${
-    import.meta.env.VITE_GET_AVG_SELECTED_DEVICE_API_URL_SIG
-  }`;
-  url = `${url}&orgName=${userInfo.orgName}`;
+export const getAverage=(userInfo,devEUIs)=>{
+  let url =`${import.meta.env.VITE_GET_AVG}`;
   url = `${url}&authToken=${userInfo.token}`;
   url = `${url}&devEUIs=${JSON.stringify(devEUIs)}`;
-
-  console.log("Constructed average data for selected device:", url);
-
-  // Call the endpoint
+  // console.log("Constructed average data URL:", url);
   return getRequest(url);
-};
-
+}
 export const addDevice = (userInfo, devEUI) => {
   // Construct the URL for fetching rules
   let url = `${
