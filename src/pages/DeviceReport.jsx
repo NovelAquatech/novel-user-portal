@@ -45,7 +45,11 @@ export default function DeviceReportPage() {
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState("last_hour");
-  const [selectedParam, setSelectedParam] = useState([])
+  const [selectedParam, setSelectedParam] = useState(
+    orgName === "SeelyEnergyMonitor"
+      ? [APP_CONST.default_parameter_Seely]
+      : [APP_CONST.default_parameter]
+  );
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
   const [avgData, setAvgData] = useState([]);
@@ -74,8 +78,8 @@ export default function DeviceReportPage() {
 
       // Organized parameters
       let repAdvisorySettings = responses[1]["value"];
-      let defaultParams = responses[1]["defaultSetting"];
-  
+      // let defaultParams =responses[1]["defaultSetting"]
+      // console.log("Default Params:", defaultParams);
       // Changing m/s to km/h unit
       repAdvisorySettings.forEach((item) => {
         if (item.parameter === "wind_speed") {
@@ -107,9 +111,6 @@ export default function DeviceReportPage() {
       setDevices(deviceList);
       setSelectedDevices(deviceList.map((device) => device.devEUI));
       setLast24HourEachDevice(latestData);
-      if (defaultParams) {
-        setSelectedParam([defaultParams]);
-      }
       setLoaderVisible(false);
     });
   }, [user]);
