@@ -1,6 +1,6 @@
 import React from "react";
 import { GaugeComponent } from "react-gauge-component";
-export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld, formattedAvg }) => {
+export const GaugeChart = ({data}) => {
   return (
     <>
       <GaugeComponent
@@ -11,12 +11,12 @@ export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld
           cornerRadius: 1,
           subArcs: [
             {
-              limit: low_thohresld,
+              limit: data.currentMinAlert ?? data.min_value ?? 0,
               color: "#F5CD19",
               showTick: false,
             },
             {
-              limit: high_thohresld,
+              limit: data.currentMaxAlert ?? data.max_value ?? 100,
               color: "#75e64d",
               showTick: false,
             },
@@ -52,9 +52,9 @@ export const GaugeChart = ({ min_value, max_value, low_thohresld, high_thohresld
             ticks: [],
           },
         }}
-        value={formattedAvg}
-        minValue={min_value}
-        maxValue={max_value}
+        value={data.average}
+        minValue={data.min_value}
+        maxValue={data.max_value}
       />
     </>
   );
