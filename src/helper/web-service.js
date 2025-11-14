@@ -188,7 +188,7 @@ export const getParameters = (userInfo) => {
 };
 
 // src/helper/web-service.js
-export const getAdvisorySettings = (userInfo, parameter = null) => {
+export const getAdvisorySettings = (userInfo) => {
   // For URL
   let url = `${
     import.meta.env.VITE_GET_ADV_API_URL
@@ -197,10 +197,6 @@ export const getAdvisorySettings = (userInfo, parameter = null) => {
   url = `${url}&sp=${APP_CONST.SP}`;
   url = `${url}&sv=${APP_CONST.SV}`;
   url = `${url}&sig=${import.meta.env.VITE_GET_ADV_API_URL_SIG}`;
-  url = `${url}&orgName=${userInfo.orgName}`;
-  if (parameter) {
-    url = `${url}&parameter=${parameter}`;
-  }
   url = `${url}&authToken=${userInfo.token}`;
   console.log("Constructed URL:", url); // Log the URL
   // Call end point
