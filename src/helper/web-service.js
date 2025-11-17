@@ -370,7 +370,7 @@ export const getAlerts = (userInfo) => {
   url = `${url}&authToken=${userInfo.token}`;
   url = `${url}&dateStart=${moment().subtract(1, "day").format("YYYY-MM-DD")}`;
   url = `${url}&dateEnd=${moment().format("YYYY-MM-DD")}`;
-  console.log("Constructed URL:", url);
+  // console.log("Constructed URL:", url);
   // Call end point
   return getRequest(url);
 };
