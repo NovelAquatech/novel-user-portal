@@ -93,15 +93,13 @@ export const getDevices = (userInfo) => {
 export const getSensorData = (userInfo, timeFilter = false) => {
   let url = `${
     import.meta.env.VITE_GET_SENSOR_API_URL
-  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-  
+  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;  
   url = `${url}?api-version=${APP_CONST.API_VERSION}`;
   url = `${url}&sp=${APP_CONST.SP}`;
   url = `${url}&sv=${APP_CONST.SV}`;
   url = `${url}&sig=${import.meta.env.VITE_GET_SENSOR_API_URL_SIG}`;
   url = `${url}&orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
-
   if (timeFilter) {
     // Determine the date range based on timeFilter
     const timeRanges = {
@@ -112,14 +110,11 @@ export const getSensorData = (userInfo, timeFilter = false) => {
       last_week: moment().subtract(1, "weeks"),
       last_month: moment().subtract(1, "months"),
       last_year: moment().subtract(1, "years"),
-    };
-  
+    };  
     const dateStart = timeRanges[timeFilter]?.toISOString();
-    const dateEnd = moment().toISOString();
-  
+    const dateEnd = moment().toISOString();  
     url = `${url}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
-  }
-  
+  }  
   // Call API endpoint
   return getRequest(url);
 };
@@ -167,7 +162,7 @@ export const getAdvisorySettingData = (userInfo) => {
   url = `${url}&sig=${import.meta.env.VITE_SET_ADV_API_URL_SIG}`;
   url = `${url}&orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
-  console.log("Constructed URL:", url); // Log the URL
+  // console.log("Constructed URL:", url);
   // Call end point
   return getRequest(url);
 };
@@ -182,7 +177,7 @@ export const getParameters = (userInfo) => {
   url = `${url}&sig=${import.meta.env.VITE_GET_PARAM_API_URL_SIG}`;
   url = `${url}&orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
-  console.log("Constructed URL:", url); // Log the URL
+  // console.log("Constructed URL:", url);
   // Call end point
   return getRequest(url);
 };
@@ -198,7 +193,7 @@ export const getAdvisorySettings = (userInfo) => {
   url = `${url}&sv=${APP_CONST.SV}`;
   url = `${url}&sig=${import.meta.env.VITE_GET_ADV_API_URL_SIG}`;
   url = `${url}&authToken=${userInfo.token}`;
-  console.log("Constructed URL:", url); // Log the URL
+  //console.log("Constructed URL:", url);
   // Call end point
   return getRequest(url);
 };
@@ -442,7 +437,7 @@ export const updateValveSecondaryStatus = (userInfo, data) => {
   url = `${url}&sig=${import.meta.env.VITE_MAKE_VALVE_SECONDARY_API_URL_SIG}`;
   url = `${url}&orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
-  console.log("Constructed Custom Alert URL:", url);
+  // console.log("Constructed Custom Alert URL:", url);
 
   // Call the endpoint
   return postRequest(url, data);
@@ -468,7 +463,7 @@ export const addDevice = (userInfo, devEUI) => {
   url = `${url}&authToken=${userInfo.token}`;
   url = `${url}&deviceEUI=${devEUI}`;
 
-  console.log("Added device:", url);
+  // console.log("Added device:", url);
 
   // Call the endpoint
   return getRequest(url);

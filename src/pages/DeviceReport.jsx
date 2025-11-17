@@ -114,16 +114,18 @@ export default function DeviceReportPage() {
 
   //Get average data
   useEffect(() => {
-    getAverage(user, selectedDevices)
-      .then((response) => {
-        setAvgData(response.value);
-      })
-      .catch((err) => {
-        console.error("Error fetching average:", err);
-      });
+    if (selectedDevices.length) {
+      getAverage(user, selectedDevices)
+        .then((response) => {
+          setAvgData(response.value);
+        })
+        .catch((err) => {
+          console.error("Error fetching average:", err);
+        });
+    }
   }, [selectedDevices, user]);
 
-  const handleRefresh = () => {  
+  const handleRefresh = () => {
     if (value === "tab_one") childRef.current.fetchSensorData();
     else childRef.current.fetchRainfallData();
   };
