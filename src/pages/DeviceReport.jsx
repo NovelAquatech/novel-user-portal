@@ -45,14 +45,11 @@ export default function DeviceReportPage() {
   const [selectedDevices, setSelectedDevices] = useState([]);
   const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState("last_hour");
-  const [selectedParam, setSelectedParam] = useState(
-    orgName === "SeelyEnergyMonitor"
-      ? [APP_CONST.default_parameter_Seely]
-      : [APP_CONST.default_parameter]
-  );
+  const [selectedParam, setSelectedParam] = useState([]);
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
   const [avgData, setAvgData] = useState([]);
+
 
   useEffect(() => {
     // Showing loader
@@ -78,8 +75,8 @@ export default function DeviceReportPage() {
 
       // Organized parameters
       let repAdvisorySettings = responses[1]["value"];
-      // let defaultParams =responses[1]["defaultSetting"]
-      // console.log("Default Params:", defaultParams);
+      let defaultParams = responses[1]["defaultSetting"];
+
       // Changing m/s to km/h unit
       repAdvisorySettings.forEach((item) => {
         if (item.parameter === "wind_speed") {
@@ -111,12 +108,16 @@ export default function DeviceReportPage() {
       setDevices(deviceList);
       setSelectedDevices(deviceList.map((device) => device.devEUI));
       setLast24HourEachDevice(latestData);
+      if (defaultParams) {
+        setSelectedParam([defaultParams]);
+      }
       setLoaderVisible(false);
     });
   }, [user]);
 
   //Get average data
   useEffect(() => {
+   
     getAverage(user, selectedDevices)
       .then((response) => {
         setAvgData(response.value);

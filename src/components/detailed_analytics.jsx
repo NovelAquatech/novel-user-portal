@@ -29,7 +29,7 @@ export const DetailedAnalytics = React.forwardRef(
     },
     ref
   ) => {
-    console.log('devices in detailed analytics', devices)
+    // console.log("devices in detailed analytics", devices);
     const { user } = useAuth();
     const farmer_companies = APP_CONST.farmer_companies;
     const orgName = user.orgName;
@@ -37,19 +37,13 @@ export const DetailedAnalytics = React.forwardRef(
     Object.keys(parameters).map((parameter, i) => {
       displayParameters.push(parameter);
     });
-
-    if (["JoeFarm", "DeepTesting", "Jesse"].includes(orgName)) {
-      displayParameters = displayParameters.filter((param) => {
-        const lowerParam = param.toLowerCase();
-        if (orgName === "JoeFarm") {
-          return lowerParam !== "valve_1" && lowerParam !== "valve_2";
-        }
-        if (orgName === "DeepTesting" || orgName === "Jesse")  {
-          return lowerParam !== "gpio_1" && lowerParam !== "gpio_2";
-        }
-        return true;
-      });
-    }
+    displayParameters = displayParameters.filter((param) => {
+      const lowerParam = param.toLowerCase();
+      if (orgName === "JoeFarm") {
+        return lowerParam !== "valve_1" && lowerParam !== "valve_2";
+      }
+      return true;
+    });
     displayParameters.sort();
 
     let layout = APP_CONST.default_layout;
@@ -584,7 +578,7 @@ export const DetailedAnalytics = React.forwardRef(
         devices.forEach((device) => {
           const isValveController = device.deviceType
             .toLowerCase()
-            .includes("valve controller");          
+            .includes("valve controller");
           if (selectedDevices.includes(device.devEUI) && isValveController) {
             multiSelectOptions.push({
               label: `${capitalizeFirstLetter(updateParamName(parameter))} (${
@@ -606,21 +600,21 @@ export const DetailedAnalytics = React.forwardRef(
       <>
         <div className="row">
           <div className="col-xs-12" style={{ display: "flex" }}>
-            <div style={{ position: 'relative', display: 'inline-block' }}>
+            <div style={{ position: "relative", display: "inline-block" }}>
               <select
                 name="hourly_filter"
                 value={selectedHourly}
                 onChange={handleHourlyFilterChange}
                 style={{
-                  appearance: 'none',
-                  WebkitAppearance: 'none',
-                  MozAppearance: 'none',
-                  padding: '8px 40px 8px 12px',
-                  border: '1px solid #CCCCCC',
+                  appearance: "none",
+                  WebkitAppearance: "none",
+                  MozAppearance: "none",
+                  padding: "8px 40px 8px 12px",
+                  border: "1px solid #CCCCCC",
                   borderRadius: 4,
                   fontSize: 13.4,
                   height: 40,
-                  backgroundColor: 'white',
+                  backgroundColor: "white",
                 }}
               >
                 <option value="last_hour">Last hour</option>
@@ -640,11 +634,11 @@ export const DetailedAnalytics = React.forwardRef(
                 viewBox="0 0 24 24"
                 fill="none"
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   right: 10,
-                  top: '52%',
-                  transform: 'translateY(-50%)',
-                  pointerEvents: 'none',
+                  top: "52%",
+                  transform: "translateY(-50%)",
+                  pointerEvents: "none",
                 }}
               >
                 <path
