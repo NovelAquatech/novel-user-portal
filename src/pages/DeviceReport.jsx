@@ -43,19 +43,17 @@ export default function DeviceReportPage() {
   const [series, setSeries] = useState(null);
   const [devices, setDevices] = useState([]);
   const [selectedDevices, setSelectedDevices] = useState([]);
-  const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState("last_hour");
   const [selectedParam, setSelectedParam] = useState([]);
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
   const [avgData, setAvgData] = useState([]);
 
-
   useEffect(() => {
     // Showing loader
     setLoaderVisible(true);
     const apiPromises = [
-      !isDevicesFetched ? getDevices(user) : Promise.resolve({ value: [] }), // Conditional call for getDevices
+      !isDevicesFetched ? getDevices(user) : Promise.resolve({ value: [] }),
       getAdvisorySettings(user),
       getSensorData(user),
       getAlerts(user),
@@ -93,7 +91,7 @@ export default function DeviceReportPage() {
           sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
         }
       });
-      let { seriesData, latestData } = getOrganizedSensorData(
+      let { seriesData } = getOrganizedSensorData(
         repSensorData,
         Object.keys(parameters)
       );
@@ -107,7 +105,6 @@ export default function DeviceReportPage() {
       setSeries(seriesData);
       setDevices(deviceList);
       setSelectedDevices(deviceList.map((device) => device.devEUI));
-      setLast24HourEachDevice(latestData);
       if (defaultParams) {
         setSelectedParam([defaultParams]);
       }
@@ -117,7 +114,6 @@ export default function DeviceReportPage() {
 
   //Get average data
   useEffect(() => {
-   
     getAverage(user, selectedDevices)
       .then((response) => {
         setAvgData(response.value);
@@ -127,27 +123,7 @@ export default function DeviceReportPage() {
       });
   }, [selectedDevices, user]);
 
-  const handleRefresh = () => {
-    // setLoaderVisible(true);
-    // const apiPromises = [getSensorData(user)];
-
-    // Promise.all(apiPromises).then((responses) => {
-    //   // Organize sensor data
-    //   let repSensorData = responses[0]["value"];
-    //   repSensorData.forEach((sensorData) => {
-    //     if (sensorData.wind_speed != null) {
-    //       sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
-    //     }
-    //   });
-
-    //   let { seriesData, latestData } = getOrganizedSensorData(
-    //     repSensorData,
-    //     Object.keys(parameters)
-    //   );
-    //   setSeries(seriesData);
-    //   setLast24HourEachDevice(latestData);
-    //   setLoaderVisible(false);
-    // });
+  const handleRefresh = () => {  
     if (value === "tab_one") childRef.current.fetchSensorData();
     else childRef.current.fetchRainfallData();
   };
@@ -368,13 +344,9 @@ export default function DeviceReportPage() {
             <h2 className="dev_ttlmain" style={{ marginTop: "20px" }}>
               Device advisories
             </h2>
-            {last24HourEachDevice ? (
-              <div style={{ marginTop: "-8px" }}>
-                <AlertAdvisories alerts={alerts} />
-              </div>
-            ) : (
-              <div className="waiting_loader">Waiting to load data....</div>
-            )}
+            <div style={{ marginTop: "-8px" }}>
+              <AlertAdvisories alerts={alerts} />
+            </div>
           </div>
         </div>
       </div>
