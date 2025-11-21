@@ -264,7 +264,7 @@ export const DevicePage = () => {
 
           <div
             className="col-md-12 col-sm-12 col-xs-12"
-            style={{ marginTop: "-20px" }}
+            style={{  minHeight: "100vh" }}
           >
             <div className="x_panel">
               <div className="col-md-12 col-sm-12 col-xs-12">
@@ -349,7 +349,7 @@ export const DevicePage = () => {
                 </div>
               </div>
               <div className="x_content">
-                <div style={{ overflowX: "auto", marginBottom: "200px" }}>
+                <div>
                   <table
                     id="datatable"
                     className="table table-striped"
@@ -485,7 +485,7 @@ export const DevicePage = () => {
         onDeviceAdded={updatedData}
         onCloseCreateModal={onCloseCreateModal}
       />
-      <Footer />
+    <Footer />
     </>
   );
 };
