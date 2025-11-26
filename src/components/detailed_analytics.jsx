@@ -302,16 +302,7 @@ export const DetailedAnalytics = React.forwardRef(
       }
     };
 
-    const initialRender = useRef(true);
-
-
     useEffect(() => {
-
-        if (initialRender.current) {
-        initialRender.current = false;
-        return;  // Skip the duplicate call
-      }
-
       if (selectedHourly === 'custom') {
         fetchSensorData();
       } else {
@@ -319,6 +310,7 @@ export const DetailedAnalytics = React.forwardRef(
       }
 
     }, [selectedHourly, customFrom, customTo]);
+    
     const handleHourlyFilterChange = (event) => {
       setSelectedHourly(event.target.value);
     };
