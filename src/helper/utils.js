@@ -208,7 +208,7 @@ export const getOrganizedSensorData = (data, parameters) => {
     devEUI = APP_CONST.overAllPeoplePresentDevEUIKey;
     devName = APP_CONST.overAllPeoplePresentDevNameKey;
     let instData = {
-      timestamp: value.Timestamp,
+      timestamp: value.timestamp,
       devName: devEUI,
       devEUI: devName,
     };
@@ -218,7 +218,7 @@ export const getOrganizedSensorData = (data, parameters) => {
     let periodIn = value["period_in"] ?? null;
     let periodOut = value["period_out"] ?? null;
     if (periodIn != null || periodOut != null) {
-      let day = moment(value.Timestamp).format("YYYY-MM-DD");
+      let day = moment(value.timestamp).format("YYYY-MM-DD");
       if (day !== cumulativeDayPeoplepresent) {
         cumulativePeriodIn = 0;
         cumulativePeriodOut = 0;
@@ -254,7 +254,7 @@ export const getOrganizedSensorData = (data, parameters) => {
       }
 
       let instData = {
-        timestamp: value.Timestamp,
+        timestamp: value.timestamp,
         devName: devName,
         devEUI: devEUI,
       };
@@ -264,7 +264,7 @@ export const getOrganizedSensorData = (data, parameters) => {
         switch (parameter) {
           case "rainfall_total":
             if (fvalue != null) {
-              let day = moment(value.Timestamp).format("YYYY-MM-DD");
+              let day = moment(value.timestamp).format("YYYY-MM-DD");
               if (day !== currentDayRainfall) {
                 dailyRainfall = 0;
                 currentDayRainfall = day;
@@ -277,7 +277,7 @@ export const getOrganizedSensorData = (data, parameters) => {
             let periodIn = value["period_in"] ?? null;
             let periodOut = value["period_out"] ?? null;
             if (periodIn != null || periodOut != null) {
-              let day = moment(value.Timestamp).format("YYYY-MM-DD");
+              let day = moment(value.timestamp).format("YYYY-MM-DD");
               if (day !== currentDayPeoplepresent) {
                 dailyPeriodIn = 0;
                 dailyPeriodOut = 0;
@@ -288,7 +288,7 @@ export const getOrganizedSensorData = (data, parameters) => {
               instData["people_present"] = dailyPeriodIn - dailyPeriodOut;
               // console.log(`############################`);
               // console.log(devEUI);
-              // console.log(`currentDay =>${moment(value.Timestamp)}`);
+              // console.log(`currentDay =>${moment(value.timestamp)}`);
               // console.log(`periodIn =>${periodIn} periodOut => ${periodOut}`);
               // console.log(`dailyPeriodIn => ${dailyPeriodIn}  dailyPeriodOut => ${dailyPeriodOut} people_present => ${instData["people_present"]}`);
               // console.log(`############################`);
@@ -302,12 +302,12 @@ export const getOrganizedSensorData = (data, parameters) => {
       // Push into series data array
       seriesData[devEUI].push(instData);
       // Push into last 24 hours data
-      let tm = moment(value.Timestamp);
+      let tm = moment(value.timestamp);
       if (tm.diff(timeBefore24Hour, "seconds") > 0) {
         if (Object.keys(latestData[devEUI]) == 0) {
           latestData[devEUI] = instData;
         } else if (
-          new Date(value.Timestamp) > new Date(latestData[devEUI].timestamp)
+          new Date(value.timestamp) > new Date(latestData[devEUI].timestamp)
         ) {
           latestData[devEUI] = instData;
         }

@@ -133,13 +133,8 @@ export const getSensorData = (
 ) => {
   let url = `${
     import.meta.env.VITE_GET_SENSOR_API_URL
-  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-
-  url = `${url}?api-version=${APP_CONST.API_VERSION}`;
-  url = `${url}&sp=${APP_CONST.SP}`;
-  url = `${url}&sv=${APP_CONST.SV}`;
-  url = `${url}&sig=${import.meta.env.VITE_GET_SENSOR_API_URL_SIG}`;
-  url = `${url}&orgName=${userInfo.orgName}`;
+  }`;
+  url = `${url}?orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
 
   const timeRanges = {
@@ -172,13 +167,8 @@ export const getSensorData = (
 export const getRainfallData = (userInfo, timeFilter = false) => {
   let url = `${
     import.meta.env.VITE_GET_SENSOR_API_URL
-  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-
-  url = `${url}?api-version=${APP_CONST.API_VERSION}`;
-  url = `${url}&sp=${APP_CONST.SP}`;
-  url = `${url}&sv=${APP_CONST.SV}`;
-  url = `${url}&sig=${import.meta.env.VITE_GET_SENSOR_API_URL_SIG}`;
-  url = `${url}&orgName=${userInfo.orgName}`;
+  }`;
+  url = `${url}?orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
 
   // Determine date range based on timeframe

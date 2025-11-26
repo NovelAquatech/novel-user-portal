@@ -10,10 +10,8 @@ import "react-multi-carousel/lib/styles.css";
 import { useAuth } from "../hooks/useAuth";
 import { useCacheStatus } from "../hooks/useCacheStatus";
 import { APP_CONST } from "../helper/application-constant";
-import { convertMsToKmh } from "../helper/utils";
 import {
   getDevices,
-  getSensorData,
   getAdvisorySettings,
   getAlerts,
   getAverage,
@@ -24,7 +22,6 @@ import { AlertAdvisories } from "../components/alert_advisories";
 import { DetailedAnalytics } from "../components/detailed_analytics";
 import {
   getOrganizedParameters,
-  getOrganizedSensorData,
 } from "../helper/utils";
 import RainFallBarGraph from "../components/RainFallBarGraph";
 import { FaDownload } from "react-icons/fa";
@@ -40,10 +37,8 @@ export default function DeviceReportPage() {
   const orgName = user.orgName;
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [parameters, setParameters] = useState([]);
-  const [series, setSeries] = useState(null);
   const [devices, setDevices] = useState([]);
   const [selectedDevices, setSelectedDevices] = useState([]);
-  const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState("last_hour");
   const [selectedParam, setSelectedParam] = useState([]);
   const [avgData, setAvgData] = useState([]);
@@ -76,7 +71,6 @@ export default function DeviceReportPage() {
     const apiPromises = [
       !isDevicesFetched ? getDevices(user) : Promise.resolve({ value: [] }), // Conditional call for getDevices
       getAdvisorySettings(user),
-      getSensorData(user),
       getAlerts(user),
     ];
     Promise.all(apiPromises).then((responses) => {
@@ -104,29 +98,14 @@ export default function DeviceReportPage() {
       });
       let parameters = getOrganizedParameters(repAdvisorySettings);
 
-      // Organized sensor data
-      let repSensorData = responses[2]["value"];
-      repSensorData.forEach((sensorData) => {
-        if (sensorData.wind_speed != null) {
-          // Check if wind_speed exists and is not null
-          sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
-        }
-      });
-      let { seriesData, latestData } = getOrganizedSensorData(
-        repSensorData,
-        Object.keys(parameters)
-      );
-
       // Alerts
-      let alertsResp = responses[3]?.["value"] || [];
+      let alertsResp = responses[2]?.["value"] || [];
       setAlerts(alertsResp);
 
       // Set state
       setParameters(parameters);
-      setSeries(seriesData);
       setDevices(deviceList);
       setSelectedDevices(deviceList.map((device) => device.devEUI));
-      setLast24HourEachDevice(latestData);
       setLoaderVisible(false);
           if (defaultParams) {
       setSelectedParam([defaultParams]);
@@ -283,7 +262,7 @@ export default function DeviceReportPage() {
             </div>
             <h2 className="dev_ttlmain" style={{marginTop: '20px'}}>Detailed analytics</h2>
             <div className="dbb chtbox">
-              {series ? (
+              {!isLoaderVisible ? (
                 <>
                   <TabContext value={value}>
                     <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -364,7 +343,7 @@ export default function DeviceReportPage() {
           </div>
           <div className="col-md-12 col-sm-12 col-xs-12">
             <h2 className="dev_ttlmain" style={{marginTop: '20px'}}>Device advisories</h2>
-            {last24HourEachDevice ? (
+            {!isLoaderVisible ? (
               <div style={{marginTop: '-8px'}}>
               <AlertAdvisories alerts={alerts} />
               </div>
