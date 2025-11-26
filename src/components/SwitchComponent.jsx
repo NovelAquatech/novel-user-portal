@@ -55,6 +55,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
+  const authToken = user.token;
+
   const getDeviceName = (uid) => {
     return devices[uid] || '';
   };
@@ -228,7 +230,11 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     }
 
     try {
-      await axios.post(import.meta.env.VITE_VALVE_SAVE_FUNCTION_BASE);
+      await axios.post(
+        `${
+          import.meta.env.VITE_VALVE_SAVE_FUNCTION_BASE
+        }?authToken=${authToken}`
+      );
       toast.success('All settings saved successfully!');
       setEditedRows(new Set());
     } catch (err) {
@@ -269,13 +275,11 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
     if (!currentRows || currentRows.length === 0) return;
 
-    const orgName = user.orgName;
-
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_SYNC_API_BASE}?orgName=${encodeURIComponent(
-          orgName
-        )}`
+        `${import.meta.env.VITE_SYNC_API_BASE}?authToken=${
+          authToken
+        }`
       );
       const syncRows = res.data?.status ?? [];
       const byKey = new Map(syncRows.map((r) => [r.rowKey, r]));
