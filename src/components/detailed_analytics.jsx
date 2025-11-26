@@ -284,7 +284,6 @@ export const DetailedAnalytics = React.forwardRef(
 
     const fetchSensorData = async () => {
       setLoaderVisible(true);
-      setDataLoaded(false);
       try {
         const sensorDataResp = await getSensorData(
           user,
@@ -472,6 +471,8 @@ export const DetailedAnalytics = React.forwardRef(
         });
       });
     }
+
+    console.log(dataLoaded)
 
     return (
       <>
