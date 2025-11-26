@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import Plot from 'react-plotly.js';
 import moment from 'moment';
 import { MultiSelect } from 'react-multi-select-component';
@@ -301,12 +301,23 @@ export const DetailedAnalytics = React.forwardRef(
         setLoaderVisible(false);
       }
     };
+
+    const initialRender = useRef(true);
+
+
     useEffect(() => {
+
+        if (initialRender.current) {
+        initialRender.current = false;
+        return;  // Skip the duplicate call
+      }
+
       if (selectedHourly === 'custom') {
         fetchSensorData();
       } else {
         fetchSensorData();
       }
+
     }, [selectedHourly, customFrom, customTo]);
     const handleHourlyFilterChange = (event) => {
       setSelectedHourly(event.target.value);
