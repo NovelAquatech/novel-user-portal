@@ -7,13 +7,13 @@ import { toast, Toaster } from 'react-hot-toast';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 
-export const EditLabelModal = ({
+export const EditDeviceModal = ({
   isOpen,
-  row,
-  title = 'Edit Label',
+  device,
+  title = 'Edit device name',
   onClose,
 }) => {
-  const [label, setLabel] = useState(row?.label || row?.identifier || '');
+  const [devName, setDevName] = useState(device?.devName || '');
   const [isSaving, setIsSaving] = useState(false);
 
   const { user } = useAuth();
@@ -23,39 +23,38 @@ export const EditLabelModal = ({
   // Reset local state whenever modal opens or label changes
   useEffect(() => {
     if (isOpen) {
-      setLabel(row?.label || row?.identifier || '');
+      setDevName(device?.devName || '');
     }
-  }, [isOpen, row]);
+  }, [isOpen, device]);
 
   const handleSave = async () => {
     setIsSaving(true);
 
     const payload = {
-      label,
-      identifier: row?.identifier,
-      devEUI: row?.devEUI,
+      devName,
+      devEUI: device?.devEUI,
     };
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_UPDATE_VALVE_LABEL}?authToken=${authToken}`,
+        `${import.meta.env.VITE_UPDATE_DEVICE_NAME}?authToken=${authToken}`,
         payload
       );
-      toast.success('Valve label saved successfully!');
+      toast.success('Device name saved successfully!');
       handleClose();
     } catch (err) {
-      toast.error('Could not save valve label. Please try again.');
+      toast.error('Could not save Device name. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
    const handleClose = (event) => {
-    setLabel('');
+    setDevName('');
     onClose(event);
   };
 
-  const isSaveDisabled = !label.trim();
+  const isSaveDisabled = !devName.trim();
 
   return (
     <>
@@ -84,8 +83,8 @@ export const EditLabelModal = ({
           <Box sx={{ mt: 1 }}>
             <TextField
               fullWidth
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
+              value={devName}
+              onChange={(e) => setDevName(e.target.value)}
               variant="outlined"
               size="large"
               fontSize="16px"
