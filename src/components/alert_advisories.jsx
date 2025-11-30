@@ -72,7 +72,7 @@ export const AlertAdvisories = ({ alerts }) => {
             transform: 'translate(-50%, -50%)',
             zIndex: 9999,
             background: '#fff',
-            padding: '20px',
+            padding: '0px',
             borderRadius: '10px',
             width: '90%',
             maxWidth: '400px',
