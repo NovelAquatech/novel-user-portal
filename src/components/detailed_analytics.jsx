@@ -35,14 +35,11 @@ export const DetailedAnalytics = React.forwardRef(
     const orgIcon = farmer_companies.includes(orgName)
       ? "images/logomain.png"
       : `https://api.cors.lol/?url=${user.orgDetails.icon}`;
-    let displayParameters = [];
+    let paramsItems = [];
 
-    Object.keys(parameters).map((paramDisplayName, i) => {
-      console.log(paramDisplayName);
-      displayParameters.push(paramDisplayName);
+    Object.values(parameters).forEach((param) => {
+      paramsItems.push(param);
     });
-    displayParameters.sort();
-
 
     let layout = APP_CONST.default_layout;
 
@@ -388,10 +385,10 @@ export const DetailedAnalytics = React.forwardRef(
         try {
           const columns = [
             { title: "Date", dataKey: "timestamp" },
-            ...displayParameters.map((parameter) => {
+            ...paramsItems.map((parameter) => {
               return {
-                title: capitalizeFirstLetter(parameter),
-                dataKey: parameter,
+                title: parameter.paramDisplayName,
+                dataKey: parameter.parameter,
               };
             }),
           ];
@@ -424,19 +421,12 @@ export const DetailedAnalytics = React.forwardRef(
       return deviceA.localeCompare(deviceB) || paramA.localeCompare(paramB);
     });
 
-    const updateParamName = (paramDisplayName) => {
-      if (paramDisplayName.toLowerCase() == "tvoc")
-        return paramDisplayName.toUpperCase();
-      if (paramDisplayName.toLowerCase() == "co2") return "CO₂";
-      return paramDisplayName;
-    };
-
     const multiSelectOptions = [];
 
-    displayParameters.forEach((parameter) => {
+    Object.values(paramsItems).forEach((parameter) => {
       multiSelectOptions.push({
-        label: capitalizeFirstLetter(updateParamName(parameter)),
-        value: parameter,
+        label: parameter.paramDisplayName,
+        value: parameter.parameter,
       });
     });
 
