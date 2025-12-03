@@ -173,7 +173,7 @@ export const SettingPage = () => {
       let selectedSetting = selectedDevice.parameters.find(
         (s) => s?.parameter === parameter
       );
-      selectedSetting = { ...selectedSetting, devEUI: devEUI };
+      selectedSetting = { ...selectedSetting, devEUI: devEUI, orgName: user.orgName };
       console.log("selectedSetting :", selectedSetting);
       if (selectedSetting.length === 0) {
         toast.warn("No settings to save.");
