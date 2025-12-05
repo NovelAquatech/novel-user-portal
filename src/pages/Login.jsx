@@ -91,7 +91,7 @@ export const LoginPage = () => {
                         value={companyPassword}
                         onChange={(e) => setCompanyPassword(e.target.value)}
                       />
-                      <span className="fa fa-fw" onClick={handleToggle} style={{marginTop: '-5px'}}>
+                      <span className="fa fa-fw eye-icon-login" onClick={handleToggle} style={{marginTop: '-13px'}}>
                         <img src={isVisible ? "images/eye_1.png" : "images/eyecut_1.png"}/>
                       </span>
                     </div>
