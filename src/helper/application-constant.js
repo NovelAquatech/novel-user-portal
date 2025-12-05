@@ -31,19 +31,31 @@ export const APP_CONST = {
     alert_advisories_responsive_parameter: {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
-      items: 10,
+      items: 8,
     },
     desktop: {
       breakpoint: { max: 3000, min: 1450 },
-      items: 8,
+      items: 6,
     },
+    // tabletLarge: {
+    //   breakpoint: { max: 3000, min: 1450 },
+    //   items: 6,
+    // },
     tablet: {
-      breakpoint: { max:1450, min: 750 },
-      items: 5, 
+      breakpoint: { max:1450, min: 970 },
+      items: 4, 
+    },
+    mobileLarge: {
+      breakpoint: { max: 970, min: 780 },
+      items: 3,
     },
     mobile: {
-      breakpoint: { max: 750, min: 0 },
+      breakpoint: { max: 750, min: 470 },
       items: 2,
+    },
+    mobileSmall: {
+      breakpoint: { max: 470, min: 0 },
+      items: 1,
     },
   },
   avg_device_data_responsive_parameter: {

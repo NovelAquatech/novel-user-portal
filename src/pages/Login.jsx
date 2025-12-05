@@ -1,43 +1,43 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { CirclesWithBar } from "react-loader-spinner";
-import { userLogin } from "../helper/web-service";
-import { useAuth } from "../hooks/useAuth";
-import { sha512 } from "js-sha512";
+import { CirclesWithBar } from 'react-loader-spinner';
+import { userLogin } from '../helper/web-service';
+import { useAuth } from '../hooks/useAuth';
+import { sha512 } from 'js-sha512';
 export const LoginPage = () => {
-  const [companyPassword, setCompanyPassword] = useState("");
+  const [companyPassword, setCompanyPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isVisible, setVisible] = useState(false);
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const { setUserData } = useAuth();
   const inputCompanyPasswordReference = useRef(null);
   const [searchParams] = useSearchParams();
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     let p = searchParams.get('p');
-    if (p != null && p != "") {
+    if (p != null && p != '') {
       setLoaderVisible(true);
       let companyPassword = atob(p);
       let encryptedPassword = sha512(companyPassword);
-      userLogin(encryptedPassword)
-        .then((data) => {
-          setLoaderVisible(false);
-          data["autoLogin"] = true;
-          setUserData(data);
-        });
+      userLogin(encryptedPassword).then((data) => {
+        setLoaderVisible(false);
+        data['autoLogin'] = true;
+        setUserData(data);
+      });
     }
-
-
   }, []);
 
   // Handler for login
   const handleLogin = async (e) => {
     e.preventDefault();
     let inputField = null;
+
+    setErrorMessage('');
     try {
-      if (companyPassword == "") {
+      if (companyPassword == '') {
         inputField = inputCompanyPasswordReference;
-        throw new Error("Please enter company password.");
+        throw new Error('Please enter company password.');
       }
       setLoaderVisible(true);
       // Make base64 encryption for company password feild
@@ -49,7 +49,13 @@ export const LoginPage = () => {
       await setUserData(data);
     } catch (error) {
       setLoaderVisible(false);
-      alert(error.message);
+
+      const message =
+        error?.messagee ||
+        'The password entered is incorrect. Please check the password or contact NovelAquatech to reset your password.';
+
+      setErrorMessage(message);
+
       if (inputField) {
         inputField.current.focus();
       }
@@ -75,14 +81,16 @@ export const LoginPage = () => {
           <div className="col-md-9 col-sm-9 col-xs-12">
             <div className="ttl_main"></div>
             <div className="x_content">
-              <h2 className="ttl_hd"><strong>Novel Aquatech Company Product</strong></h2>
+              <h2 className="ttl_hd">
+                <strong>Novel Aquatech Company Product</strong>
+              </h2>
               <div className="form-horizontal form-label-left">
                 <div className="form-group">
                   <div className="col-md-12 col-sm-12 col-xs-12">
                     <div className="backlgbg">
-                      <label className="cp">Company Password</label>
+                      <label className="cp">Company Password*</label>
                       <input
-                        type={isVisible ? "text" : "password"}
+                        type={isVisible ? 'text' : 'password'}
                         id="companyPassword"
                         required="required"
                         className="form-control2"
@@ -91,12 +99,35 @@ export const LoginPage = () => {
                         value={companyPassword}
                         onChange={(e) => setCompanyPassword(e.target.value)}
                       />
-                      <span className="fa fa-fw eye-icon-login" onClick={handleToggle} style={{marginTop: '-13px'}}>
-                        <img src={isVisible ? "images/eye_1.png" : "images/eyecut_1.png"}/>
+                      <span
+                        className="fa fa-fw eye-icon-login"
+                        onClick={handleToggle}
+                        style={{ marginTop: '-13px' }}
+                      >
+                        <img
+                          src={
+                            isVisible
+                              ? 'images/eye_1.png'
+                              : 'images/eyecut_1.png'
+                          }
+                        />
                       </span>
                     </div>
                   </div>
                 </div>
+                {errorMessage && (
+                  <p
+                    className="error-text"
+                    style={{
+                      color: 'red',
+                      marginTop: '4px',
+                      fontSize: '12px',
+                      marginLeft: '10px',
+                    }}
+                  >
+                    {errorMessage}
+                  </p>
+                )}
                 <div className="form-group">
                   <div className="col-md-12 col-sm-12 col-xs-12">
                     {/* <input
@@ -109,7 +140,11 @@ export const LoginPage = () => {
                     <button
                       type="button"
                       className="btn btn-success"
-                      onClick={handleLogin}>Login</button>
+                      onClick={handleLogin}
+                      disabled={companyPassword.trim() === ''}
+                    >
+                      Login
+                    </button>
                   </div>
                 </div>
               </div>
@@ -121,6 +156,5 @@ export const LoginPage = () => {
         </div>
       </div>
     </>
-
   );
 };

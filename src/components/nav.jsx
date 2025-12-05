@@ -90,7 +90,7 @@ export const Navbar = () => {
             <li style={{ marginTop: "12px" }}>
               <button
                 type="button"
-                className="btn btn-info btn-sm"
+                className="btn btn-info btn-sm logout-btn"
                 onClick={handleLogout}
               >
                 Logout

@@ -129,6 +129,12 @@
   max-width: 40px !important;
 }
 
+@media (min-width: 768px) {
+  .navbar-header .navbar-brand .orglog {
+  margin-top: -4px
+}
+}
+
 @media (max-width: 768px) { 
 
   .mobile-margin {
@@ -360,6 +366,10 @@
 
   .navbar-brand {
     margin-top: -10px;
+  }
+
+  .logout-btn {
+    margin-left: 15px;
   }
 }
 
