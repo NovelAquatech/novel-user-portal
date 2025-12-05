@@ -357,6 +357,10 @@
   .eye-icon-login {
      margin-right: 10px;
   }
+
+  .navbar-brand {
+    margin-top: -10px;
+  }
 }
 
 

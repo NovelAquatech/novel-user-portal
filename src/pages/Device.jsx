@@ -353,7 +353,7 @@ export const DevicePage = () => {
                           verticalAlign: 'middle',
                           marginTop: '5px',
                           marginRight: '10px',
-                          width: '130px',
+                          minWidth: '110px',
                         }}
                         className={`btn btn-success ${styles.save_btn}`}
                       >
@@ -379,7 +379,7 @@ export const DevicePage = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody style={{borderBottom: '1px solid #ddd'}}>
                       {devices.map((device, i) => {
                         let delta = differenceDate(
                           new Date(device.lastUpdate),
