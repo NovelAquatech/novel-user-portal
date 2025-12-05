@@ -349,19 +349,11 @@ export const DevicePage = () => {
                         variant="contained"
                         color="primary"
                         style={{
-<<<<<<< HEAD
-                          color: "#ffffff",
-                          verticalAlign: "middle",
-                          marginTop: "5px",
-                          marginRight: "10px",
-                          width: "130px",
-=======
                           color: '#ffffff',
                           verticalAlign: 'middle',
                           marginTop: '5px',
                           marginRight: '10px',
                           minWidth: '110px',
->>>>>>> 1aaaf39bb0fb154b66854cdd300f44bf04bccb20
                         }}
                         className={`btn btn-success ${styles.save_btn}`}
                       >
