@@ -70,7 +70,7 @@ export const Navbar = () => {
             </li>
 
             <li>
-              <NavLink to="/setting">Setting</NavLink>
+              <NavLink to="/setting">Settings</NavLink>
             </li>
                {user.orgDetails.occupantSurvey ? (
               <li>
@@ -83,7 +83,7 @@ export const Navbar = () => {
                 display: weatherStations.includes(orgName) ? "block" : "none",
               }}
             >
-              <NavLink to="/customsetting">Custom Setting</NavLink>
+              <NavLink to="/customsetting">Custom Settings</NavLink>
             </li>
           </ul>
           <ul className="nav navbar-nav navbar-right">
