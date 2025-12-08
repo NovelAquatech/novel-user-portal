@@ -27,6 +27,8 @@ import axios from "axios";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import EditIcon from "@mui/icons-material/Edit";
 import { EditDeviceModal } from "../components/DeviceNameModel";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import IconButton from "@mui/material/IconButton";
 
 const DeviceTypeFilter = ({
   selectedDeviceType,
@@ -38,15 +40,15 @@ const DeviceTypeFilter = ({
       size="small"
       variant="outlined"
       sx={{
-        minWidth: 180,
+        minWidth: 100,
         "& .MuiOutlinedInput-notchedOutline": {
-          border: "none", // remove border
+          border: "none",
         },
         "&:hover .MuiOutlinedInput-notchedOutline": {
           border: "none",
         },
         "& .MuiSelect-icon": {
-          display: "none", // remove right-side SVG arrow
+          display: "none",
         },
       }}
     >
@@ -60,7 +62,7 @@ const DeviceTypeFilter = ({
               <FilterListIcon fontSize="large" color="action" />
               <Typography
                 variant="body2"
-                sx={{ lineHeight: 1.5, fontSize: "12px", color: "#555" }}
+                sx={{ lineHeight: 1.5, fontSize: "13px", color: "#555" }}
               >
                 {selected || "Filter Device Type"}
               </Typography>
@@ -153,6 +155,10 @@ export const DevicePage = () => {
     });
     setDevices(deves);
     setSelectedDeviceType(event.target.value);
+  };
+  const resetFilters = () => {
+    setSelectedDeviceType("");
+    setDevices(orgDevices);
   };
 
   const handleModelClose = (event) => {
@@ -339,26 +345,40 @@ export const DevicePage = () => {
                         marginTop: "10px",
                       }}
                     >
-                      <DeviceTypeFilter
-                        selectedDeviceType={selectedDeviceType}
-                        handleChange={handleChange}
-                        deviceTypes={deviceTypes}
-                      />
                       <Button
                         onClick={() => setCreateModalOpen(true)}
                         variant="contained"
                         color="primary"
                         style={{
-                          color: '#ffffff',
-                          verticalAlign: 'middle',
-                          marginTop: '5px',
-                          marginRight: '10px',
-                          minWidth: '110px',
+                          color: "#ffffff",
+                          verticalAlign: "middle",
+                          marginTop: '10px',
+                          marginRight: "10px",
+                          minWidth: "110px",
                         }}
                         className={`btn btn-success ${styles.save_btn}`}
                       >
                         + Add Device
                       </Button>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          gap: "1px",
+                          marginTop: "10px",
+                        }}
+                      >
+                        <DeviceTypeFilter
+                          selectedDeviceType={selectedDeviceType}
+                          handleChange={handleChange}
+                          deviceTypes={deviceTypes}
+                        />
+                        <IconButton onClick={resetFilters} size="small">
+                          <FilterAltOffIcon />
+                        </IconButton>
+                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -379,7 +399,7 @@ export const DevicePage = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody style={{borderBottom: '1px solid #ddd'}}>
+                    <tbody style={{ borderBottom: "1px solid #ddd" }}>
                       {devices.map((device, i) => {
                         let delta = differenceDate(
                           new Date(device.lastUpdate),
