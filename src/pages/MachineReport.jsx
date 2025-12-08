@@ -338,7 +338,7 @@ export default function MachineReportPage() {
                     ))}
                   </Carousel>
                 ) : (
-                  <div className="waiting_loader">Waiting to load data....</div>
+                  <div className="waiting_loader">No Data is available to display</div>
                 )}
               </div>
               <h2 className="dev_ttlmain" style={{marginTop: '20px'}}>Detailed analytics</h2>

@@ -30,10 +30,11 @@ import { EditDeviceModal } from "../components/DeviceNameModel";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 import IconButton from "@mui/material/IconButton";
 
-const DeviceTypeFilter = ({
+export const DeviceTypeFilter = ({
   selectedDeviceType,
   handleChange,
   deviceTypes,
+  placeholder = "Filter Device Type",
 }) => {
   return (
     <FormControl
@@ -70,7 +71,7 @@ const DeviceTypeFilter = ({
                 variant="body2"
                 sx={{ lineHeight: 1.5, fontSize: "13px", color: "#555" }}
               >
-                {selected || "Filter Device Type"}
+                {selected || placeholder}
               </Typography>
             </Box>
           );
