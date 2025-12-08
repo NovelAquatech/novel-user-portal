@@ -55,6 +55,12 @@ const DeviceTypeFilter = ({
       <Select
         value={selectedDeviceType}
         onChange={handleChange}
+        sx={{
+          "& .MuiSelect-select": {
+            paddingRight: '6px !important',
+          },
+     
+        }}
         displayEmpty
         renderValue={(selected) => {
           return (
@@ -352,7 +358,7 @@ export const DevicePage = () => {
                         style={{
                           color: "#ffffff",
                           verticalAlign: "middle",
-                          marginTop: '10px',
+                          marginTop: "10px",
                           marginRight: "10px",
                           minWidth: "110px",
                         }}
@@ -378,7 +384,6 @@ export const DevicePage = () => {
                           <FilterAltOffIcon />
                         </IconButton>
                       </div>
-                      
                     </div>
                   </div>
                 </div>
