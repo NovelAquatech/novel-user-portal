@@ -911,6 +911,9 @@ footer {
   background: #fff;
   padding: 15px 20px;
   display: block;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 .nav-sm footer {
   margin-left: 70px;
