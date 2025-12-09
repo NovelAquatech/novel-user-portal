@@ -1,22 +1,25 @@
-import { useState, useEffect } from 'react';
-import { CirclesWithBar } from 'react-loader-spinner';
-import * as MaterialDesign from 'react-icons/md';
-import { Navbar } from '../components/nav';
-import { Footer } from '../components/footer';
-import { useAuth } from '../hooks/useAuth';
-import { getMachines, getDevices, deleteMachines } from '../helper/web-service';
-import { useCacheStatus } from '../hooks/useCacheStatus';
-import { useNavigate, useLocation } from 'react-router-dom';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { useState, useEffect } from "react";
+import { CirclesWithBar } from "react-loader-spinner";
+import * as MaterialDesign from "react-icons/md";
+import { Navbar } from "../components/nav";
+import { Footer } from "../components/footer";
+import { useAuth } from "../hooks/useAuth";
+import { getMachines, getDevices, deleteMachines } from "../helper/web-service";
+import { useCacheStatus } from "../hooks/useCacheStatus";
+import { useNavigate, useLocation } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   Button,
-} from '@mui/material';
-import { toast, Toaster } from 'react-hot-toast';
+} from "@mui/material";
+import { toast, Toaster } from "react-hot-toast";
+import { DeviceTypeFilter } from "./Device";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import IconButton from "@mui/material/IconButton";
 
 export const MachinePage = () => {
   const { user } = useAuth();
@@ -34,7 +37,7 @@ export const MachinePage = () => {
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [machines, setMachines] = useState([]);
   const [machineTypes, setMachineTypes] = useState([]);
-  const [selectedMachineType, setSelectedMachineType] = useState('');
+  const [selectedMachineType, setSelectedMachineType] = useState("");
   const [filterMachines, setFilterMachines] = useState([]);
   const [devices, setDevices] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
@@ -51,12 +54,12 @@ export const MachinePage = () => {
         setMachines(data.value);
         setFilterMachines(data.value);
         setFetchedMachines(data.value);
-        setMachineTypes(['1-phase', '3-phase']);
+        setMachineTypes(["1-phase", "3-phase"]);
         setIsMachinesFetched(true);
       } else {
         setMachines(fetchedMachines);
         setFilterMachines(fetchedMachines);
-        setMachineTypes(['1-phase', '3-phase']);
+        setMachineTypes(["1-phase", "3-phase"]);
       }
     })();
 
@@ -87,6 +90,11 @@ export const MachinePage = () => {
     });
     setMachines(machs);
     setSelectedMachineType(event.target.value);
+  };
+
+  const resetFilters = () => {
+    setSelectedMachineType("");
+    setMachines(filterMachines);
   };
 
   const handleDeleteClick = (machine) => {
@@ -140,23 +148,23 @@ export const MachinePage = () => {
 
           <div
             className="col-md-12 col-sm-12 col-xs-12"
-            style={{ marginTop: '-20px' }}
+            style={{ marginTop: "-20px" }}
           >
             <div className="x_panel">
               <div className="col-md-12 col-sm-12 col-xs-12">
                 <div
                   className={
-                    user.orgName == 'UNSW' || user.orgName == 'UNSW2'
-                      ? 'ttl_main sm-padding'
-                      : 'ttl_main'
+                    user.orgName == "UNSW" || user.orgName == "UNSW2"
+                      ? "ttl_main sm-padding"
+                      : "ttl_main"
                   }
                 >
-                  <h2 style={{ textAlign: 'center' }}>
+                  <h2 style={{ textAlign: "center" }}>
                     <strong
                       className={
-                        user.orgName == 'SeelyEnergyMonitor'
-                          ? 'show-elm'
-                          : 'hide-elm'
+                        user.orgName == "SeelyEnergyMonitor"
+                          ? "show-elm"
+                          : "hide-elm"
                       }
                     >
                       Seeley Energy Monitor
@@ -165,9 +173,9 @@ export const MachinePage = () => {
                   <div
                     className="ttl_main"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                     }}
                   >
                     <h2 style={{ flex: 1 }}>
@@ -176,11 +184,11 @@ export const MachinePage = () => {
                     <button
                       type="button"
                       className="btn btn-info btn-sm"
-                      onClick={() => navigate('/machines/new')} // Navigate on click
+                      onClick={() => navigate("/machines/new")} // Navigate on click
                     >
                       <MaterialDesign.MdAdd
                         size={18}
-                        style={{ marginRight: '5px', marginBottom: '-4px' }}
+                        style={{ marginRight: "5px", marginBottom: "-4px" }}
                       />
                       Create New Machine
                     </button>
@@ -192,24 +200,33 @@ export const MachinePage = () => {
                       {machines.length} Machines
                     </p>
                   </div>
-                  <div className="col-md-6 col-sm-6 col-xs-6 txtrgt">
-                    <select value={selectedMachineType} onChange={handleChange}>
-                      <option value="">Filter Machine Type</option>
-                      {machineTypes.map((type, i) => (
-                        <option value={type} key={i}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      gap: "1px",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <DeviceTypeFilter
+                      selectedDeviceType={selectedMachineType}
+                      handleChange={handleChange}
+                      deviceTypes={machineTypes}
+                      placeholder="Filter Machine Type"
+                    />
+                    <IconButton onClick={resetFilters} size="small">
+                      <FilterAltOffIcon />
+                    </IconButton>
                   </div>
                 </div>
               </div>
               <div className="x_content">
-                <div style={{ overflowX: 'auto' }}>
+                <div style={{ overflowX: "auto" }}>
                   <table
                     id="datatable"
                     className="table table-striped"
-                    style={{ minWidth: '800px' }}
+                    style={{ minWidth: "800px" }}
                   >
                     <thead>
                       <tr>
@@ -227,7 +244,7 @@ export const MachinePage = () => {
                         <tr>
                           <td
                             colSpan="7"
-                            style={{ textAlign: 'center', padding: '10px' }}
+                            style={{ textAlign: "center", padding: "10px" }}
                           >
                             No machine found
                           </td>
@@ -236,7 +253,7 @@ export const MachinePage = () => {
                         machines.map((machine, i) => (
                           <tr key={i}>
                             <td>
-                              <MaterialDesign.MdAir color="#00bdd5" size={20} />{' '}
+                              <MaterialDesign.MdAir color="#00bdd5" size={20} />{" "}
                               {machine.PartitionKey}
                             </td>
                             <td>{machine.load}</td>
@@ -247,7 +264,7 @@ export const MachinePage = () => {
                               {devices.find(
                                 (device) =>
                                   device.devEUI === machine.primaryDevEUI
-                              )?.devName || 'Unknown'}
+                              )?.devName || "Unknown"}
                             </td>
                             <td>
                               <button
@@ -286,8 +303,8 @@ export const MachinePage = () => {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
           sx={{
-            '& .MuiDialog-paper': {
-              width: { xs: '300px', sm: '400px' },
+            "& .MuiDialog-paper": {
+              width: { xs: "300px", sm: "400px" },
             },
           }}
         >
@@ -295,8 +312,8 @@ export const MachinePage = () => {
             <DialogContentText
               id="alert-dialog-description"
               sx={{
-                fontSize: { xs: '1.2rem', sm: '1.5rem' },
-                textAlign: 'center',
+                fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                textAlign: "center",
               }}
             >
               Are you sure you want to delete this machine?
@@ -305,7 +322,7 @@ export const MachinePage = () => {
           <DialogActions>
             <Button
               sx={{
-                fontSize: { xs: '1.2rem', sm: '1.5rem' },
+                fontSize: { xs: "1.2rem", sm: "1.5rem" },
               }}
               onClick={handleConfirmDelete}
             >
@@ -313,7 +330,7 @@ export const MachinePage = () => {
             </Button>
             <Button
               sx={{
-                fontSize: { xs: '1.2rem', sm: '1.5rem' },
+                fontSize: { xs: "1.2rem", sm: "1.5rem" },
               }}
               onClick={() => setShowPopup(false)}
               autoFocus
