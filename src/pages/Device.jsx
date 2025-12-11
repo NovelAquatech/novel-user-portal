@@ -349,13 +349,7 @@ export const DevicePage = () => {
                       </button>
                     )}
                     <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        alignItems: 'center',
-                        gap: '10px',
-                        marginTop: '10px',
-                      }}
+                    className='device-actions'                    
                     >
                       <Button
                         onClick={() => setCreateModalOpen(true)}
@@ -364,8 +358,7 @@ export const DevicePage = () => {
                         style={{
                           color: '#ffffff',
                           verticalAlign: 'middle',
-                          marginTop: '10px',
-                          marginRight: '10px',
+                          marginTop: '10px',                          
                           minWidth: '110px',
                         }}
                         className={`btn btn-success ${styles.save_btn}`}
