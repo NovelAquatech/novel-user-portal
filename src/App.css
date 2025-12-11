@@ -199,7 +199,7 @@
 
 .multi-select {
   width: 250px;
-  margin-left: 10px;
+  /* margin-left: 10px; */
 }
 
 .device-email-field {
