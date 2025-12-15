@@ -202,6 +202,12 @@
   /* margin-left: 10px; */
 }
 
+.email-cell{
+  width: 600px;
+  vertical-align: middle;
+}
+
+
 .device-email-field {
   font-size: 13px !important;
   margin: 2px !important;
@@ -209,6 +215,16 @@
 
 .device-email-field input {
   font-size: 13px !important;
+}
+
+/* Small screens */
+@media (max-width: 768px) {
+  .email-cell{
+    width: 250px;
+  }
+  .css-120s2v5-MuiAutocomplete-root .MuiAutocomplete-inputRoot .MuiAutocomplete-input {
+    min-width: 100px !important;
+  }
 }
 
 .reports-button-container {

@@ -1,13 +1,13 @@
-import { useState, useEffect, createElement } from 'react';
-import { CirclesWithBar } from 'react-loader-spinner';
-import * as MaterialDesign from 'react-icons/md';
-import { Navbar } from '../components/nav';
-import { Footer } from '../components/footer';
-import { DeviceModel } from '../components/device_model';
-import { useAuth } from '../hooks/useAuth';
-import { getDevices, setDeviceEmail } from '../helper/web-service';
-import { differenceDate } from '../helper/utils';
-import { useCacheStatus } from '../hooks/useCacheStatus';
+import { useState, useEffect, createElement } from "react";
+import { CirclesWithBar } from "react-loader-spinner";
+import * as MaterialDesign from "react-icons/md";
+import { Navbar } from "../components/nav";
+import { Footer } from "../components/footer";
+import { DeviceModel } from "../components/device_model";
+import { useAuth } from "../hooks/useAuth";
+import { getDevices, setDeviceEmail } from "../helper/web-service";
+import { differenceDate } from "../helper/utils";
+import { useCacheStatus } from "../hooks/useCacheStatus";
 import {
   Chip,
   Autocomplete,
@@ -18,23 +18,23 @@ import {
   MenuItem,
   Box,
   Typography,
-} from '@mui/material';
-import styles from '../components/SwitchComponent.module.css';
-import { toast, Toaster } from 'react-hot-toast';
-import { FaMapMarkerAlt } from 'react-icons/fa';
-import { AddDeviceModal } from '../components/AddDevice';
-import axios from 'axios';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import EditIcon from '@mui/icons-material/Edit';
-import { EditDeviceModal } from '../components/DeviceNameModel';
-import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
-import IconButton from '@mui/material/IconButton';
+} from "@mui/material";
+import styles from "../components/SwitchComponent.module.css";
+import { toast, Toaster } from "react-hot-toast";
+import { FaMapMarkerAlt } from "react-icons/fa";
+import { AddDeviceModal } from "../components/AddDevice";
+import axios from "axios";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import EditIcon from "@mui/icons-material/Edit";
+import { EditDeviceModal } from "../components/DeviceNameModel";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import IconButton from "@mui/material/IconButton";
 
 export const DeviceTypeFilter = ({
   selectedDeviceType,
   handleChange,
   deviceTypes,
-  placeholder = 'Filter Device Type',
+  placeholder = "Filter Device Type",
 }) => {
   return (
     <FormControl
@@ -42,14 +42,14 @@ export const DeviceTypeFilter = ({
       variant="outlined"
       sx={{
         minWidth: 100,
-        '& .MuiOutlinedInput-notchedOutline': {
-          border: 'none',
+        "& .MuiOutlinedInput-notchedOutline": {
+          border: "none",
         },
-        '&:hover .MuiOutlinedInput-notchedOutline': {
-          border: 'none',
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+          border: "none",
         },
-        '& .MuiSelect-icon': {
-          display: 'none',
+        "& .MuiSelect-icon": {
+          display: "none",
         },
       }}
     >
@@ -57,8 +57,8 @@ export const DeviceTypeFilter = ({
         value={selectedDeviceType}
         onChange={handleChange}
         sx={{
-          '& .MuiSelect-select': {
-            paddingRight: '6px !important',
+          "& .MuiSelect-select": {
+            paddingRight: "6px !important",
           },
         }}
         displayEmpty
@@ -68,7 +68,7 @@ export const DeviceTypeFilter = ({
               <FilterListIcon fontSize="large" color="action" />
               <Typography
                 variant="body2"
-                sx={{ lineHeight: 1.5, fontSize: '13px', color: '#555' }}
+                sx={{ lineHeight: 1.5, fontSize: "13px", color: "#555" }}
               >
                 {selected || placeholder}
               </Typography>
@@ -98,14 +98,14 @@ export const DevicePage = () => {
   } = useCacheStatus();
   const [isLoaderVisible, setLoaderVisible] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
-  const [selectedDeviceType, setSelectedDeviceType] = useState('');
+  const [selectedDeviceType, setSelectedDeviceType] = useState("");
   const [isOpen, setOpen] = useState(false);
   const [orgDevices, setOrgDevices] = useState([]);
   const [devices, setDevices] = useState([]);
   const [deviceTypes, setDeviceTypes] = useState([]);
   const [emailErorrs, setEmailErrors] = useState({});
   const [autoLogin, setAutoLogin] = useState([]);
-  const [inputEmailValue, setInputEmailValue] = useState('');
+  const [inputEmailValue, setInputEmailValue] = useState("");
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditLabelModal, setEditLabelModal] = useState(false);
   const [editDevice, setEditDevice] = useState(null);
@@ -163,7 +163,7 @@ export const DevicePage = () => {
     setSelectedDeviceType(event.target.value);
   };
   const resetFilters = () => {
-    setSelectedDeviceType('');
+    setSelectedDeviceType("");
     setDevices(orgDevices);
   };
 
@@ -190,7 +190,7 @@ export const DevicePage = () => {
         setFetchedDevices(deviceList);
       });
     } catch (err) {
-      toast.error('Error saving email. Please try again.');
+      toast.error("Error saving email. Please try again.");
     }
   };
 
@@ -200,11 +200,11 @@ export const DevicePage = () => {
   };
 
   const handleEmailAdd = (event, device) => {
-    if (event != 'blur' && event.key !== 'Enter') return;
-    let errorMsg = '';
+    if (event != "blur" && event.key !== "Enter") return;
+    let errorMsg = "";
     let isValid = true;
     let emailList = JSON.parse(device.email);
-    const currentInputValue = inputEmailValue[device.devEUI] || '';
+    const currentInputValue = inputEmailValue[device.devEUI] || "";
     if (!currentInputValue) isValid = false;
     else if (emailList.includes(currentInputValue)) {
       isValid = false;
@@ -223,9 +223,9 @@ export const DevicePage = () => {
         return d;
       });
       setDevices(updatedDevices);
-      setInputEmailValue((prev) => ({ ...prev, [device.devEUI]: '' }));
+      setInputEmailValue((prev) => ({ ...prev, [device.devEUI]: "" }));
       setEmailErrors((prev) => ({ ...prev, [device.devEUI]: false }));
-      handleSave(device, updatedEmails, { event: 'saved' });
+      handleSave(device, updatedEmails, { event: "saved" });
     } else if (errorMsg) {
       toast.error(errorMsg);
       setEmailErrors((prev) => ({ ...prev, [device.devEUI]: true }));
@@ -241,7 +241,7 @@ export const DevicePage = () => {
       }
       return d;
     });
-    handleSave(device, updatedEmails, { event: 'deleted' });
+    handleSave(device, updatedEmails, { event: "deleted" });
     setDevices(updatedDevices);
   };
 
@@ -249,9 +249,9 @@ export const DevicePage = () => {
     setInputEmailValue((prev) => ({
       ...prev,
       [deviceEUI]:
-        event?.type === 'keydown'
+        event?.type === "keydown"
           ? isValidEmail(prev[deviceEUI])
-            ? ''
+            ? ""
             : prev[deviceEUI]
           : newInputValue,
     }));
@@ -267,7 +267,7 @@ export const DevicePage = () => {
       setDeviceTypes(dTypes);
       setFetchedDevices(deviceList);
     } catch (err) {
-      toast.error('Error refreshing device list.');
+      toast.error("Error refreshing device list.");
     } finally {
       setLoaderVisible(false);
     }
@@ -297,23 +297,23 @@ export const DevicePage = () => {
 
           <div
             className="col-md-12 col-sm-12 col-xs-12"
-            style={{ marginTop: '-20px' }}
+            style={{ marginTop: "-20px" }}
           >
             <div className="x_panel">
               <div className="col-md-12 col-sm-12 col-xs-12">
                 <div
                   className={
-                    user.orgName == 'UNSW' || user.orgName == 'UNSW2'
-                      ? 'ttl_main sm-padding'
-                      : 'ttl_main'
+                    user.orgName == "UNSW" || user.orgName == "UNSW2"
+                      ? "ttl_main sm-padding"
+                      : "ttl_main"
                   }
                 >
-                  <h2 style={{ textAlign: 'center' }}>
+                  <h2 style={{ textAlign: "center" }}>
                     <strong
                       className={
-                        user.orgName == 'SeelyEnergyMonitor'
-                          ? 'show-elm'
-                          : 'hide-elm'
+                        user.orgName == "SeelyEnergyMonitor"
+                          ? "show-elm"
+                          : "hide-elm"
                       }
                     >
                       Seeley Energy Monitor
@@ -330,36 +330,34 @@ export const DevicePage = () => {
                     </p>
                   </div>
                   <div className="col-md-6 col-sm-6 col-xs-6 txtrgt">
-                    {user.orgName === 'JoeFarm' && (
+                    {user.orgName === "JoeFarm" && (
                       <button
                         className="btn btn-info btn-sm"
                         style={{
-                          marginTop: '10px',
-                          marginLeft: 'auto',
+                          marginTop: "10px",
+                          marginLeft: "auto",
                         }}
                         onClick={() =>
                           window.open(
-                            'https://maps.app.goo.gl/TA5SowVoHuABRwms9',
-                            '_blank'
+                            "https://maps.app.goo.gl/TA5SowVoHuABRwms9",
+                            "_blank"
                           )
                         }
                       >
-                        <FaMapMarkerAlt style={{ marginRight: '5px' }} />
+                        <FaMapMarkerAlt style={{ marginRight: "5px" }} />
                         Click To View Farm
                       </button>
                     )}
-                    <div
-                    className='device-actions'                    
-                    >
+                    <div className="device-actions">
                       <Button
                         onClick={() => setCreateModalOpen(true)}
                         variant="contained"
                         color="primary"
                         style={{
-                          color: '#ffffff',
-                          verticalAlign: 'middle',
-                          marginTop: '10px',                          
-                          minWidth: '110px',
+                          color: "#ffffff",
+                          verticalAlign: "middle",
+                          marginTop: "10px",
+                          minWidth: "110px",
                         }}
                         className={`btn btn-success ${styles.save_btn}`}
                       >
@@ -367,11 +365,11 @@ export const DevicePage = () => {
                       </Button>
                       <div
                         style={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          alignItems: 'center',
-                          gap: '1px',
-                          marginTop: '10px',
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          gap: "1px",
+                          marginTop: "10px",
                         }}
                       >
                         <DeviceTypeFilter
@@ -388,11 +386,11 @@ export const DevicePage = () => {
                 </div>
               </div>
               <div className="x_content">
-                <div style={{ overflowX: 'auto', marginBottom: '200px' }}>
+                <div style={{ overflowX: "auto", marginBottom: "200px" }}>
                   <table
                     id="datatable"
                     className="table table-striped"
-                    style={{ minWidth: '1000px' }}
+                    style={{ minWidth: "1000px" }}
                   >
                     <thead>
                       <tr>
@@ -403,7 +401,7 @@ export const DevicePage = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody style={{ borderBottom: '1px solid #ddd' }}>
+                    <tbody style={{ borderBottom: "1px solid #ddd" }}>
                       {devices.map((device, i) => {
                         let delta = differenceDate(
                           new Date(device.lastUpdate),
@@ -412,23 +410,26 @@ export const DevicePage = () => {
                         return (
                           <tr key={i}>
                             <td>
-                              <MaterialDesign.MdAir color="#00bdd5" size={20} />{' '}
+                              <MaterialDesign.MdAir color="#00bdd5" size={20} />{" "}
                               {device.devName}
                               <EditIcon
                                 style={{
-                                  fontSize: '16px',
-                                  color: 'grey',
-                                  marginBottom: '-2px',
-                                  cursor: 'pointer',
-                                  marginLeft: '6px',
+                                  fontSize: "16px",
+                                  color: "grey",
+                                  marginBottom: "-2px",
+                                  cursor: "pointer",
+                                  marginLeft: "6px",
                                 }}
                                 onClick={() => openEditLabelModal(device)}
                               />
                             </td>
-                            <td>{delta}</td>
-                            <td>{device.deviceType}</td>
-                            <td style={{ width: '600px' }}>
+                            <td style={{ verticalAlign: "middle" }}>{delta}</td>
+                            <td style={{ verticalAlign: "middle" }}>
+                              {device.deviceType}
+                            </td>
+                            <td className="email-cell">
                               <Autocomplete
+                                className="email-autocomplete"
                                 size="small"
                                 disabled={autoLogin}
                                 multiple
@@ -436,10 +437,10 @@ export const DevicePage = () => {
                                 options={[]}
                                 disableClearable
                                 value={
-                                  device.email ? JSON.parse(device.email) : ''
+                                  device.email ? JSON.parse(device.email) : ""
                                 }
                                 inputValue={
-                                  inputEmailValue[device.devEUI] || ''
+                                  inputEmailValue[device.devEUI] || ""
                                 }
                                 onInputChange={(_, newInputValue) =>
                                   handleInputEmailChange(
@@ -470,38 +471,38 @@ export const DevicePage = () => {
                                     placeholder="Type and press enter"
                                     onKeyDown={(e) => handleEmailAdd(e, device)}
                                     onBlur={() =>
-                                      handleEmailAdd('blur', device)
+                                      handleEmailAdd("blur", device)
                                     }
                                     error={emailErorrs[device.devEUI] || false}
                                     style={{
                                       borderColor: emailErorrs[device.devEUI]
-                                        ? 'red'
-                                        : '',
+                                        ? "red"
+                                        : "",
                                       borderWidth: emailErorrs[device.devEUI]
-                                        ? '2px'
-                                        : '',
+                                        ? "2px"
+                                        : "",
                                     }}
                                   />
                                 )}
-                                style={{ marginTop: '-6px' }}
                               />
                             </td>
-                            <th>
+
+                            <td style={{ verticalAlign: "middle" }}>
                               <button
                                 className="btn btn-link"
                                 data-device={JSON.stringify(device)}
-                                style={{ fontSize: '12px' }}
+                                style={{ fontSize: "12px" }}
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   event.preventDefault();
                                   let device = null;
                                   try {
                                     device = JSON.parse(
-                                      event.target.getAttribute('data-device')
+                                      event.target.getAttribute("data-device")
                                     );
                                   } catch (err) {
                                     console.log(
-                                      'Error occurred to parse the data-device'
+                                      "Error occurred to parse the data-device"
                                     );
                                   }
                                   setOpen(true);
@@ -510,28 +511,7 @@ export const DevicePage = () => {
                               >
                                 View Details
                               </button>
-                              {/* <img
-                                src="images/eye.jpg"
-                                data-device={JSON.stringify(device)}
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  event.preventDefault();
-                                  let device = null;
-                                  try {
-                                    device = JSON.parse(
-                                      event.target.getAttribute('data-device')
-                                    );
-                                  } catch (err) {
-                                    console.log(
-                                      'Error occurred to parse the data-device'
-                                    );
-                                  }
-                                  setOpen(true);
-                                  setSelectedDevice(device);
-                                }}
-                              /> */}
-                            </th>
-                            <td></td>
+                            </td>
                           </tr>
                         );
                       })}
@@ -550,7 +530,7 @@ export const DevicePage = () => {
           device={selectedDevice}
         />
       ) : (
-        ''
+        ""
       )}
       <AddDeviceModal
         isOpen={isCreateModalOpen}
