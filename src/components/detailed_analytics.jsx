@@ -508,24 +508,29 @@ export const DetailedAnalytics = React.forwardRef(
                 }}
               >
                 <div>
-                  <label>From:</label>
                   <input
                     type="date"
                     style={{
                       height: "38px",
+                      border: "1px solid #CCCCCC",
+                      borderRadius: 4,
                     }}
                     value={customFrom}
                     onChange={(e) => setCustomFrom(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label>To:</label>
+                  <p style={{ textAlign:"center", margin:"0"}}>to</p>
+                </div>
+                <div>
                   <input
                     type="date"
                     value={customTo}
                     onChange={(e) => setCustomTo(e.target.value)}
                     style={{
                       height: "38px",
+                      border: "1px solid #CCCCCC",
+                      borderRadius: 4,
                     }}
                   />
                 </div>
