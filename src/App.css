@@ -131,12 +131,11 @@
 
 @media (min-width: 768px) {
   .navbar-header .navbar-brand .orglog {
-  margin-top: -4px
-}
+    margin-top: -4px;
+  }
 }
 
-@media (max-width: 768px) { 
-
+@media (max-width: 768px) {
   .mobile-margin {
     margin-top: 20px;
   }
@@ -179,10 +178,7 @@
   width: 133px !important;
 }
 
-
-
 .report_page .chtbox .list {
-  height: 90.5vh;
   overflow-y: auto;
   scrollbar-color: #a6a6a6 #f2f2f2;
   scrollbar-width: thin;
@@ -202,11 +198,10 @@
   /* margin-left: 10px; */
 }
 
-.email-cell{
+.email-cell {
   width: 600px;
   vertical-align: middle;
 }
-
 
 .device-email-field {
   font-size: 13px !important;
@@ -219,10 +214,12 @@
 
 /* Small screens */
 @media (max-width: 768px) {
-  .email-cell{
+  .email-cell {
     width: 250px;
   }
-  .css-120s2v5-MuiAutocomplete-root .MuiAutocomplete-inputRoot .MuiAutocomplete-input {
+  .css-120s2v5-MuiAutocomplete-root
+    .MuiAutocomplete-inputRoot
+    .MuiAutocomplete-input {
     min-width: 100px !important;
   }
 }
@@ -255,10 +252,9 @@
   gap: 10px;
   align-items: center;
   margin-top: 20px;
-   justify-content: center;  /* center horizontally */
-  align-items: center; 
+  justify-content: center; /* center horizontally */
+  align-items: center;
 }
-
 
 .machine-container {
   padding: 20px;
@@ -317,12 +313,12 @@
 }
 
 .machine-valid-button:hover {
-  background-color: #33BCE0;
+  background-color: #33bce0;
 }
 
 .machine-invalid-button {
   color: white;
-  background-color: #9CA3Af;
+  background-color: #9ca3af;
   cursor: not-allowed !important;
 }
 
@@ -343,12 +339,12 @@
   cursor: pointer;
 }
 
-.device-actions{
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-      margin-top: 10px;
+.device-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 @media (max-width: 768px) {
@@ -387,14 +383,14 @@
     flex-wrap: wrap;
   }
 
-  .device-actions{
+  .device-actions {
     flex-wrap: wrap;
     gap: 0;
     margin-top: 0;
   }
 
   .eye-icon-login {
-     margin-right: 10px;
+    margin-right: 10px;
   }
 
   .navbar-brand {
@@ -405,5 +401,3 @@
     margin-left: 15px;
   }
 }
-
-
