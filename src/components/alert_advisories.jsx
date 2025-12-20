@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect, useRef} from 'react';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { convertOperator, getAlerts } from '../helper/utils';
@@ -8,6 +8,25 @@ export const AlertAdvisories = ({ alerts }) => {
   const responsive = APP_CONST.alert_advisories_responsive_parameter;
   const advisoriesData = getAlerts(alerts) || [];
   const [selectedAlert, setSelectedAlert] = useState(null);
+  const popupRef = useRef(null);
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      popupRef.current &&
+      !popupRef.current.contains(event.target)
+    ) {
+      setSelectedAlert(null);
+    }
+  };
+
+  if (selectedAlert) {
+    document.addEventListener('mousedown', handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [selectedAlert]);
 
   const updateMsg = (msg) => {
     if (msg.toLowerCase().includes('tvoc'))
@@ -65,6 +84,7 @@ export const AlertAdvisories = ({ alerts }) => {
 
       {selectedAlert && (
         <div
+         ref={popupRef}
           style={{
             position: 'fixed',
             top: '50%',
@@ -72,7 +92,7 @@ export const AlertAdvisories = ({ alerts }) => {
             transform: 'translate(-50%, -50%)',
             zIndex: 9999,
             background: '#fff',
-            padding: '20px',
+            padding: '0px',
             borderRadius: '10px',
             width: '90%',
             maxWidth: '400px',
@@ -87,8 +107,8 @@ export const AlertAdvisories = ({ alerts }) => {
             <h3>{selectedAlert.devEUI}</h3>
             <h5>{selectedAlert.timeDiff}</h5>
             <div
-              className={`temp ${
-                selectedAlert.customAlert ? 'custom-alert-div' : ''
+                className={`temp ${
+                selectedAlert.customAlert ? 'custom-alert-div alert-value' : 'alert-value'
               }`}
               dangerouslySetInnerHTML={{
                 __html: `${

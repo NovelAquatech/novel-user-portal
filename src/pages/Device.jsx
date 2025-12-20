@@ -52,6 +52,12 @@ const DeviceTypeFilter = ({
       <Select
         value={selectedDeviceType}
         onChange={handleChange}
+        sx={{
+          "& .MuiSelect-select": {
+            paddingRight: '6px !important',
+          },
+     
+        }}
         displayEmpty
         renderValue={(selected) => {
           return (

@@ -7,12 +7,13 @@ import logo from "../assets/images/logomain.png";
 
 export const Navbar = () => {
   const { user, removeUserData } = useAuth();
-   const queryClient = useQueryClient();  
+  const queryClient = useQueryClient();
+
   const weatherStations = APP_CONST.weatherStations;
   const { setIsDevicesFetched } = useCacheStatus();
 
   const orgName = user.orgName;
-  const orgIcon = user.orgDetails.icon ? user.orgDetails.icon : logo;
+  const orgIcon =  user.orgDetails.icon ? user.orgDetails.icon : logo;
 
   const handleLogout = (event) => {
     console.log("--- Inside handleLogout ---");
@@ -24,6 +25,7 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-default">
       <div className="container-fluid">
+        {/*-- Brand and toggle get grouped for better mobile display */}
         <div className="navbar-header">
           <button
             type="button"
@@ -37,15 +39,10 @@ export const Navbar = () => {
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
           </button>
-          <a className="navbar-brand" href="/novel/report">
+          <a className="navbar-brand" href="/report">
             <img
               src={orgIcon}
               className={orgName == "UNSW" || orgName == "UNSW2" ? "orglog UNSW2Org" : "orglog orglog2"}
-              style={{
-                ...(orgName === "JoeFarm" ? { width: "100%" } : {}),
-                maxWidth: "90%",
-                height: "auto",
-              }}
             />
           </a>
         </div>
@@ -67,14 +64,15 @@ export const Navbar = () => {
                 <NavLink to="/machines">Machines</NavLink>
               </li>
             )}
+
             <li>
               <NavLink to="/devices">Devices</NavLink>
             </li>
 
             <li>
-              <NavLink to="/setting">Setting</NavLink>
+              <NavLink to="/setting">Settings</NavLink>
             </li>
-            {user.orgDetails.occupantSurvey ? (
+               {user.orgDetails.occupantSurvey ? (
               <li>
                 <NavLink to="/survey">Occupant Survey</NavLink>
               </li>
@@ -85,14 +83,14 @@ export const Navbar = () => {
                 display: weatherStations.includes(orgName) ? "block" : "none",
               }}
             >
-              <NavLink to="/customsetting">Custom Setting</NavLink>
+              <NavLink to="/customsetting">Custom Settings</NavLink>
             </li>
           </ul>
           <ul className="nav navbar-nav navbar-right">
             <li style={{ marginTop: "12px" }}>
               <button
                 type="button"
-                className="btn btn-info btn-sm"
+                className="btn btn-info btn-sm logout-btn"
                 onClick={handleLogout}
               >
                 Logout

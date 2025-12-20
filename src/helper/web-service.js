@@ -90,51 +90,50 @@ export const getDevices = (userInfo) => {
   return getRequest(url);
 };
 
-export const getSensorData = (userInfo, timeFilter = false) => {
+export const getSensorData = (
+  userInfo,
+  timeFilter = false,
+  customFrom = null,
+  customTo = null
+) => {
   let url = `${
     import.meta.env.VITE_GET_SENSOR_API_URL
-  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-  
-  url = `${url}?api-version=${APP_CONST.API_VERSION}`;
-  url = `${url}&sp=${APP_CONST.SP}`;
-  url = `${url}&sv=${APP_CONST.SV}`;
-  url = `${url}&sig=${import.meta.env.VITE_GET_SENSOR_API_URL_SIG}`;
-  url = `${url}&orgName=${userInfo.orgName}`;
+  }`;
+  url = `${url}?orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
 
-  if (timeFilter) {
-    // Determine the date range based on timeFilter
-    const timeRanges = {
-      last_hour: moment().subtract(1, "hours"),
-      last_12_hour: moment().subtract(12, "hours"),
-      last_24_hour: moment().subtract(24, "hours"),
-      last_48_hour: moment().subtract(48, "hours"),
-      last_week: moment().subtract(1, "weeks"),
-      last_month: moment().subtract(1, "months"),
-      last_year: moment().subtract(1, "years"),
-    };
-  
-    const dateStart = timeRanges[timeFilter]?.toISOString();
-    const dateEnd = moment().toISOString();
-  
+  const timeRanges = {
+    last_hour: moment().subtract(1, "hours"),
+    last_12_hour: moment().subtract(12, "hours"),
+    last_24_hour: moment().subtract(24, "hours"),
+    last_48_hour: moment().subtract(48, "hours"),
+    last_week: moment().subtract(1, "weeks"),
+    last_month: moment().subtract(1, "months"),
+    last_year: moment().subtract(1, "years"),
+  };
+
+  let dateStart, dateEnd;
+
+  if (timeFilter === "custom" && customFrom && customTo) {
+    dateStart = moment(customFrom).startOf("day").toISOString();
+    dateEnd = moment(customTo).endOf("day").toISOString();
+  } else if (timeRanges[timeFilter]) {
+    dateStart = timeRanges[timeFilter].toISOString();
+    dateEnd = moment().toISOString();
+  }
+
+  if (dateStart && dateEnd) {
     url = `${url}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
   }
-  
-  // Call API endpoint
+
   return getRequest(url);
 };
-
 
 export const getRainfallData = (userInfo, timeFilter = false) => {
   let url = `${
     import.meta.env.VITE_GET_SENSOR_API_URL
-  }/triggers/When_a_HTTP_request_is_received/paths/invoke`;
-  
-  url = `${url}?api-version=${APP_CONST.API_VERSION}`;
-  url = `${url}&sp=${APP_CONST.SP}`;
-  url = `${url}&sv=${APP_CONST.SV}`;
-  url = `${url}&sig=${import.meta.env.VITE_GET_SENSOR_API_URL_SIG}`;
-  url = `${url}&orgName=${userInfo.orgName}`;
+  }`;
+  url = `${url}?orgName=${userInfo.orgName}`;
   url = `${url}&authToken=${userInfo.token}`;
 
   // Determine date range based on timeframe
@@ -145,16 +144,15 @@ export const getRainfallData = (userInfo, timeFilter = false) => {
       monthly: moment().subtract(1, "months"),
       yearly: moment().subtract(1, "years"),
     };
-  
+
     const dateStart = timeRanges[timeFilter]?.toISOString();
     const dateEnd = moment().toISOString();
-  
+
     url = `${url}&dateStart=${dateStart}&dateEnd=${dateEnd}`;
-  }  
+  }
 
   return getRequest(url);
 };
-
 
 export const getAdvisorySettingData = (userInfo) => {
   // For URL
