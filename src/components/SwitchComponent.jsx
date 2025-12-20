@@ -29,7 +29,9 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import ValvePressure from "./ValvePressure";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CachedIcon from "@mui/icons-material/Cached";
+import EditIcon from "@mui/icons-material/Edit";
 import { Tooltip } from "@mui/material";
+import { EditLabelModal } from "./ValveLabelModel";
 
 const SwitchComponent = ({ devices, autoLogin }) => {
   const [saveLoading, setSaveLoading] = useState(false);
@@ -39,6 +41,8 @@ const SwitchComponent = ({ devices, autoLogin }) => {
   );
 
   const [editedRows, setEditedRows] = useState(new Set());
+  const [isEditLabelModal, setEditLabelModal] = useState(false);
+  const [editRow, setEditRow] = useState(null);
 
   const markRowEdited = (rowKey) => {
     setEditedRows((prev) => new Set(prev).add(rowKey));
@@ -146,6 +150,18 @@ const SwitchComponent = ({ devices, autoLogin }) => {
     } catch (err) {
       console.error("Failed to refresh valve data:", err);
     }
+  };
+
+  const onCloseEditLabelModel = (event) => {
+    const closedByUser = !event;
+    setEditLabelModal(false);
+    setEditRow(null);
+    if (closedByUser) updatedData();
+  };
+
+  const openEditLabelModal = (row) => {
+    setEditRow(row);
+    setEditLabelModal(true);
   };
 
   const handleSaveAll = async () => {
@@ -413,24 +429,46 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   </Tooltip>
                                 </TableCell>
 
-                                <TableCell
+ <TableCell
                                   className={`${styles.stickyColumn1}`}
                                 >
                                   <div
-                                    style={{ fontWeight: "bold" }}
+                                    style={{ fontWeight: 'bold' }}
                                     dangerouslySetInnerHTML={{
                                       __html: getDeviceName(row.devEUI),
                                     }}
                                   />
                                   <div
-                                    dangerouslySetInnerHTML={{
-                                      __html: row.identifier,
+                                    style={{
+                                      display: 'flex',
+                                      justifyContent: 'center',
+                                      marginTop: '4px',
                                     }}
-                                  />
+                                  >
+                                    <p
+                                      style={{
+                                        fontSize: '14px',
+                                        marginRight: '6px',
+                                      }}
+                                    >
+                                      {row.label || row.identifier}
+                                    </p>
+                                    <EditIcon
+                                      style={{
+                                        fontSize: '16px',
+                                        color: 'grey',
+                                        marginTop: '1px',
+                                        cursor: 'pointer',
+                                      }}
+                                      onClick={() => openEditLabelModal(row)}
+                                    />
+                                  </div>
+
                                   <div
                                     dangerouslySetInnerHTML={{
                                       __html: row.devEUI,
                                     }}
+                                    style={{ marginTop: '-6px' }}
                                   />
                                 </TableCell>
                                 <TableCell className={styles.stickyColumn1}>
@@ -832,6 +870,11 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       ) : (
         ""
       )}
+      <EditLabelModal
+        isOpen={isEditLabelModal}
+        row={editRow}
+        onClose={onCloseEditLabelModel}
+      />
     </>
   );
 };
