@@ -87,6 +87,8 @@ export const getOrganizedParameters = (data, isMachineParameters = false) => {
             alert.parameter.split('_')
               .map(word => word.charAt(0).toUpperCase() + word.slice(1))
               .join(' '),
+          label:alert.label,
+          devEUI: alert.devEUI,
           orgName: alert.orgName,
           currentMinAlert: alert.currentMinAlert,
           min_value: alert.min_value,

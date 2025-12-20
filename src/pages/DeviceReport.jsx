@@ -45,6 +45,7 @@ export default function DeviceReportPage() {
 
   const weatherStations = APP_CONST.weatherStations;
   const [alerts, setAlerts] = useState([]);
+  const [rawAdvisorySettings, setRawAdvisorySettings] = useState([]);
 
   useEffect(() => {
     // Showing loader
@@ -84,6 +85,7 @@ export default function DeviceReportPage() {
       setAlerts(alertsResp);
 
       // Set state
+      setRawAdvisorySettings(repAdvisorySettings);
       setParameters(parameters);
       setDevices(deviceList);
       setSelectedDevices(deviceList.map((device) => device.devEUI));
@@ -274,6 +276,7 @@ export default function DeviceReportPage() {
                     <TabPanel value="tab_one" style={{ padding: "24px 0" }}>
                       <DetailedAnalytics
                         parameters={parameters}
+                        advisorySettings={rawAdvisorySettings}
                         devices={devices}
                         selectedDevices={selectedDevices}
                         selectedHourly={selectedHourly}

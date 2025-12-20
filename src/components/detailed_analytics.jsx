@@ -7,10 +7,7 @@ import { jsPDF } from "jspdf";
 import { useState, useEffect } from "react";
 import { APP_CONST } from "../helper/application-constant";
 import { useAuth } from "../hooks/useAuth";
-import {
-  getOrganizedSensorData,
-  organizedExportedData,  
-} from "../helper/utils";
+import { getOrganizedSensorData, organizedExportedData } from "../helper/utils";
 import { downloadExcel } from "../helper/download-utils";
 import { CirclesWithBar } from "react-loader-spinner";
 import { getSensorData } from "../helper/web-service";
@@ -25,6 +22,7 @@ export const DetailedAnalytics = React.forwardRef(
       setSelectedHourly,
       setSelectedParam,
       machines,
+      advisorySettings,
     },
     ref
   ) => {
@@ -426,13 +424,31 @@ export const DetailedAnalytics = React.forwardRef(
 
     const multiSelectOptions = [];
 
+    // Non-valve parameters (unchanged)
     Object.values(paramsItems).forEach((parameter) => {
-      multiSelectOptions.push({
-        label: parameter.paramDisplayName,
-        value: parameter.parameter,
-      });
+      if (!parameter.parameter.startsWith("valve_")) {
+        multiSelectOptions.push({
+          label: parameter.paramDisplayName,
+          value: parameter.parameter,
+        });
+      }
     });
-    console.log(selectedParam);
+
+    // Valve parameters — from RAW advisory data
+    advisorySettings
+      .filter(
+        (a) =>
+          a.parameter?.startsWith("valve_") &&
+          a.devEUI &&
+          /state/i.test(a.label)
+      )
+      .forEach((alert) => {
+        multiSelectOptions.push({
+          label: alert.label,
+          value: `${alert.parameter}__${alert.devEUI}`,
+        });
+      });
+ 
 
     return (
       <>
@@ -519,7 +535,7 @@ export const DetailedAnalytics = React.forwardRef(
                   />
                 </div>
                 <div>
-                  <p style={{ textAlign:"center", margin:"0"}}>to</p>
+                  <p style={{ textAlign: "center", margin: "0" }}>to</p>
                 </div>
                 <div>
                   <input
