@@ -294,7 +294,7 @@ export const SettingPage = () => {
                   }
                 >
                   <h2>
-                    <strong>Advisory Setting</strong>
+                    <strong>Advisory Settings</strong>
                   </h2>
                 </div>
               </div>
