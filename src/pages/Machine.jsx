@@ -17,6 +17,9 @@ import {
   Button,
 } from "@mui/material";
 import { toast, Toaster } from "react-hot-toast";
+import { DeviceTypeFilter } from "./Device";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import IconButton from "@mui/material/IconButton";
 
 export const MachinePage = () => {
   const { user } = useAuth();
@@ -87,6 +90,11 @@ export const MachinePage = () => {
     });
     setMachines(machs);
     setSelectedMachineType(event.target.value);
+  };
+
+  const resetFilters = () => {
+    setSelectedMachineType("");
+    setMachines(filterMachines);
   };
 
   const handleDeleteClick = (machine) => {
@@ -192,15 +200,24 @@ export const MachinePage = () => {
                       {machines.length} Machines
                     </p>
                   </div>
-                  <div className="col-md-6 col-sm-6 col-xs-6 txtrgt">
-                    <select value={selectedMachineType} onChange={handleChange}>
-                      <option value="">Filter Machine Type</option>
-                      {machineTypes.map((type, i) => (
-                        <option value={type} key={i}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      gap: "1px",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <DeviceTypeFilter
+                      selectedDeviceType={selectedMachineType}
+                      handleChange={handleChange}
+                      deviceTypes={machineTypes}
+                      placeholder="Filter Machine Type"
+                    />
+                    <IconButton onClick={resetFilters} size="small">
+                      <FilterAltOffIcon />
+                    </IconButton>
                   </div>
                 </div>
               </div>

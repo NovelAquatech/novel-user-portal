@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -10,10 +10,8 @@ import "react-multi-carousel/lib/styles.css";
 import { useAuth } from "../hooks/useAuth";
 import { useCacheStatus } from "../hooks/useCacheStatus";
 import { APP_CONST } from "../helper/application-constant";
-import { convertMsToKmh } from "../helper/utils";
 import {
-  getDevices,
-  getSensorData,
+  getDevices,  
   getAdvisorySettings,
   getAlerts,
   getAverage,
@@ -23,8 +21,7 @@ import { DeviceList } from "../components/deviceList";
 import { AlertAdvisories } from "../components/alert_advisories";
 import { DetailedAnalytics } from "../components/detailed_analytics";
 import {
-  getOrganizedParameters,
-  getOrganizedSensorData,
+  getOrganizedParameters,  
 } from "../helper/utils";
 import RainFallBarGraph from "../components/RainFallBarGraph";
 import { FaDownload } from "react-icons/fa";
@@ -38,18 +35,16 @@ export default function DeviceReportPage() {
     setFetchedDevices,
   } = useCacheStatus();
   const orgName = user.orgName;
-  const [isLoaderVisible, setLoaderVisible] = useState(false);
+  const [isLoaderVisible, setLoaderVisible] = useState(true);
   const [parameters, setParameters] = useState([]);
-  const [series, setSeries] = useState(null);
   const [devices, setDevices] = useState([]);
   const [selectedDevices, setSelectedDevices] = useState([]);
-  const [last24HourEachDevice, setLast24HourEachDevice] = useState(null);
   const [selectedHourly, setSelectedHourly] = useState("last_hour");
   const [selectedParam, setSelectedParam] = useState([]);
-  const weatherStations = APP_CONST.weatherStations;
-  const [alerts, setAlerts] = useState([]);
   const [avgData, setAvgData] = useState([]);
 
+  const weatherStations = APP_CONST.weatherStations;
+  const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
     // Showing loader
@@ -57,7 +52,6 @@ export default function DeviceReportPage() {
     const apiPromises = [
       !isDevicesFetched ? getDevices(user) : Promise.resolve({ value: [] }), // Conditional call for getDevices
       getAdvisorySettings(user),
-      getSensorData(user),
       getAlerts(user),
     ];
     Promise.all(apiPromises).then((responses) => {
@@ -68,8 +62,8 @@ export default function DeviceReportPage() {
         : fetchedDevices;
       if (!isDevicesFetched) setFetchedDevices(repDevices);
       deviceList = repDevices.map((device) => {
-        let { devName, devEUI, deviceType } = device;
-        return { devName, devEUI, deviceType };
+        let { devName, devEUI } = device;
+        return { devName, devEUI };
       });
       setIsDevicesFetched(true);
 
@@ -85,39 +79,27 @@ export default function DeviceReportPage() {
       });
       let parameters = getOrganizedParameters(repAdvisorySettings);
 
-      // Organized sensor data
-      let repSensorData = responses[2]["value"];
-      repSensorData.forEach((sensorData) => {
-        if (sensorData.wind_speed != null) {
-          // Check if wind_speed exists and is not null
-          sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
-        }
-      });
-      let { seriesData, latestData } = getOrganizedSensorData(
-        repSensorData,
-        Object.keys(parameters)
-      );
-
       // Alerts
-      let alertsResp = responses[3]?.["value"] || [];
+      let alertsResp = responses[2]?.["value"] || [];
       setAlerts(alertsResp);
 
       // Set state
       setParameters(parameters);
-      setSeries(seriesData);
       setDevices(deviceList);
       setSelectedDevices(deviceList.map((device) => device.devEUI));
-      setLast24HourEachDevice(latestData);
+      setLoaderVisible(false);
       if (defaultParams) {
         setSelectedParam([defaultParams]);
       }
-      setLoaderVisible(false);
     });
   }, [user]);
 
+  const didFetchRef = useRef(false);
+
   //Get average data
   useEffect(() => {
-   
+    if (didFetchRef.current) return;
+    didFetchRef.current = true;
     getAverage(user, selectedDevices)
       .then((response) => {
         setAvgData(response.value);
@@ -126,6 +108,7 @@ export default function DeviceReportPage() {
         console.error("Error fetching average:", err);
       });
   }, [selectedDevices, user]);
+  // console.log("average data", avgData);
 
   const handleRefresh = () => {
     // setLoaderVisible(true);
@@ -133,7 +116,7 @@ export default function DeviceReportPage() {
 
     // Promise.all(apiPromises).then((responses) => {
     //   // Organize sensor data
-    //   let repSensorData = responses[0]["value"];
+    //   let repSensorData = responses[0]['value'];
     //   repSensorData.forEach((sensorData) => {
     //     if (sensorData.wind_speed != null) {
     //       sensorData.wind_speed = convertMsToKmh(sensorData.wind_speed);
@@ -267,74 +250,27 @@ export default function DeviceReportPage() {
               Detailed analytics
             </h2>
             <div className="dbb chtbox">
-              {series ? (
+              {!isLoaderVisible ? (
                 <>
                   <TabContext value={value}>
-                    <Box
-                      sx={{
-                        borderBottom: 1,
-                        borderColor: "divider",
-                      }}
-                    >
-                      <TabList
-                        onChange={handleChange}
-                        aria-label="lab API tabs example"
-                      >
-                        <Tab
-                          label="Detailed Analysis"
-                          value="tab_one"
-                          className="tab-btn"
-                        />
-                        {weatherStations.includes(orgName) ? (
-                          <Tab
-                            label="Rainfall"
-                            value="tab_two"
-                            className="tab-btn"
-                          />
-                        ) : (
-                          ""
-                        )}
-                        <span
-                          className="label label-primary"
-                          style={{
-                            padding: "6px",
-                            cursor: "pointer",
-                            marginTop: "auto",
-                            marginBottom: "12px",
-                            marginLeft: "10px",
-                          }}
-                          onClick={handleRefresh}
-                        >
-                          Refresh Sensor Data
-                        </span>
-                        <button
-                          className="btn btn-info btn-sm"
-                          style={{
-                            marginTop: "10px",
-                            marginLeft: "auto",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                          onClick={handleChartDownloadAsPdf}
-                        >
-                          <FaDownload style={{ marginRight: "5px" }} />
-                          Download as PDF
-                        </button>
+                    {weatherStations.includes(orgName) && (
+                      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                        <div className="tab-toolbar">
+                          <TabList
+                            onChange={handleChange}
+                            aria-label="lab API tabs example"
+                            className="tab-list"
+                          >
+                            <Tab
+                              label="Rainfall"
+                              value="tab_two"
+                              className="tab-btn"
+                            />
+                          </TabList>
+                        </div>
+                      </Box>
+                    )}
 
-                        <button
-                          className="btn btn-info btn-sm"
-                          style={{
-                            marginTop: "10px",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                          onClick={handleChartDownloadAsExcel}
-                        >
-                          <FaDownload style={{ marginRight: "5px" }} />
-                          Download as Excel
-                        </button>
-                      </TabList>
-                    </Box>
                     <TabPanel value="tab_one" style={{ padding: "24px 0" }}>
                       <DetailedAnalytics
                         parameters={parameters}
@@ -346,6 +282,29 @@ export default function DeviceReportPage() {
                         setSelectedParam={setSelectedParam}
                         ref={childRef}
                       ></DetailedAnalytics>
+                      <div className="tab-actions">
+                        <button
+                          className="btn btn-info btn-sm"
+                          onClick={handleRefresh}
+                        >
+                          Refresh Sensor Data
+                        </button>
+                        <button
+                          className="btn btn-info btn-sm"
+                          onClick={handleChartDownloadAsPdf}
+                        >
+                          <FaDownload style={{ marginRight: "5px" }} />
+                          Download as PDF
+                        </button>
+
+                        <button
+                          className="btn btn-info btn-sm"
+                          onClick={handleChartDownloadAsExcel}
+                        >
+                          <FaDownload style={{ marginRight: "5px" }} />
+                          Download as Excel
+                        </button>
+                      </div>
                     </TabPanel>
                     {weatherStations.includes(orgName) ? (
                       <TabPanel value="tab_two" style={{ padding: "24px 0" }}>
@@ -368,7 +327,7 @@ export default function DeviceReportPage() {
             <h2 className="dev_ttlmain" style={{ marginTop: "20px" }}>
               Device advisories
             </h2>
-            {last24HourEachDevice ? (
+            {!isLoaderVisible ? (
               <div style={{ marginTop: "-8px" }}>
                 <AlertAdvisories alerts={alerts} />
               </div>

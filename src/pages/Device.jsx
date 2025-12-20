@@ -14,7 +14,6 @@ import {
   TextField,
   Button,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   Box,
@@ -26,32 +25,42 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import { AddDeviceModal } from "../components/AddDevice";
 import axios from "axios";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import EditIcon from "@mui/icons-material/Edit";
+import { EditDeviceModal } from "../components/DeviceNameModel";
+import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
+import IconButton from "@mui/material/IconButton";
 
-const DeviceTypeFilter = ({
+export const DeviceTypeFilter = ({
   selectedDeviceType,
   handleChange,
   deviceTypes,
+  placeholder = "Filter Device Type",
 }) => {
   return (
     <FormControl
       size="small"
       variant="outlined"
       sx={{
-        minWidth: 180,
+        minWidth: 100,
         "& .MuiOutlinedInput-notchedOutline": {
-          border: "none", // remove border
+          border: "none",
         },
         "&:hover .MuiOutlinedInput-notchedOutline": {
           border: "none",
         },
         "& .MuiSelect-icon": {
-          display: "none", // remove right-side SVG arrow
+          display: "none",
         },
       }}
     >
       <Select
         value={selectedDeviceType}
         onChange={handleChange}
+        sx={{
+          "& .MuiSelect-select": {
+            paddingRight: "6px !important",
+          },
+        }}
         displayEmpty
         renderValue={(selected) => {
           return (
@@ -59,9 +68,9 @@ const DeviceTypeFilter = ({
               <FilterListIcon fontSize="large" color="action" />
               <Typography
                 variant="body2"
-                sx={{ lineHeight: 1.5, fontSize: "12px", color: "#555" }}
+                sx={{ lineHeight: 1.5, fontSize: "13px", color: "#555" }}
               >
-                {selected || "Filter Device Type"}
+                {selected || placeholder}
               </Typography>
             </Box>
           );
@@ -98,6 +107,20 @@ export const DevicePage = () => {
   const [autoLogin, setAutoLogin] = useState([]);
   const [inputEmailValue, setInputEmailValue] = useState("");
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isEditLabelModal, setEditLabelModal] = useState(false);
+  const [editDevice, setEditDevice] = useState(null);
+
+  const onCloseEditLabelModel = (event) => {
+    const closedByUser = !event;
+    setEditLabelModal(false);
+    setEditDevice(null);
+    if (closedByUser) updatedData();
+  };
+
+  const openEditLabelModal = (device) => {
+    setEditDevice(device);
+    setEditLabelModal(true);
+  };
 
   useEffect(() => {
     setLoaderVisible(true);
@@ -139,6 +162,10 @@ export const DevicePage = () => {
     setDevices(deves);
     setSelectedDeviceType(event.target.value);
   };
+  const resetFilters = () => {
+    setSelectedDeviceType("");
+    setDevices(orgDevices);
+  };
 
   const handleModelClose = (event) => {
     event.stopPropagation();
@@ -156,6 +183,12 @@ export const DevicePage = () => {
     try {
       await axios.post(apiSaveUrl, payload);
       toast.success(`Email ${event.event} successfully!`);
+      let deviceList = [];
+      getDevices(user).then((data) => {
+        deviceList = data.value;
+        setDevices(deviceList);
+        setFetchedDevices(deviceList);
+      });
     } catch (err) {
       toast.error("Error saving email. Please try again.");
     }
@@ -315,20 +348,7 @@ export const DevicePage = () => {
                         Click To View Farm
                       </button>
                     )}
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                        gap: "10px",
-                        marginTop: "10px",
-                      }}
-                    >
-                      <DeviceTypeFilter
-                        selectedDeviceType={selectedDeviceType}
-                        handleChange={handleChange}
-                        deviceTypes={deviceTypes}
-                      />
+                    <div className="device-actions">
                       <Button
                         onClick={() => setCreateModalOpen(true)}
                         variant="contained"
@@ -336,14 +356,31 @@ export const DevicePage = () => {
                         style={{
                           color: "#ffffff",
                           verticalAlign: "middle",
-                          marginTop: "5px",
-                          marginRight: "10px",
-                          width: "130px",
+                          marginTop: "10px",
+                          minWidth: "110px",
                         }}
                         className={`btn btn-success ${styles.save_btn}`}
                       >
                         + Add Device
                       </Button>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          alignItems: "center",
+                          gap: "1px",
+                          marginTop: "10px",
+                        }}
+                      >
+                        <DeviceTypeFilter
+                          selectedDeviceType={selectedDeviceType}
+                          handleChange={handleChange}
+                          deviceTypes={deviceTypes}
+                        />
+                        <IconButton onClick={resetFilters} size="small">
+                          <FilterAltOffIcon />
+                        </IconButton>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -364,7 +401,7 @@ export const DevicePage = () => {
                         <th></th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody style={{ borderBottom: "1px solid #ddd" }}>
                       {devices.map((device, i) => {
                         let delta = differenceDate(
                           new Date(device.lastUpdate),
@@ -375,11 +412,24 @@ export const DevicePage = () => {
                             <td>
                               <MaterialDesign.MdAir color="#00bdd5" size={20} />{" "}
                               {device.devName}
+                              <EditIcon
+                                style={{
+                                  fontSize: "16px",
+                                  color: "grey",
+                                  marginBottom: "-2px",
+                                  cursor: "pointer",
+                                  marginLeft: "6px",
+                                }}
+                                onClick={() => openEditLabelModal(device)}
+                              />
                             </td>
-                            <td>{delta}</td>
-                            <td>{device.deviceType}</td>
-                            <td style={{ width: "600px" }}>
+                            <td style={{ verticalAlign: "middle" }}>{delta}</td>
+                            <td style={{ verticalAlign: "middle" }}>
+                              {device.deviceType}
+                            </td>
+                            <td className="email-cell">
                               <Autocomplete
+                                className="email-autocomplete"
                                 size="small"
                                 disabled={autoLogin}
                                 multiple
@@ -434,13 +484,14 @@ export const DevicePage = () => {
                                     }}
                                   />
                                 )}
-                                style={{ marginTop: "-6px" }}
                               />
                             </td>
-                            <th>
-                              <img
-                                src="images/eye.jpg"
+
+                            <td style={{ verticalAlign: "middle" }}>
+                              <button
+                                className="btn btn-link"
                                 data-device={JSON.stringify(device)}
+                                style={{ fontSize: "12px" }}
                                 onClick={(event) => {
                                   event.stopPropagation();
                                   event.preventDefault();
@@ -457,9 +508,10 @@ export const DevicePage = () => {
                                   setOpen(true);
                                   setSelectedDevice(device);
                                 }}
-                              />
-                            </th>
-                            <td></td>
+                              >
+                                View Details
+                              </button>
+                            </td>
                           </tr>
                         );
                       })}
@@ -486,6 +538,11 @@ export const DevicePage = () => {
         onCloseCreateModal={onCloseCreateModal}
       />
       <Footer />
+      <EditDeviceModal
+        isOpen={isEditLabelModal}
+        device={editDevice}
+        onClose={onCloseEditLabelModel}
+      />
     </>
   );
 };

@@ -24,6 +24,7 @@ export const BaseModal = ({ isOpen, closeModal, title, children, footer, width =
         alignItems: "center",
         background: "rgba(0,0,0,0.3)",
         zIndex: 1050,
+        backdropFilter: "blur(2px)",
       }}
     >
       <div
