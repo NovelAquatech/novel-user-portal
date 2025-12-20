@@ -243,7 +243,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       }
     }
     try {
-      await axios.post(import.meta.env.VITE_VALVE_SAVE_FUNCTION_BASE);
+      `${import.meta.env.VITE_VALVE_SAVE_FUNCTION_BASE}?authToken=${authToken}`;
       toast.success("All settings saved successfully!");
       setEditedRows(new Set());
     } catch (err) {
@@ -288,9 +288,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
 
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_SYNC_API_BASE}?orgName=${encodeURIComponent(
-          orgName
-        )}`
+        `${import.meta.env.VITE_SYNC_API_BASE}?authToken=${authToken}`
       );
       const syncRows = res.data?.status ?? [];
       const byKey = new Map(syncRows.map((r) => [r.rowKey, r]));
@@ -429,36 +427,36 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                   </Tooltip>
                                 </TableCell>
 
- <TableCell
+                                <TableCell
                                   className={`${styles.stickyColumn1}`}
                                 >
                                   <div
-                                    style={{ fontWeight: 'bold' }}
+                                    style={{ fontWeight: "bold" }}
                                     dangerouslySetInnerHTML={{
                                       __html: getDeviceName(row.devEUI),
                                     }}
                                   />
                                   <div
                                     style={{
-                                      display: 'flex',
-                                      justifyContent: 'center',
-                                      marginTop: '4px',
+                                      display: "flex",
+                                      justifyContent: "center",
+                                      marginTop: "4px",
                                     }}
                                   >
                                     <p
                                       style={{
-                                        fontSize: '14px',
-                                        marginRight: '6px',
+                                        fontSize: "14px",
+                                        marginRight: "6px",
                                       }}
                                     >
                                       {row.label || row.identifier}
                                     </p>
                                     <EditIcon
                                       style={{
-                                        fontSize: '16px',
-                                        color: 'grey',
-                                        marginTop: '1px',
-                                        cursor: 'pointer',
+                                        fontSize: "16px",
+                                        color: "grey",
+                                        marginTop: "1px",
+                                        cursor: "pointer",
                                       }}
                                       onClick={() => openEditLabelModal(row)}
                                     />
@@ -468,7 +466,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
                                     dangerouslySetInnerHTML={{
                                       __html: row.devEUI,
                                     }}
-                                    style={{ marginTop: '-6px' }}
+                                    style={{ marginTop: "-6px" }}
                                   />
                                 </TableCell>
                                 <TableCell className={styles.stickyColumn1}>
