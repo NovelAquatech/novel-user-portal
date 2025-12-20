@@ -170,29 +170,9 @@ export const MachinePage = () => {
                       Seeley Energy Monitor
                     </strong>
                   </h2>
-                  <div
-                    className="ttl_main"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <h2 style={{ flex: 1 }}>
-                      <strong>Machine List</strong>
-                    </h2>
-                    <button
-                      type="button"
-                      className="btn btn-info btn-sm"
-                      onClick={() => navigate("/machines/new")} // Navigate on click
-                    >
-                      <MaterialDesign.MdAdd
-                        size={18}
-                        style={{ marginRight: "5px", marginBottom: "-4px" }}
-                      />
-                      Create New Machine
-                    </button>
-                  </div>
+                  <h2>
+                    <strong>Machine List</strong>
+                  </h2>
                 </div>
                 <div className="row">
                   <div className="col-md-6 col-sm-6 col-xs-6">
@@ -200,90 +180,108 @@ export const MachinePage = () => {
                       {machines.length} Machines
                     </p>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                      gap: "1px",
-                      marginTop: "10px",
-                    }}
-                  >
-                    <DeviceTypeFilter
-                      selectedDeviceType={selectedMachineType}
-                      handleChange={handleChange}
-                      deviceTypes={machineTypes}
-                      placeholder="Filter Machine Type"
-                    />
-                    <IconButton onClick={resetFilters} size="small">
-                      <FilterAltOffIcon />
-                    </IconButton>
+                  <div className="col-md-6 col-sm-6 col-xs-6 txtrgt">
+                    <div className="device-actions">
+                      <button
+                        type="button"
+                        className="btn btn-info btn-sm"
+                        onClick={() => navigate("/machines/new")} // Navigate on click
+                      >
+                        <MaterialDesign.MdAdd
+                          size={18}
+                          style={{ marginRight: "5px", marginBottom: "-4px" }}
+                        />
+                        Create New Machine
+                      </button>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        gap: "1px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      <DeviceTypeFilter
+                        selectedDeviceType={selectedMachineType}
+                        handleChange={handleChange}
+                        deviceTypes={machineTypes}
+                        placeholder="Filter Machine Type"
+                      />
+                      <IconButton onClick={resetFilters} size="small">
+                        <FilterAltOffIcon />
+                      </IconButton>
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="x_content">
-                <table id="datatable" className="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Machine Name</th>
-                      <th>Load</th>
-                      <th>Option</th>
-                      <th>Power Factor</th>
-                      <th>Line Voltage</th>
-                      <th>Primary Device</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {machines.length === 0 ? (
+                <div style={{ overflowX: "auto", marginBottom: "200px" }}>
+                  <table id="datatable" className="table table-striped"
+                  style={{ minWidth: "1000px" }}>
+                    <thead>
                       <tr>
-                        <td
-                          colSpan="7"
-                          style={{ textAlign: "center", padding: "10px" }}
-                        >
-                          No machine found
-                        </td>
+                        <th>Machine Name</th>
+                        <th>Load</th>
+                        <th>Option</th>
+                        <th>Power Factor</th>
+                        <th>Line Voltage</th>
+                        <th>Primary Device</th>
+                        <th>Actions</th>
                       </tr>
-                    ) : (
-                      machines.map((machine, i) => (
-                        <tr key={i}>
-                          <td>
-                            <MaterialDesign.MdAir color="#00bdd5" size={20} />{" "}
-                            {machine.PartitionKey}
-                          </td>
-                          <td>{machine.load}</td>
-                          <td>{machine.option}</td>
-                          <td>{machine.powerFactor}</td>
-                          <td>{machine.lineVoltage}</td>
-                          <td>
-                            {devices.find(
-                              (device) =>
-                                device.devEUI === machine.primaryDevEUI
-                            )?.devName || "Unknown"}
-                          </td>
-                          <td>
-                            <button
-                              className="machine-transparent-btn"
-                              onClick={() =>
-                                navigate(`/machines/${machine.RowKey}`, {
-                                  state: { machine },
-                                })
-                              }
-                            >
-                              <EditIcon />
-                            </button>
-                            <button
-                              className="machine-transparent-btn"
-                              onClick={() => handleDeleteClick(machine)}
-                            >
-                              <DeleteIcon />
-                            </button>
+                    </thead>
+                    <tbody>
+                      {machines.length === 0 ? (
+                        <tr>
+                          <td
+                            colSpan="7"
+                            style={{ textAlign: "center", padding: "10px" }}
+                          >
+                            No machine found
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        machines.map((machine, i) => (
+                          <tr key={i}>
+                            <td>
+                              <MaterialDesign.MdAir color="#00bdd5" size={20} />{" "}
+                              {machine.PartitionKey}
+                            </td>
+                            <td>{machine.load}</td>
+                            <td>{machine.option}</td>
+                            <td>{machine.powerFactor}</td>
+                            <td>{machine.lineVoltage}</td>
+                            <td>
+                              {devices.find(
+                                (device) =>
+                                  device.devEUI === machine.primaryDevEUI
+                              )?.devName || "Unknown"}
+                            </td>
+                            <td>
+                              <button
+                                className="machine-transparent-btn"
+                                onClick={() =>
+                                  navigate(`/machines/${machine.RowKey}`, {
+                                    state: { machine },
+                                  })
+                                }
+                              >
+                                <EditIcon />
+                              </button>
+                              <button
+                                className="machine-transparent-btn"
+                                onClick={() => handleDeleteClick(machine)}
+                              >
+                                <DeleteIcon />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
