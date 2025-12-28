@@ -10,7 +10,6 @@ import { useAuth } from "../hooks/useAuth";
 import {
   getOrganizedSensorData,
   organizedExportedData,
-  capitalizeFirstLetter,
 } from "../helper/utils";
 import { downloadExcel } from "../helper/download-utils";
 import { CirclesWithBar } from "react-loader-spinner";
@@ -59,6 +58,7 @@ export const DetailedAnalytics = React.forwardRef(
 
       const timeRanges = {
         last_hour: moment().subtract(1, "hours"),
+        last_6_hour: moment().subtract(6, "hours"),
         last_12_hour: moment().subtract(12, "hours"),
         last_24_hour: moment().subtract(24, "hours"),
         last_48_hour: moment().subtract(48, "hours"),
@@ -465,6 +465,7 @@ export const DetailedAnalytics = React.forwardRef(
                 }}
               >
                 <option value="last_hour">Last hour</option>
+                <option value="last_6_hour">Last 6 hours</option>
                 <option value="last_12_hour">Last 12 hours</option>
                 <option value="last_24_hour">Last 24 hours</option>
                 <option value="last_48_hour">Last 48 hours</option>
