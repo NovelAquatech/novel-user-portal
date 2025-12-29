@@ -104,6 +104,7 @@ export const getSensorData = (
 
   const timeRanges = {
     last_hour: moment().subtract(1, "hours"),
+    last_06_hour: moment().subtract(6, "hours"),
     last_12_hour: moment().subtract(12, "hours"),
     last_24_hour: moment().subtract(24, "hours"),
     last_48_hour: moment().subtract(48, "hours"),
