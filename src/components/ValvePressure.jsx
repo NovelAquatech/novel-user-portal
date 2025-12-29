@@ -44,7 +44,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
     });
 
   const groups = buildGroups();
-
+ 
   const getDeviceName = (uid) => {
     return devices[uid] || '';
   };
@@ -134,7 +134,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
                       />
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: valve.identifier,
+                          __html: valve.label,
                         }}
                       />
                       <div
@@ -238,7 +238,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
                       />
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: g.primary.identifier,
+                          __html: g.primary.label,
                         }}
                       />
                       <div
@@ -279,7 +279,7 @@ const ValvePressure = ({ rows, devices, updatedData }) => {
                         />
                         <div
                           dangerouslySetInnerHTML={{
-                            __html: s.identifier,
+                            __html: s.label,
                           }}
                         />
                         <div

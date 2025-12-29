@@ -180,7 +180,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       if (row.once && (!row.turnOnTime || !row.turnOffTime)) {
         toast.error(
           `${getDeviceName(row.devEUI)} (${
-            row.identifier
+            row.label
           }): Both Turn-on and Turn-off time are required!`
         );
         return;
@@ -192,7 +192,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       ) {
         toast.error(
           `${getDeviceName(row.devEUI)} (${
-            row.identifier
+            row.label
           }): Turn-on time must be now or in the future!`
         );
         return;
@@ -204,7 +204,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       ) {
         toast.error(
           `${getDeviceName(row.devEUI)} (${
-            row.identifier
+            row.label
           }): The turn-off time must be later than the turn-on time!`
         );
         return;
@@ -217,7 +217,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
       ) {
         toast.error(
           `${getDeviceName(row.devEUI)} (${
-            row.identifier
+            row.label
           }): Turn-off time cannot be earlier than Turn-on time!`
         );
         return;
@@ -238,7 +238,7 @@ const SwitchComponent = ({ devices, autoLogin }) => {
         });
       } catch (error) {
         toast.error(
-          `Failed to save ${getDeviceName(row.devEUI)} (${row.identifier})`
+          `Failed to save ${getDeviceName(row.devEUI)} (${row.label})`
         );
         console.error('Failed to save settings:', error);
         return;

@@ -143,7 +143,7 @@ export const ValveGroupCreateModel = ({
                     value={pv.RowKey}
                     sx={{ fontSize: '13px' }}
                   >
-                    {getDeviceName(pv.devEUI)} ({pv.identifier})
+                    {getDeviceName(pv.devEUI)} ({pv.label})
                   </MenuItem>
                 ))
               )}
@@ -186,7 +186,7 @@ export const ValveGroupCreateModel = ({
                     />
                     <ListItemText
                       primaryTypographyProps={{ fontSize: '13px' }}
-                      primary={`${getDeviceName(lv.devEUI)} (${lv.identifier})`}
+                      primary={`${getDeviceName(lv.devEUI)} (${lv.label})`}
                     />
                   </MenuItem>
                 ))

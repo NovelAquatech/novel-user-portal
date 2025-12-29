@@ -126,7 +126,7 @@ export const ValveSettingModel = ({
             gutterBottom
             sx={{ mt: 3 }}
           >
-            Name: {getDeviceName(row?.devEUI)} - {row?.identifier}
+            Name: {getDeviceName(row?.devEUI)} - {row?.label}
           </Typography>
 
           <Typography fontSize="14px" color="text.secondary" gutterBottom>
@@ -181,7 +181,7 @@ export const ValveSettingModel = ({
                         value={pv.RowKey}
                         sx={{ fontSize: '13px' }}
                       >
-                        {getDeviceName(pv.devEUI)} - {pv.identifier}
+                        {getDeviceName(pv.devEUI)} - {pv.label}
                       </MenuItem>
                     ))}
                   </Select>
